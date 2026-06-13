@@ -301,7 +301,7 @@ class StartWeapon(Choice):
     option_dual_blades = 0x1FC
     option_gloves = 0x21B
     option_staff = 0x1D8
-    option_random = "random"
+    #option_random = "random"
     default = 0x149
     
 class ProgressiveWeapon(Choice):
@@ -382,7 +382,7 @@ class CharaApperance(Choice):
     option_ambrosia = 0xE5
     option_thunderbolt = 0xE6
     option_marionetta = 0xE7
-    option_random = "random"
+    #option_random = "random"
     default = 0x0
 
 rf4_options_group = [
