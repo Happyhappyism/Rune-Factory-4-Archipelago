@@ -9,7 +9,7 @@ import traceback
 logging.getLogger("pymem").setLevel(logging.CRITICAL)
 logger = logging.getLogger("pc_ap_methods")
 
-pid = "Mesen.exe"
+
 
 def pc_get_proc_base(proc):
     try:
