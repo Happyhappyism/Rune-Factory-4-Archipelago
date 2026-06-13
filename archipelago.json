@@ -1,0 +1,8 @@
+{
+    "minimum_ap_version": "0.6.3", 
+    "world_version": "0.1.1",
+    "authors": ["Happyhappyism","Caidryn"],
+    "version": 7,
+    "compatible_version": 7,
+    "game": "Rune Factory 4"
+}

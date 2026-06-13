@@ -1,0 +1,177 @@
+Name,ID,Region,Is Boss,Produce,Friend Item,Tier,APID,Drop,Drop Chance
+???,B2,Maya Road,,,,6,1C4500,Drop 1 + Drop 2 + Drop 3 + Drop 4,Drop Chance + Drop Chance + Drop Chance + Scarcity 4
+Airror,64,Maya Road,,,Wind Crystal,6,1C4502,Magic Crystal + Wind Crystal +  + ,80 + 120 + 0 + 0
+Ambrosia,E5,Yokmir Forest (Boss),Yes,,Ultra Toyherb,0,1C4503,Ambrosia's Thorns + Ambrosia's Thorns + Toyherb + Plant Stem,600 + 100 + 100 + 10
+Ancient Bone,DE,Revival Cave (Boss),,,,5,1C4504,Dragon Bones + Skull + Fish Fossil + Fish Fossil,500 + 100 + 120 + 50
+Ant,43,Yokmir Forest,,Insect Carapace,Lumber,0,1C4505,Insect Carapace + Pretty Carapace + Insect Jaw + Lumber,100 + 2 + 30 + 70
+Ant Queen,9A,Rune Prana F4,,Queen's Jaw,Honey,10,1C4506,Insect Carapace + Pretty Carapace + Queen's Jaw + Lumber,80 + 40 + 80 + 50
+Aquameleon,E3,Sechs Territory (Boss),Yes,,Union Stew,9,1C4507,Water Dragon Ash + Water Dragon Ash +  + Intelligencer,700 + 200 + 0 + 1
+Aquaticus,E2,Sharance Maze: Deepwater Shrine Lv 10 (Boss),Yes,,Union Stew,11,1C4508,Dragon Fin + Dragon Fin + Legendary Scale + Intelligencer,700 + 100 + 50 + 100
+Arch-Daemon,3B,Leon Karnak,,,Devil Horn,9,1C4509,Devil Horn + Devil Blood +  + ,120 + 160 + 0 + 0
+Armed Ghost,C1,Rune Prana F1,,,,10,1C450A,Orichalcum + Broadsword + Small Shield + ,10 + 50 + 50 + 0
+Armored Tank +,F1,Floating Empire - South (Boss),,,,8,1C450B,MTGU Plate + MTGU Plate + Platinum + Gold,450 + 150 + 50 + 200
+Baal,91,Rune Prana F5,,,,10,1C450C,Devil Blood + Devil Blood + Great Hammer Shard + Devil Horn,90 + 80 + 40 + 15
+Bane Dragon,CC,Rune Prana F1 (Boss),Yes,,Rockfish Stew,10,1C450D,Electro Crystal + Electro Crystal + Vital Gummi + ,600 + 150 + 80 + 0
+Beetle,49,Yokmir Forest,,Insect Horn,Insect Carapace,0,1C450E,Insect Horn + Insect Carapace + Pretty Carapace + ,160 + 60 + 2 + 0
+Big Duck,8A,Rune Prana F2,,,,10,1C450F,Yellow Down + Yellow Down + Yellow Feather + Formuade,140 + 100 + 160 + 8
+Big Muck,5B,Selphia Plains,,Spore,Spore,0,1C4511,Spore + Poison Powder + Mushroom + ,200 + 5 + 100 + 0
+Black Dragon,92,Rune Prana F7,,,Dragon Fang,10,1C4512,Dragon Fang + Black Scale +  + ,80 + 70 + 0 + 0
+Blackbird,54,Maya Road,,Black Bird Feather,Bird's Feather,6,1C4513,Black Bird Feather + Black Bird Feather + Stick + Branch,240 + 40 + 150 + 150
+Blood Panther,4E,Floating Empire,,,Fur,8,1C4514,Magic Claw + Fur + Fur + Devil Blood,120 + 50 + 50 + 40
+Blue,AB,Sechs Territory,,,Cake,6,1C4515,Blue Core + Water Crystal +  + ,100 + 100 + 0 + 0
+Blue Dragon,C5,Rune Prana F6,,,Dragon Fang,10,1C4516,Dragon Fang + Blue Scale + Blue Scale + Small Crystal,150 + 120 + 10 + 1
+Buffaloo,51,Delirium Lava Ruins,,Bull's Horn,Bull's Horn,4,1C4517,Bull's Horn + Bull's Horn +  + ,160 + 90 + 0 + 0
+Buffamoo,52,Selphia Plains,,Milk (S),Milk (S),0,1C4518,Milk (S) + Milk (M) +  + ,160 + 70 + 0 + 0
+Captain Goblin,79,Leon Karnak,,,Oil,9,1C4519,Warrior's Proof + Silk Cloth + Skull + Wine,100 + 50 + 40 + 100
+Chimera,D2,Water Ruins (Boss),Yes,,Royal Curry,3,1C451A,Chimera Tail + Quality Fur + Devil Blood + Chimera's Claw,1 + 120 + 2 + 500
+Chimera 2,D1,Rune Prana F7 (Boss),Yes,,Royal Curry,10,1C451B,Chimera Tail + Chimera's Claw + Devil Blood + ,500 + 150 + 50 + 0
+Chipsqueek,55,Selphia Plains,,Fur,Branch,0,1C451C,Fur + Quality Fur + Branch + Stick,170 + 5 + 200 + 60
+Cloudy,85,Selphia (Festival Only),,Fur (S),,3,1C451D,Wooly Furball + Wooly Furball +  + ,140 + 40 + 0 + 0
+Cluckadoodle,71,Selphia Plains,,Egg (S),Egg (S),0,1C451E,Egg (S) + Egg (M) + Bird's Feather + ,60 + 15 + 10 + 0
+Crystal Mammoth,CE,Sechs Territory (Boss),Yes,,King Pineapple,7,1C451F,Icy Nose + Diamond + Diamond + Quality Fur,8 + 300 + 500 + 250
+Crystal Mammoth 2,CD,Rune Prana F3 (Boss),Yes,,King Pineapple,10,1C4520,Icy Nose + Diamond + Diamond + Quality Fur,500 + 150 + 50 + 50
+Daemon,3A,Idra Cave,,,Devil Horn,5,1C4521,Devil Horn + Devil Blood +  + ,4 + 120 + 0 + 0
+Dark Fairy,6B,Floating Empire,,Fairy Elixir,Prelude to Love,8,1C4522,Fairy Elixir + Fairy Dust + Love Potion + Prelude to Love,75 + 40 + 2 + 7
+Dark Slime,6D,Floating Empire: West,,,Aquamarine,8,1C4523,Emerald + Sapphire + Small Crystal + Dark Crystal,50 + 50 + 2 + 100
+Dead Tree,C9,Yokmir Forest (Boss),Yes,,Formula C,3,1C4524,Moving Branch + Apple + Apple + Apple Tree Seeds,1 + 50 + 500 + 30
+Dead Tree 2,C8,Rune Prana F7 (Boss),Yes,,Formula C,10,1C4525,Moving Branch + Moving Branch + Apple + Small Crystal,500 + 50 + 500 + 30
+Death Fungus,8C,Selphia Plains,,Spore,,7,1C4526,Holy Spore + Spore + Poison Powder + Monarch Mushroom,280 + 150 + 100 + 7
+Death Orc,94,Rune Prana F7,,,,10,1C4527,Ancient Orc Cloth +  +  + ,80 + 0 + 0 + 0
+Death Stalker,4C,Sechs Territory,,Scorpion Tail,Insect Carapace,8,1C4528,Scorpion Tail + Scorpion Pincer + Insect Carapace + Pretty Carapace,60 + 160 + 70 + 60
+Death Wall,E1,Rune Prana F6 (Boss),Yes,,Ice Cream,10,1C4529,Broken Ice Wall + Broken Ice Wall + Water Crystal + Water Crystal,600 + 50 + 100 + 50
+Duck,7C,Selphia Plains - West,,,Fur,1,1C452A,Yellow Down + Yellow Down + Bird's Feather + Yellow Feather,160 + 50 + 20 + 1
+Elefun,7E,Sercerezo Hill,,,Cheap Waterpot,4,1C452B,Ivory Tusk + Ivory Tusk + Cheap Waterpot + ,140 + 50 + 40 + 0
+Elemental Emperor,C4,Rune Prana F6,,,Magic,10,1C452C,Magic + Magic Crystal + Small Crystal + Medicine Bread,60 + 100 + 13 + 60
+Emerald (Boss),FB,Rune Prana F7 (Boss),Yes,,Big Green Crystal,10,1C452D,Green Core + Wind Crystal + Small Crystal + Rune Crystal,150 + 100 + 10 + 2
+Emperor Penguin,7D,Sechs Territory,,,Fur,7,1C452E,Penguin Down + Penguin Down + Bird's Feather + ,100 + 100 + 80 + 0
+Fairy,6A,Selphia Plains - West,,Fairy Dust,Prelude to Love,1,1C4531,Fairy Dust + Fairy Dust + Love Potion + Prelude to Love,75 + 40 + 1 + 7
+Faust,67,Floating Empire,,,Ghost Hood,8,1C4532,Ghost Hood + Skull + Glistening Blade + ,60 + 120 + 90 + 0
+Fiergaenger,DB,Maya Road (Boss),Yes,,Gold Juice,7,1C4533,Fire Dragon Ash + Fire Dragon Ash +  + The Protein,700 + 200 + 0 + 1
+Fiersome,DA,Sharance Maze (Boss),Yes,,Gold Juice,11,1C4534,Firewyrm Scale + Firewyrm Scale + Dragon Fang + The Protein,700 + 100 + 400 + 100
+Flare Mage,C2,Rune Prana F1,,,Magic,10,1C4535,Magic + Magic Crystal + Small Crystal + Medicine Bread,60 + 100 + 7 + 60
+Flower Blossom,57,Sercerezo Hill,,Root,Plant Stem,4,1C4536,Root + Plant Stem + Vine + Strong Vine,120 + 60 + 90 + 2
+Flower Crystal,5A,Sechs Territory,,Strong Vine,Plant Stem,7,1C4537,Root + Plant Stem + Strong Vine + ,180 + 120 + 80 + 0
+Flower Lily,59,Autumn Road,,Vine,Plant Stem,3,1C4538,Root + Plant Stem + Vine + ,2 + 100 + 100 + 0
+Flower Lion,58,Delirium Lava Ruins,,Plant Stem,Plant Stem,4,1C4539,Root + Plant Stem + Vine + Strong Vine,3 + 70 + 180 + 1
+Fortoise,B8,Floating Empire,,,Blk. Tortoise Shell,8,1C453A,Blk. Tortoise Shell + Blk. Tortoise Shell + Silver + Gold,100 + 40 + 120 + 40
+Furpy,56,Autumn Road,,Quality Puffy Fur,Branch,4,1C453B,Quality Puffy Fur + Quality Puffy Fur + Branch + Stick,190 + 60 + 250 + 70
+G Golem,D3,Rune Prana F7 (Boss),Yes,,Orichalcum,10,1C453C,Tablet of Truth + Golem Tablet + Platinum + Diamond,600 + 50 + 200 + 300
+Gaias,9D,Idra Cave,,,Magic Crystal,5,1C453D,Magic Crystal + Earth Crystal +  + ,80 + 120 + 0 + 0
+Gangster Goblin,7A,Delirium Lava Ruins,,,Oil,4,1C453E,Quality Cloth + Old Bandage + Skull + Oil,180 + 120 + 1 + 120
+Gasham,A4,Floating Empire,,,,8,1C453F,Rusty Screw + Shiny Screw +  + ,150 + 1 + 0 + 0
+Ghost,65,Obsidian Mansion,,,Ghost Hood,2,1C4540,Ghost Hood + Skull + Stick + ,120 + 3 + 80 + 0
+Ghost Ray,98,Obsidian Mansion,,,Ghost Hood,2,1C4541,Ghost Hood + Skull + Stick + Thick Stick,300 + 3 + 80 + 4
+Gigantes,42,Floating Empire,,,Giant's Nail,8,1C4542,Giant's Nail + Giant's Gloves + Hammer Piece + Thick Stick,80 + 100 + 140 + 100
+Gobble Box,69,Anywhere (Rare),,,Failed Dish,5,1C4543,Broken Hilt + Broken Box + Failed Dish + Disastrous Dish,300 + 550 + 250 + 70
+Goblin,34,Water Ruins,,,Onigiri,0,1C4544,Blade Shard + Glue + Old Bandage + Onigiri,160 + 2 + 20 + 80
+Goblin Archer,36,Water Ruins,,,Recovery Potion,0,1C4545,Arrowhead + Gunpowder + Old Bandage + Recovery Potion,60 + 3 + 100 + 80
+Goblin Don,7B,Leon Karnak,,,Oil,9,1C4546,Proof of Rank + Old Bandage + Skull + Wine,100 + 140 + 100 + 140
+Goblin Pirate,78,Delirium Lava Ruins,,,Oil,4,1C4547,Quality Cloth + Silk Cloth + Skull + Oil,120 + 1 + 1 + 80
+Goblin Sniper,37,Idra Cave,,,Recovery Potion,5,1C4548,Arrowhead + Gunpowder + Silk Cloth + Healing Potion,60 + 120 + 90 + 80
+Golem,B1,Floating Empire,,,Silver,8,1C4549,Silver + Gold + Golem Stone + Diamond,80 + 70 + 100 + 10
+Greater Demon,D0,Field Dungeon (Boss),Yes,,Big Fireflower,5,1C454A,Chest Hair + Quality Fur + Fur + Fur,9 + 150 + 100 + 50
+Greater Demon 2,CF,Rune Prana F7 (Boss),Yes,,Big Fireflower,10,1C454B,Chest Hair + Quality Fur + Fur + Fur,500 + 150 + 100 + 50
+Green,AA,Maya Road,,,Cake,6,1C454C,Green Core + Wind Crystal +  + ,100 + 100 + 0 + 0
+Green Dragon,BE,Rune Prana F1,,,Dragon Fang,10,1C454D,Dragon Fang + Dragon Scale + Dragon Scale + Small Crystal,180 + 120 + 10 + 1
+Grimoire,D6,Field Dungeon (Boss),Yes,,Golden Tyrant Turnip,8,1C454E,Grimoire Scale + Grimoire Scale + Dragon Fang + Dragon Fang,8 + 1 + 500 + 100
+Grimoire 2,D5,Leon Karnak (Boss),Yes,,Golden Tyrant Turnip,10,1C454F,Grimoire Scale + Grimoire Scale + Dragon Fang + ,600 + 100 + 50 + 0
+Guardian,93,Rune Prana F6,,,,10,1C4550,Golem Spirit Stone +  +  + ,60 + 0 + 0 + 0
+Hammer Troll,41,Maya Road,,,Giant's Nail,6,1C4551,Giant's Nail + Giant's Gloves + Hammer Piece + ,80 + 80 + 120 + 0
+Handonetta,E8,Not implemented,,,Gold Juice,2,1C4552,Puppetry Strings +  +  + ,600 + 0 + 0 + 0
+Heaven's Scissors,9C,Rune Prana F5,,Dangerous Scissors,Honey,10,1C4553,Scorpion Tail + Dangerous Scissors + Insect Carapace + Pretty Carapace,160 + 60 + 50 + 40
+Hell Spider,48,Floating Empire,,Pretty Thread,Insect Jaw,8,1C4554,Spider's Thread + Pretty Thread + Insect Jaw + ,100 + 160 + 80 + 0
+Heracles,4A,Maya Road,,Rigid Horn,Insect Carapace,6,1C4555,Rigid Horn + Insect Carapace + Pretty Carapace + ,200 + 60 + 10 + 0
+High Ogre Viking,77,Rune Prana F3,,,Wine,10,1C4556,Pirate's Armor + Glue + Wine + ,160 + 60 + 80 + 0
+High Orc,31,Yokmir Cave,,,Cheap Cloth,3,1C4557,Cheap Cloth + Glue + Cheap Bracelet + Stick,40 + 150 + 25 + 70
+High Orc Viking,75,Rune Prana F3,,,Wine,10,1C4558,Pirate's Armor + Glue + Wine + ,160 + 60 + 80 + 0
+Hinoe,DF,Rune Prana F4 (Boss),Yes,,Salted Char,10,1C4559,Red Lion Fur + Quality Fur + Quality Fur + Fur,500 + 150 + 100 + 50
+Hobgoblin,35,Idra Cave,,,Onigiri,5,1C455A,Blade Shard + Glue + Silk Cloth + Onigiri,100 + 120 + 80 + 80
+Hornet,45,Yokmir Cave,,Honey,Honey,3,1C455B,Insect Carapace + Pretty Carapace + Insect Jaw + Honey,70 + 100 + 50 + 70
+Hornet Queen,46,Maya Road,,Honey,Honey,6,1C455C,Paralysis Poison + Pretty Carapace + Insect Jaw + Honey,90 + 60 + 100 + 80
+Hover Soldier,A2,Floating Empire,,,,8,1C455D,Cheap Propeller + Quality Propeller + Iron + Gold,150 + 2 + 50 + 1
+Hover Warrior,A3,Floating Empire,,,,8,1C455E,Quality Propeller + Cheap Propeller + Iron + Gold,60 + 100 + 50 + 18
+Hunter Wolf,50,Sechs Territory,,Gold Wolf Fang,Fur,7,1C455F,Wolf Fang + Fur + Quality Fur + Gold Wolf Fang,100 + 80 + 80 + 90
+Ice Wizard,C3,Rune Prana F5,,,Magic,10,1C4560,Magic + Magic Crystal + Small Crystal + Medicine Bread,60 + 100 + 9 + 60
+Ignis,62,Delirium Lava Ruins,,,Fire Crystal,4,1C4561,Magic Crystal + Fire Crystal +  + ,70 + 120 + 0 + 0
+Killer Ant,44,Yokmir Cave,,Pretty Carapace,Lumber,3,1C4562,Insect Carapace + Pretty Carapace + Insect Jaw + Lumber,80 + 160 + 20 + 150
+King Bee,9B,Rune Prana F2,,Honey,Honey,10,1C4563,Insect Carapace + Pretty Carapace + Poison King + Honey,80 + 60 + 80 + 50
+King Wooly,8B,Autumn Road,,,,4,1C4564,Wooly Furball + Fur (S) + Fur (M) + ,8 + 90 + 60 + 0
+Kinoto,E0,Rune Prana F4 (Boss),Yes,,Salted Char,10,1C4565,Blue Lion Fur + Quality Fur + Quality Fur + Fur,500 + 150 + 100 + 50
+Leaf Ball,5D,Yokmir Cave,,Plant Stem,Plant Stem,3,1C4566,Root + Plant Stem + Vine + ,1 + 160 + 4 + 0
+Leoplicant,C0,Rune Prana F4,,,Cake,10,1C4567,Fur + Quality Fur + Palm Claw + Malm Claw,100 + 100 + 100 + 100
+Little Dragon,72,Floating Empire,,,Dragon Fang,8,1C4568,Dragon Fang + Dragon Fang +  + ,120 + 40 + 0 + 0
+Little Emperor,3E,Leon Karnak,,,Magic Powder,9,1C4569,Magic + Magic Crystal + Small Crystal + Medicine Bread,60 + 100 + 4 + 60
+Little Golem,70,Idra Cave,,,Silver,5,1C456A,Tiny Golem Stone + Silver + Ruby + ,80 + 70 + 60 + 0
+Little Mage,3C,Idra Cave,,,Magic Powder,5,1C456B,Magic Powder + Magic Crystal + Small Crystal + Medicine Bread,60 + 180 + 2 + 5
+Little Wizard,3D,Sechs Territory,,,Magic Powder,7,1C456C,Magic + Magic Crystal + Small Crystal + Accessory Bread,140 + 100 + 3 + 5
+Magnuto,DC,Demon's Den (Boss),Yes,,Udon,6,1C456E,Raccoon Leaf + Curry Udon + Tempura Udon + Udon,250 + 50 + 20 + 60
+Malm Tiger,A1,Leon Karnak,,,Fur,9,1C4571,Malm Claw + Fur + Quality Fur + ,100 + 50 + 80 + 0
+Mamadoodle,BA,Cluck Cluck Nest,,Egg (S),Egg (S),4,1C4572,Egg (S) + Egg (M) + Bird's Feather + Big Bird's Comb,200 + 150 + 150 + 120
+Mammoo,7F,Sechs Territory,,,Cheap Waterpot,7,1C4573,Unbroken Ivory Tusk + Ivory Tusk + Tin Waterpot + ,80 + 160 + 40 + 0
+Marin,FC,Rune Prana F7 (Boss),Yes,,Big Blue Crystal,10,1C4574,Blue Core + Water Crystal + Small Crystal + Rune Crystal,150 + 100 + 10 + 2
+Marionetta,E7,Obsidian Mansion (Boss),Yes,,Cake,2,1C4575,Cursed Doll + Puppetry Strings + Fur (S) + Fur (M),600 + 50 + 200 + 20
+Master Giant,9E,Floating Empire,,,Giant's Gloves,8,1C4576,Giant's Nail + Giant's Gloves + Hammer Piece + Great Hammer Shard,80 + 80 + 120 + 60
+Master Troll,89,Rune Prana F4,,,,10,1C4577,Big Giant's Nail + Giant's Gloves + Hammer Piece + Formuade,140 + 80 + 60 + 8
+Mineral Squeek,BB,Leon Karnak,,,,9,1C4578, +  +  + ,0 + 0 + 0 + 0
+Mino,87,Autumn Road,,,Grapes,3,1C4579,Grapes + Grapes + Grape Juice + Grape Tree Seed,140 + 40 + 5 + 1
+Minotaur,38,Idra Cave,,,Devil Horn,5,1C457A,Hammer Piece + Devil Horn + The Protein + ,150 + 3 + 4 + 0
+Minotaur King,39,Leon Karnak,,,Devil Horn,9,1C457B,Hammer Piece + Devil Horn + The Protein + ,220 + 120 + 40 + 0
+Monster Box,68,Anywhere (Rare),,,Failed Dish,2,1C457C,Broken Hilt + Broken Box + Failed Dish + Disastrous Dish,680 + 8 + 200 + 8
+Nappie,86,Leon Karnak,,,Pineapple,9,1C457D,Pineapple + Pineapple + Pineapple Seeds + King Pineapple,30 + 30 + 90 + 1
+Necro,66,Idra Cave,,,Ghost Hood,5,1C457E,Ghost Hood + Skull +  + ,120 + 90 + 0 + 0
+Octopirate,CB,Field Dungeon (Boss),Yes,,Grilled Snapper,8,1C457F,Ammonite + Ammonite + Fish Fossil + Vital Gummi,7 + 1 + 400 + 80
+Octopirate 2,CA,Rune Prana F2 (Boss),Yes,,Grilled Snapper,10,1C4580,Ammonite + Ammonite + Fish Fossil + Vital Gummi,700 + 200 + 400 + 80
+Ogre Viking,76,Sechs Territory,,,Wine,7,1C4581,Shoulder Piece + Glue + Wine + ,60 + 80 + 40 + 0
+Olive,FD,Rune Prana F7 (Boss),Yes,,Big White Crystal,10,1C4582,Yellow Core + Earth Crystal + Small Crystal + Rune Crystal,150 + 100 + 10 + 2
+Onion Ghost,80,Obsidian Mansion,,,Onion,2,1C4583,Onion Seeds + Onion + Ghost Hood + ,125 + 3 + 100 + 0
+Onionger,97,Rune Prana F1,,,Onion Seeds,10,1C4584,Onion Seeds + Onion + Ghost Hood + Quality Worn Cloth,100 + 40 + 40 + 120
+Orc,30,Yokmir Forest,,,Cheap Cloth,0,1C4585,Cheap Cloth + Glue + Cheap Bracelet + Stick,120 + 1 + 20 + 80
+Orc Archer,32,Yokmir Forest,,,Recovery Potion,0,1C4586,Arrowhead + Gunpowder + Recovery Potion + Stick,120 + 3 + 40 + 80
+Orc Hunter,33,Yokmir Cave,,,Recovery Potion,3,1C4587,Arrowhead + Gunpowder + Recovery Potion + Stick,40 + 140 + 80 + 70
+Orc Viking,74,Sechs Territory,,,Wine,7,1C4588,Shoulder Piece + Glue + Wine + ,100 + 60 + 40 + 0
+Palm Cat,A0,Autumn Road,,,Fur,4,1C4589,Palm Claw + Fur +  + ,150 + 90 + 0 + 0
+Pepper Ghost,82,Floating Empire,,,Green Pepper,8,1C458A,Green Pepper Seeds + Green Pepper + Green Pepper Rex + Ghost Hood,100 + 120 + 4 + 40
+Pink Dragon,C7,Rune Prana F6,,,Dragon Fang,10,1C458B,Dragon Fang + Love Scale + Love Scale + ,150 + 120 + 10 + 1
+Planchoa,5E,Maya Road,,Root,Plant Stem,6,1C458C,Root + Plant Stem + Strong Vine + Strong Vine,60 + 80 + 90 + 150
+Pomme Pomme,73,Selphia Plains,,,Baked Apple,0,1C458D,Apple + Apple + Baked Apple + Apple Tree Seeds,100 + 30 + 4 + 1
+Rafflesia,F0,Delirium Lava Ruins (Boss),,,,4,1C458E,Rafflesia Petal + Rafflesia Petal + Plant Stem + Root,450 + 150 + 100 + 200
+Red,A9,Autumn Road,,,Cake,6,1C4590,Red Core + Fire Crystal +  + ,100 + 100 + 0 + 0
+Red Dragon,BF,Rune Prana F4,,,Dragon Fang,10,1C4591,Dragon Fang + Crimson Scale + Crimson Scale + Small Crystal,150 + 120 + 10 + 1
+Rider Orc,84,Yokmir Cave,,,,3,1C4592,Cheap Cloth + Blade Shard + Glue + Cheap Bracelet,140 + 140 + 80 + 80
+Rouge,FA,Rune Prana F7 (Boss),Yes,,Big Red Crystal,10,1C4593,Red Core + Fire Crystal + Small Crystal + Rune Crystal,150 + 100 + 10 + 2
+Ruffled Flower,A8,Delirium Lava Ruins (Boss),,,,4,1C4594,Plant Stem + Root +  + ,40 + 20 + 0 + 0
+Ruffled Horsetail,A7,Delirium Lava Ruins (Boss),,,,4,1C4595,Plant Stem + Root +  + ,40 + 20 + 0 + 0
+Ruffled Vine,A6,Delirium Lava Ruins (Boss),,,,4,1C4596,Plant Stem + Root +  + ,40 + 20 + 0 + 0
+Sano,F2,Leon Karnak (Boss),,,,10,1C4597,Left Rock Shard + Left Rock Shard + Material Stone + Rock,480 + 150 + 200 + 80
+Sarcophagus,E9,Leon Karnak (Boss),Yes,,Mixed Juice,10,1C4598,Crystal Skull + Magic Crystal + Small Crystal + Lumber,500 + 150 + 10 + 200
+Scorpion,4B,Delirium Lava Ruins,,Scorpion Tail,Insect Carapace,4,1C4599,Scorpion Tail + Scorpion Pincer + Insect Carapace + Pretty Carapace,160 + 4 + 50 + 40
+Sealy,60,Sechs Territory,,,Fish Fossil,7,1C459A,Wet Scale + Fish Fossil + Can + Rare Can,160 + 40 + 60 + 1
+Sechs Golem,D4,Floating Empire - West (Boss),,,,8,1C459B,Golem Tablet + Golem Tablet + Platinum + Diamond,600 + 50 + 20 + 50
+Sechs Tank,F9,Floating Empire - East (Boss),,,,8,1C459C,Shiny Screw + Shiny Screw + Rusty Screw + Platinum,600 + 150 + 200 + 50
+Shadow Panther,4D,Obsidian Mansion,,,Fur,2,1C459D,Panther Claw + Fur + Quality Fur + ,160 + 10 + 70 + 0
+Shmooly,AF,Selphia Plains - East,,Fur (S),Lumber,4,1C459E,Wooly Furball + Clippers + Fur (S) + Fur (M),15 + 20 + 80 + 30
+Silver Wolf,4F,Yokmir Cave,,Wolf Fang,Fur,3,1C459F,Wolf Fang + Fur + Quality Fur + ,160 + 80 + 40 + 0
+Siren,D7,Rune Prana F5 (Boss),Yes,,Great 4-Leaf Clover,10,1C45A0,Melody Bottle + Melody Bottle + Intelligencer + ,600 + 50 + 90 + 0
+Sky Fish,5F,Water Ruins,,,Fish Fossil,1,1C45A1,Fish Fossil + Fish Fossil + Can + Rare Can,60 + 40 + 60 + 1
+Slime,6C,Obsidian Mansion,,,Ruby,2,1C45A2,Small Crystal + Aquamarine + Bronze + Amethyst,1 + 80 + 24 + 80
+Snowy,88,Sechs Territory,,,Orange,7,1C45A3,Orange + Orange + Orange Juice + Orange Tree Seed,200 + 40 + 5 + 1
+Spider,47,Obsidian Mansion,,Spider's Thread,Insect Jaw,2,1C45A4,Spider's Thread + Pretty Thread + Insect Jaw + ,160 + 2 + 80 + 0
+Spirit,99,Obsidian Mansion,,,Magic Crystal,2,1C45A5,Magic Crystal + Dark Crystal +  + ,70 + 120 + 0 + 0
+Terrable,D8,Sharance Maze (Boss),Yes,,Turnip Heaven,10,1C45A6,Earthwyrm Scale + Earthwyrm Scale + Dragon Fang + Vital Gummi,700 + 100 + 400 + 100
+Terraclone,D9,Idra Cave (Boss),Yes,,Turnip Heaven,7,1C45A7,Earth Dragon Ash + Earth Dragon Ash +  + Vital Gummi,700 + 200 + 0 + 1
+Thunderbird,B9,Floating Empire,,Thunderbird Feather,Branch,8,1C45A8,Thunderbird Feather + Thunderbird Feather + Branch + Branch,120 + 40 + 150 + 150
+Thunderbolt,E6,Water Ruins (Boss),Yes,,Royal Carrot,1,1C45A9,Lightning Mane + Lightning Mane + Fur + Quality Fur,600 + 100 + 100 + 50
+Titan,40,Sechs Territory,,,Giant's Nail,7,1C45AA,Giant's Nail + Giant's Gloves + Blue Giant's Glove + ,80 + 16 + 120 + 0
+Tomato Ghost,81,Delirium Lava Ruins,,,Tomato,4,1C45AB,Tomato Seeds + Tomato + Ghost Hood + Titan Tomato,15 + 60 + 98 + 1
+Tortas,61,Water Ruins,,,Egg (S),1,1C45AC,Turtle Shell + Turtle Shell + Iron + Bronze,220 + 40 + 80 + 4
+Tricky Muck,5C,Autumn Road,,Poison Powder,Spore,4,1C45AD,Spore + Poison Powder + Mushroom + Monarch Mushroom,200 + 110 + 100 + 1
+Troll,3F,Delirium Lava Ruins,,,Giant's Nail,4,1C45AE,Giant's Nail + Giant's Gloves +  + ,160 + 2 + 0 + 0
+Tundra,63,Sechs Territory,,,Water Crystal,7,1C45AF,Magic Crystal + Water Crystal +  + ,80 + 120 + 0 + 0
+Turnip Ghost,83,Rune Prana F3,,,Turnip,10,1C45B0,Turnip Seeds + Turnip + Turnip's Miracle + Gold Turnip Seeds,400 + 200 + 15 + 2
+Typhoon,BC,Sercerezo Hill,,,Mealy Apple,9,1C45B1,Mealy Apple + Mealy Apple + Devil Horn + Devil Blood,150 + 30 + 100 + 100
+Uno,F3,Leon Karnak (Boss),,,,10,1C45B2,Right Rock Shard + Right Rock Shard + Material Stone + Rock,480 + 150 + 200 + 80
+Weagle,53,Water Ruins,,Bird's Feather,Bird's Feather,1,1C45B4,Bird's Feather + Bird's Feather + Branch + Shining Seed,80 + 40 + 100 + 5
+Wooly,6F,Selphia Plains,,Fur (S),Wooly Furball,0,1C45B5,Fur (S) + Clippers +  + ,140 + 15 + 0 + 0
+Yellow,AC,Sercerezo Hill,,,Cake,7,1C45B6,Yellow Core + Earth Crystal +  + ,100 + 100 + 0 + 0
+Yellow Dragon,C6,Rune Prana F6,,,Dragon Fang,10,1C45B7,Dragon Fang + Glitter Scale + Glitter Scale + Small Crystal,150 + 120 + 10 + 1
+Ragnarok,,Rune Prana F7 (Boss),,,,11,1C45B8,Throne of the Empire + Rune Sphere Shard + Small Crystal + Rune Crystal,600 + 650 + 80 + 2

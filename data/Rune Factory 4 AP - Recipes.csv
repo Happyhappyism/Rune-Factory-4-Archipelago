@@ -1,0 +1,615 @@
+Name,ID,Type,Subtype,Address,Mask,Level,Tier,Ingredients
+Antidote Potion,106,Chemistry,Medicine,2a5,20,25,,Antidote Grass + Yellow Grass
+Cold Medicine,109,Chemistry,Medicine,2a6,1,22,,Orange Grass + Toyherb
+Formuade,10A,Chemistry,Medicine,2a6,2,46,,Heavy Spice + Lamp Grass + Ironleaf + Glue + Spore
+Formula A,158,Chemistry,Nutrient,2b0,1,29,,Withered Grass + Blue Grass + Black Grass
+Formula B,159,Chemistry,Nutrient,2b0,2,41,,Yellow Grass + Pink Cat + 4-Leaf Clover
+Formula C,15A,Chemistry,Nutrient,2b0,4,72,,White Grass + Fireflower + Corn
+Giantizer,15D,Chemistry,Nutrient,2b0,20,57,,Lamp Grass
+Greenifier,156,Chemistry,Nutrient,2af,40,34,,Withered Grass + Indigo Grass + Moondrop Flower
+Greenifier+,157,Chemistry,Nutrient,2af,80,64,,Withered Grass + Orange Grass + Corn
+Healing Potion,113,Chemistry,Medicine,2a7,4,20,,Medicinal Herb + Red Grass
+Heart Drink,105,Chemistry,Medicine,2a5,10,85,,Green Crystal + Green Crystal + Ironleaf + Spore + Glue
+Heavy Spice,10E,Chemistry,Medicine,2a6,20,10,,Purple Grass
+Intelligencer,103,Chemistry,Medicine,2a5,4,82,,White Crystal + White Crystal + Eggplant + Spore + Glue
+Invinciroid,10C,Chemistry,Medicine,2a6,8,76,,Formuade + Autumn Grass + Hot-Hot Fruit + Noel Grass + Emery Flower
+Leveliser,10D,Chemistry,Medicine,2a6,10,96,,Emery Flower + 4-Leaf Clover + Noel Grass + Autumn Grass + Fireflower + Hot-Hot Fruit
+Love Potion,10B,Chemistry,Medicine,2a6,4,87,,Grape Liqueur + Pink Melon + Strawberry + Honey + Hot-Hot Fruit + Emery Flower
+Magical Potion,115,Chemistry,Medicine,2a7,10,45,,Medicinal Herb + Elli Leaves
+Minimizer,15E,Chemistry,Nutrient,2b0,40,53,,Ironleaf
+Mixed Herbs,111,Chemistry,Medicine,2a7,1,8,,Green Grass + Toyherb
+Mystery Potion,114,Chemistry,Medicine,2a7,8,33,,Medicinal Herb + White Grass
+No Rot α,15B,Chemistry,Nutrient,2b0,8,26,,Withered Grass + Toyherb
+No Rot β,15C,Chemistry,Nutrient,2b0,10,50,,Withered Grass + Red Grass + 4-Leaf Clover
+Para-Gone,107,Chemistry,Medicine,2a5,40,18,,Indigo Grass + Indigo Grass
+Recovery Potion,112,Chemistry,Medicine,2a7,2,3,,Medicinal Herb + Green Grass
+Roundoff,108,Chemistry,Medicine,2a5,80,28,,Black Grass + Black Grass
+Sour Drop,110,Chemistry,Medicine,2a6,80,7,,Orange
+Sweet Powder,10F,Chemistry,Medicine,2a6,40,5,,Apple
+The Protein,102,Chemistry,Medicine,2a5,2,80,,Red Crystal + Red Crystal + Spinach + Spore + Glue
+Vital Gummi,104,Chemistry,Medicine,2a5,8,83,,Blue Crystal + Blue Crystal + Bok Choy + Spore + Glue
+Wettable Powder,155,Chemistry,Nutrient,2af,20,30,,Charm Blue + Cherry Grass
+Apple Jam,AF,Cooking,Pot,29a,40,10,,Apple
+Apple Juice,DA,Cooking,Mixer,2a0,2,11,,Apple
+Apple Pie,D5,Cooking,Oven,29f,10,36,,Flour + Apple + Butter + Egg (S)
+Baked Apple,7D,Cooking,Frying Pan,294,10,9,,Apple
+Baked Onigiri,C4,Cooking,Oven,29d,8,10,,Onigiri
+Bamboo Rice,F7,Cooking,Handmade,2a3,40,7,,Rice + Bamboo Sprout
+Blowfish Sashimi,6F,Cooking,Knife,292,40,71,,Blowfish
+Boiled Egg,AB,Cooking,Pot,29a,4,18,,Egg (S)
+Boiled Gyoza,AD,Cooking,Pot,29a,10,89,,Flour + Onion + Cabbage
+Boiled Pumpkin,A9,Cooking,Pot,29a,1,25,,Pumpkin
+Boiled Spinach,AA,Cooking,Pot,29a,2,13,,Spinach
+Bread,FC,Cooking,Oven,2a4,8,8,,Flour
+Butter,E3,Cooking,Mixer,2a1,4,15,,Milk (S)
+Butter Roll,C8,Cooking,Oven,29d,80,43,,Flour + Butter + Egg (S) + Milk (S)
+Cabbage Cakes,74,Cooking,Frying Pan,293,8,64,,Flour + Cabbage + Egg (S) + Leek
+Cake,D2,Cooking,Oven,29f,2,54,,Flour + Butter + Sweet Powder + Strawberry + Milk (S) + Egg (S)
+Char Sashimi,5A,Cooking,Knife,290,2,15,,Char
+Cheese,100,Cooking,Handmade,2a4,80,22,,Sour Drop + Milk (S)
+Cheese Bread,E8,Cooking,Steamer,2a1,80,44,,Flour + Cheese + Egg (S) + Milk (S)
+Cheese Fondue,B2,Cooking,Pot,29b,2,32,,Bread + Cheese
+Cheesecake,D4,Cooking,Oven,29f,8,46,,Cheese + Egg (S) + Milk (S) + Sweet Powder
+Cherry Sashimi,5D,Cooking,Knife,290,10,3,,Cherry Salmon
+Chinese Manju,EA,Cooking,Steamer,2a2,2,15,,Flour + Bamboo Sprout
+Choco Cookie,D1,Cooking,Oven,29f,1,45,,Flour + Butter + Sweet Powder + Chocolate + Egg (S)
+Chocolate Cake,D3,Cooking,Oven,29f,4,48,,Flour + Chocolate + Butter + Sweet Powder + Milk (S) + Egg (S)
+Chocolate Sponge,EE,Cooking,Steamer,2a2,20,35,,Flour + Chocolate + Egg (S) + Milk (S)
+Cookie,D0,Cooking,Oven,29e,80,38,,Flour + Sweet Powder + Egg (S) + Butter
+Corn Cereal,78,Cooking,Frying Pan,293,80,53,,Corn + Milk (S)
+Corn on the Cob,C3,Cooking,Oven,29d,4,52,,Corn
+Croquettes,76,Cooking,Frying Pan,293,20,33,,Oil + Potato + Egg (S)
+Curry Bread,7E,Cooking,Frying Pan,294,20,59,,Oil + Flour + Rice + Curry Powder + Carrot + Onion
+Curry Manju,EB,Cooking,Steamer,2a2,4,57,,Flour + Rice + Curry Powder + Carrot + Onion
+Curry Rice,BB,Cooking,Pot,29c,4,55,,Rice + Curry Powder + Carrot + Potato
+Curry Udon,B4,Cooking,Pot,29b,8,56,,Flour + Rice + Curry Powder + Carrot + Onion
+Donut,80,Cooking,Frying Pan,294,80,46,,Oil + Flour + Butter + Egg (M)
+Doria,CB,Cooking,Oven,29e,4,84,,Rice + Cheese + Milk (S) + Onion
+Dried Sardines,99,Cooking,Frying Pan,298,1,24,,Sardine + Sardine + Sardine
+Dry Curry,86,Cooking,Frying Pan,295,20,86,,Rice + Curry Powder + Carrot + Onion
+Dumplings,F1,Cooking,Steamer,2a3,1,2,,Rice Flour
+Egg Bowl,B9,Cooking,Pot,29c,1,21,,Rice + Egg (S)
+Fall Sashimi,6B,Cooking,Knife,292,4,58,,Fall Flounder
+Flan,EF,Cooking,Steamer,2a2,40,29,,Egg (S) + Milk (S)
+Flounder Sashimi,69,Cooking,Knife,292,1,30,,Flounder
+French Fries,75,Cooking,Frying Pan,293,10,24,,Oil + Potato
+French Toast,7F,Cooking,Frying Pan,294,40,31,,Bread + Egg (S)
+Fried Eggs,7A,Cooking,Frying Pan,294,2,20,,Egg (S)
+Fried Rice,73,Cooking,Frying Pan,293,4,30,,Rice + Oil + Egg (S)
+Fried Udon,81,Cooking,Frying Pan,295,1,95,,Flour + Onion + Carrot + Cabbage
+Fried Veggies,72,Cooking,Frying Pan,293,2,62,,Cabbage
+Fruit Juice,DC,Cooking,Mixer,2a0,8,18,,Apple + Grapes + Orange
+Fruit Sandwich,F4,Cooking,Handmade,2a3,8,35,,Bread + Strawberry
+Fruit Smoothie,DD,Cooking,Mixer,2a0,10,37,,Fruit Juice + Milk (S)
+Girella Sashimi,62,Cooking,Knife,291,2,6,,Girella
+Glazed Yam,AC,Cooking,Pot,29a,8,28,,Sweet Powder + Yam
+Glitter Sashimi,60,Cooking,Knife,290,80,92,,Glitter Snapper
+Gold Juice,E4,Cooking,Mixer,2a1,8,99,,Golden Pumpkin + Emery Flower + Golden Potato + Golden Turnip + Golden Cabbage
+Grape Jam,B0,Cooking,Pot,29a,80,9,,Grapes
+Grape Juice,D8,Cooking,Mixer,29f,80,7,,Grapes
+Grape Liqueur,A8,Cooking,Pot,299,80,39,,Grapes + Wine
+Gratin,CD,Cooking,Oven,29e,10,85,,Flour + Cheese + Milk (S) + Onion
+Grilled Blowfish,A2,Cooking,Frying Pan,299,2,72,,Blowfish + Sour Drop
+Grilled C. Carp,8E,Cooking,Frying Pan,296,20,14,,Crucian Carp + Sour Drop
+Grilled F.Flounder,9E,Cooking,Frying Pan,298,20,58,,Fall Flounder + Sour Drop
+Grilled Flounder,9C,Cooking,Frying Pan,298,8,31,,Flounder + Sour Drop
+Grilled G. Snapper,92,Cooking,Frying Pan,297,2,93,,Glitter Snapper + Sour Drop
+Grilled Gibelio,8F,Cooking,Frying Pan,296,40,19,,Gibelio + Sour Drop
+Grilled Girella,91,Cooking,Frying Pan,297,1,16,,Girella + Sour Drop
+Grilled L. Snapper,93,Cooking,Frying Pan,297,4,66,,Throbby Snapper + Sour Drop
+Grilled Lamp Squid,A1,Cooking,Frying Pan,299,1,54,,Lamp Squid + Sour Drop
+Grilled Lobster,A3,Cooking,Frying Pan,299,4,41,,Lobster + Sour Drop
+Grilled Mackerel,95,Cooking,Frying Pan,297,10,16,,Mackerel + Sour Drop
+Grilled Miso,BF,Cooking,Pot,29c,40,29,,Radish
+Grilled Needlefish,9A,Cooking,Frying Pan,298,2,12,,Needlefish + Sour Drop
+Grilled S.Flounder,A5,Cooking,Frying Pan,299,10,15,,Sand Flounder + Sour Drop
+Grilled Shrimp,A4,Cooking,Frying Pan,299,8,18,,Shrimp + Sour Drop
+Grilled Skipjack,94,Cooking,Frying Pan,297,8,37,,Skipjack + Sour Drop
+Grilled Snapper,90,Cooking,Frying Pan,296,80,51,,Snapper + Sour Drop
+Grilled Squid,9F,Cooking,Frying Pan,298,40,13,,Squid + Sour Drop
+Grilled Sunsquid,A0,Cooking,Frying Pan,298,80,78,,Sunsquid + Sour Drop
+Grilled Turbot,9D,Cooking,Frying Pan,298,10,21,,Turbot + Sour Drop
+Grilled Yellowtail,96,Cooking,Frying Pan,297,20,69,,Yellowtail + Sour Drop
+Gyoza,84,Cooking,Frying Pan,295,8,88,,Flour + Onion + Cabbage
+Hot Chocolate,A7,Cooking,Pot,299,40,11,,Chocolate
+Hot Juice,E6,Cooking,Mixer,2a1,20,76,,Heavy Spice + Hot-Hot Fruit
+Hot Milk,A6,Cooking,Pot,299,20,17,,Milk (S)
+Ice Cream,F9,Cooking,Mixer,2a4,1,25,,Sweet Powder + Milk (S)
+Jam Roll,C7,Cooking,Oven,29d,40,34,,Flour + Strawberry + Egg (S) + Milk (S)
+Ketchup,E2,Cooking,Mixer,2a1,2,38,,Sour Drop + Tomato
+Lamp Squid Sashimi,6E,Cooking,Knife,292,20,53,,Lamp Squid
+Lobster Sashimi,70,Cooking,Knife,292,80,40,,Lobster
+Lover Sashimi,61,Cooking,Knife,291,1,63,,Throbby Snapper
+Marmalade,B1,Cooking,Pot,29b,1,5,,Orange
+Mayonnaise,101,Cooking,Mixer,2a5,1,28,,Oil + Egg (S)
+Meat Dumpling,E9,Cooking,Steamer,2a2,1,82,,Flour + Shrimp + Onion
+Milk Porridge,B7,Cooking,Pot,29b,40,20,,Rice + Milk (S)
+Miso Eggplant,79,Cooking,Frying Pan,294,1,31,,Eggplant
+Mixed Juice,E0,Cooking,Mixer,2a0,80,83,,Apple + Grapes + Orange + Pineapple + Strawberry + Milk (S)
+Mixed Smoothie,E1,Cooking,Mixer,2a1,1,91,,Mixed Juice + Honey
+Needlefish Sashimi,67,Cooking,Knife,291,40,4,,Needlefish
+Omelet,7B,Cooking,Frying Pan,294,4,28,,Milk (S) + Egg (S)
+Omelet Rice,7C,Cooking,Frying Pan,294,8,60,,Omelet + Rice + Ketchup
+Onigiri,FB,Cooking,Handmade,2a4,4,2,,Rice
+Orange Juice,D9,Cooking,Mixer,2a0,1,5,,Orange
+Pancakes,83,Cooking,Frying Pan,295,4,49,,Flour + Honey + Milk (S) + Egg (S)
+Pickle Mix,FE,Cooking,Handmade,2a4,20,48,,Turnip + Pink Turnip
+Pickled Turnip,F5,Cooking,Handmade,2a3,10,4,,Turnip
+Pickles,F6,Cooking,Handmade,2a3,20,10,,Cucumber
+Pike Sashimi,68,Cooking,Knife,291,80,1,,Pike
+Pineapple Juice,D6,Cooking,Mixer,29f,20,81,,Pineapple
+Pizza,C9,Cooking,Oven,29e,1,60,,Flour + Cheese + Ketchup + Green Pepper + Eggplant
+Popcorn,77,Cooking,Frying Pan,293,40,51,,Corn
+Pound Cake,ED,Cooking,Steamer,2a2,10,23,,Flour + Egg (S)
+Prelude to Love,E5,Cooking,Mixer,2a1,10,61,,Pink Melon + Strawberry
+Pumpkin Flan,F0,Cooking,Steamer,2a2,80,48,,Egg (S) + Milk (S) + Pumpkin
+Rainbow Sashimi,5B,Cooking,Knife,290,4,26,,Rainbow Trout
+Raisin Bread,F8,Cooking,Oven,2a3,80,27,,Flour + Grapes
+Relax Tea,BE,Cooking,Pot,29c,20,73,,Relax Tea Leaves + Honey + Pink Melon + Leek
+Relax Tea Leaves,FA,Cooking,Handmade,2a4,2,50,,White Grass + Orange Grass + Green Grass + Yellow Grass + Blue Grass + Purple Grass
+Rice Porridge,B6,Cooking,Pot,29b,20,2,,Rice
+Risotto,85,Cooking,Frying Pan,295,10,48,,Rice + Wine + Butter
+Rockfish Stew,C1,Cooking,Pot,29d,1,45,,Rockfish
+Royal Curry,BD,Cooking,Pot,29c,10,98,,Curry Powder + Apple + Honey + Mixed Herbs + Onion + Emery Flower
+Salad,F2,Cooking,Handmade,2a3,2,67,,Mayonnaise + Cucumber + Tomato + Cabbage
+Salmon Onigiri,FD,Cooking,Handmade,2a4,10,20,,Salted Salmon + Rice
+Salmon Sashimi,5C,Cooking,Knife,290,8,12,,Salmon
+Salted C. Salmon,8A,Cooking,Frying Pan,296,2,12,,Cherry Salmon + Sour Drop
+Salted Char,88,Cooking,Frying Pan,295,80,19,,Char + Sour Drop
+Salted Chub,8B,Cooking,Frying Pan,296,4,23,,Chub + Sour Drop
+Salted Masu Trout,87,Cooking,Frying Pan,295,40,9,,Masu Trout + Sour Drop
+Salted Pike,9B,Cooking,Frying Pan,298,4,8,,Pike + Sour Drop
+Salted Pond Smelt,97,Cooking,Frying Pan,297,40,6,,Pond Smelt + Sour Drop
+Salted R. Trout,89,Cooking,Frying Pan,296,1,27,,Rainbow Trout + Sour Drop
+Salted Salmon,8C,Cooking,Frying Pan,296,8,17,,Salmon + Sour Drop
+Salted Taimen,8D,Cooking,Frying Pan,296,10,80,,Taimen + Sour Drop
+Sandwich,F3,Cooking,Handmade,2a3,4,34,,Bread + Egg (S) + Cucumber
+Sardine Sashimi,66,Cooking,Knife,291,20,8,,Sardine
+Seafood Doria,CC,Cooking,Oven,29e,8,39,,Rice + Shrimp + Cheese + Squid + Milk (S)
+Seafood Gratin,CE,Cooking,Oven,29e,20,42,,Flour + Shrimp + Cheese + Squid + Milk (S)
+Seafood Pizza,CA,Cooking,Oven,29e,2,56,,Flour + Cheese + Ketchup + Shrimp + Squid
+Shrimp Sashimi,71,Cooking,Knife,293,1,14,,Shrimp
+Skipjack Sashimi,63,Cooking,Knife,291,4,37,,Skipjack
+Snapper Sashimi,5F,Cooking,Knife,290,40,50,,Snapper
+Squid Sashimi,6C,Cooking,Knife,292,8,4,,Squid
+Steamed Bread,E7,Cooking,Steamer,2a1,40,32,,Flour + Egg (S) + Milk (S)
+Steamed Gyoza,EC,Cooking,Steamer,2a2,8,90,,Flour + Onion + Cabbage
+Stew,BA,Cooking,Pot,29c,2,87,,Flour + Milk (M) + Potato + Carrot + Onion
+Strawberry Jam,AE,Cooking,Pot,29a,20,27,,Strawberry
+Strawberry Milk,DB,Cooking,Mixer,2a0,4,33,,Strawberry + Milk (S)
+Sunsquid Sashimi,6D,Cooking,Knife,292,10,77,,Sunsquid
+Sweet Potato,C5,Cooking,Oven,29d,10,20,,Yam
+Taimen Sashimi,5E,Cooking,Knife,290,20,79,,Taimen
+Tempura,82,Cooking,Frying Pan,295,2,36,,Oil + Flour + Shrimp + Egg (S)
+Tempura Bowl,B8,Cooking,Pot,29b,80,70,,Rice + Tempura
+Tempura Udon,B5,Cooking,Pot,29b,10,54,,Tempura + Udon
+Toast,C6,Cooking,Oven,29d,20,21,,Bread
+Tomato Juice,D7,Cooking,Mixer,29f,40,35,,Tomato
+Trout Sashimi,59,Cooking,Knife,290,1,2,,Masu Trout
+Tuna Sashimi,65,Cooking,Knife,291,10,74,,Tuna
+Tuna Teriyaki,98,Cooking,Frying Pan,297,80,75,,Tuna + Sour Drop
+Turbot Sashimi,6A,Cooking,Knife,292,2,21,,Turbot
+Turnip Heaven,FF,Cooking,Handmade,2a4,40,96,,Turnip + Pink Turnip + Golden Turnip
+Udon,B3,Cooking,Pot,29b,4,7,,Flour
+Ultimate Curry,BC,Cooking,Pot,29c,8,97,,Curry Powder + Wine + Devil Blood + Heavy Spice + Onion + Golden Turnip
+Union Stew,C0,Cooking,Pot,29c,80,94,,Radish + Leek + Bok Choy + Mushroom 1 + Hot-Hot Fruit
+Vegetable Juice,DE,Cooking,Mixer,2a0,20,59,,Pumpkin + Turnip + Carrot + Spinach
+Veggie Smoothie,DF,Cooking,Mixer,2a0,40,65,,Vegetable Juice + Milk (S)
+Yam of the Ages,CF,Cooking,Oven,29e,40,47,,Sweet Powder + Butter + Milk (S) + Yam
+Yellowtail Sashimi,64,Cooking,Knife,291,8,68,,Yellowtail
+Yogurt,C2,Cooking,Pot,29d,2,19,,Sweet Powder + Milk (S)
+Amethyst Brooch,19,Crafting,Accessories,288,1,55,,Platinum + Amethyst
+Amethyst Ring,12,Crafting,Accessories,287,2,15,,Silver + Amethyst
+Anette's Necklace,2C,Crafting,Accessories,28a,8,80,,Rune Sphere Shard + Ancient Orc Cloth + Old Bandage
+Aquamarine Brooch,18,Crafting,Accessories,287,80,55,,Platinum + Aquamarine
+Aquamarine Ring,11,Crafting,Accessories,287,1,15,,Silver + Aquamarine
+Art of Attack,3F,Crafting,Accessories,28c,40,91,,Dragonic Stone + Throne of the Empire + Wind Dragon Tooth
+Art of Defense,40,Crafting,Accessories,28c,80,90,,Dragonic Stone + Grimoire Scale + Broken Ice Wall
+Art of Magic,41,Crafting,Accessories,28d,1,92,,Dragonic Stone + Chimera Tail + Melody Bottle
+Badge,42,Crafting,Accessories,28d,2,6,,Blade Shard
+Black Ribbon,140,Crafting,Headgear,2ac,80,18,,Black Grass + Insect Carapace + Old Bandage
+Blue Ribbon,135,Crafting,Headgear,2ab,10,4,,Blue Grass + Insect Carapace + Old Bandage
+Bone Boots,183,Crafting,Shoes,2b5,8,33,,Strong Vine + Big Crystal + Turtle Shell
+Bone Shield,166,Crafting,Shield,2b1,40,32,,Gold + Turtle Shell
+Brand Glasses,13C,Crafting,Headgear,2ac,8,11,,Dark Crystal + Aquamarine + Aquamarine
+Bronze Bracelet,2,Crafting,Accessories,285,2,10,,Bronze + Insect Carapace
+Cat Ears,145,Crafting,Headgear,2ad,10,24,,Fur
+Chain Mail,4A,Crafting,Armor,28e,2,20,,Silver + Old Bandage
+Champ Belt,3A,Crafting,Accessories,28c,2,58,,Warrior's Proof + Proof of Rank + Insect Carapace
+Chaos Shield,165,Crafting,Shield,2b1,20,25,,Silver + Pretty Carapace
+Charm,33,Crafting,Accessories,28b,4,3,,Insect Carapace + Old Bandage
+Cheap Bracelet,1,Crafting,Accessories,285,1,5,,Iron
+Cotton Cloth,48,Crafting,Armor,28d,80,12,,Old Bandage + Old Bandage + Spider's Thread
+Courage Badge,43,Crafting,Accessories,28d,4,99,,Badge + Rune Sphere Shard + Rune Crystal
+Critical Ring,A,Crafting,Accessories,286,2,30,,Gold + Rigid Horn
+Crown,150,Crafting,Headgear,2ae,80,95,,Dragonic Stone + Small Crystal + Black Scale + White Stone + Rune Crystal
+Cursed Ring,16,Crafting,Accessories,287,20,15,,Silver + Turtle Shell
+Cute Knitting,13D,Crafting,Headgear,2ac,10,13,,Insect Carapace + Insect Carapace
+Dew Pendant,28,Crafting,Accessories,289,80,28,,Silver Pendant + Gold + Water Crystal
+Diamond Brooch,1D,Crafting,Accessories,288,10,77,,Orichalcum + Light Ore + Rune Crystal + Diamond
+Diamond Ring,17,Crafting,Accessories,287,40,60,,Orichalcum + Diamond
+Dolphin Brooch,1E,Crafting,Accessories,288,20,88,,White Stone + Orichalcum
+Dragon Cloak,54,Crafting,Armor,28f,8,64,,Dragon Scale + Crimson Scale + Grimoire Scale + Earth Dragon Ash + Old Bandage
+Earrings,30,Crafting,Accessories,28a,80,8,,Iron + Spore
+Earth Pendant,29,Crafting,Accessories,28a,1,19,,Silver Pendant + Gold + Earth Crystal
+Earth Ring,22,Crafting,Accessories,289,2,94,,Orichalcum + Earth Crystal
+Element Shield,16C,Crafting,Shield,2b2,10,58,,Yellow Feather + Green Core + Red Core + Yellow Core + Blue Core
+Elvish Cloak,53,Crafting,Armor,28f,4,59,,Turnip's Miracle + Ambrosia's Thorns + Crystal Skull + Spore
+Emerald Brooch,1A,Crafting,Accessories,288,2,55,,Platinum + Emerald
+Emerald Ring,13,Crafting,Accessories,287,4,15,,Silver + Emerald
+Engagement Ring,154,Crafting,Accessories,2af,10,20,,Iron + Amethyst
+Fairy Boots,184,Crafting,Shoes,2b5,10,95,,Earthwyrm Scale + Small Crystal + Melody Bottle + Old Bandage + Yellow Down
+Fancy Hat,13B,Crafting,Headgear,2ac,4,9,,Insect Carapace + Old Bandage
+Fast Step Boots,17E,Crafting,Shoes,2b4,40,26,,Root + Sapphire + Fur
+Feather Boots,170,Crafting,Shoes,2b3,1,54,,Orichalcum + Big Bird's Comb + Big Crystal + Yellow Down + Old Bandage
+Feathered Hat,14D,Crafting,Headgear,2ae,10,51,,Quality Worn Cloth + Yellow Down + Old Bandage
+Field Pendant,27,Crafting,Accessories,289,40,35,,Silver Pendant + Gold + Wind Crystal
+Fire Ring,1F,Crafting,Accessories,288,40,95,,Orichalcum + Fire Crystal
+Fireproof Hood,13F,Crafting,Headgear,2ac,40,16,,Ghost Hood + Insect Carapace
+Fluffy Scarf,3C,Crafting,Accessories,28c,8,96,,Wooly Furball + Fur (S) + Fur (M) + Fur (L) + Yarn
+Four Dragons' Vest,58,Crafting,Armor,28f,80,99,,Dragon Fin + Earthwyrm Scale + Firewyrm Scale + Wind Dragon Tooth + Rune Crystal
+Four Seasons,14C,Crafting,Headgear,2ae,8,44,,Spring Headdress + Summer Headdress + Autumn Headdress + Winter Headdress
+Free Farming Shoes,185,Crafting,Shoes,2b5,20,8,,Old Bandage + Fur
+Ghost Boots,178,Crafting,Shoes,2b4,1,65,,Quality Worn Cloth + Dragon Scale + Crimson Scale + Crystal Skull + Old Bandage
+Gloves,2E,Crafting,Accessories,28a,20,18,,Giant's Gloves
+Gold Boots,182,Crafting,Shoes,2b5,4,28,,Gold + Gold + Blade Shard
+Gold Bracelet,4,Crafting,Accessories,285,8,39,,Gold + Insect Carapace
+Gold Hairpin,14E,Crafting,Headgear,2ae,20,60,,Turnip's Miracle + Gold
+Gold Ring,7,Crafting,Accessories,285,40,63,,Orichalcum + Gold + Turnip's Miracle
+Green Ribbon,136,Crafting,Headgear,2ab,20,5,,Green Grass + Insect Carapace + Old Bandage
+Hand-Knit Scarf,3B,Crafting,Accessories,28c,4,43,,Yarn + Yarn + Yarn + Yarn
+Happy Ring,23,Crafting,Accessories,289,4,30,,Silver + 4-Leaf Clover
+Headband,134,Crafting,Headgear,2ab,8,2,,Insect Carapace
+Headdress,142,Crafting,Headgear,2ad,2,20,,Insect Carapace + Insect Carapace + Insect Carapace + Old Bandage
+Heart Pendant,2A,Crafting,Accessories,28a,2,40,,Silver Pendant + Love Crystal
+Heavy Boots,171,Crafting,Shoes,2b3,2,20,,Silver + Iron + Pretty Carapace
+Heavy Shield,168,Crafting,Shield,2b2,1,41,,Diamond + Shoulder Piece
+Hero's Proof,3D,Crafting,Accessories,28c,10,73,,Chest Hair + Small Crystal + Rune Crystal
+Holy Amulet,34,Crafting,Accessories,28b,8,55,,Platinum + Diamond
+Ice Skates,175,Crafting,Shoes,2b3,20,79,,Broken Ice Wall + Insect Carapace + Old Bandage
+Indigo Ribbon,14F,Crafting,Headgear,2ae,40,77,,Blue Scale + Indigo Grass + Insect Carapace + Old Bandage
+Intelligent Glasses,13E,Crafting,Headgear,2ac,20,15,,Magic Crystal + Aquamarine + Aquamarine
+Iron Geta,173,Crafting,Shoes,2b3,8,70,,Dangerous Scissors + MTGU Plate + MTGU Plate + Iron + Iron
+Iron Shield,161,Crafting,Shield,2b1,2,8,,Iron + Iron
+Kite Shield,16A,Crafting,Shield,2b2,4,50,,Proof of Rank + Warrior's Proof + Platinum + Dragon Bones
+Knight Boots,179,Crafting,Shoes,2b4,2,86,,Dragonic Stone + Black Scale + Ammonite + Old Bandage
+Knight Shield,16B,Crafting,Shield,2b2,8,54,,Orichalcum + Grimoire Scale
+Lamellar Vest,50,Crafting,Armor,28e,80,50,,Orichalcum + Wet Scale + Old Bandage
+Leather Belt,38,Crafting,Accessories,28b,80,13,,Insect Carapace + Blade Shard
+Leather Boots,172,Crafting,Shoes,2b3,4,6,,Fur
+Lolita Headdress,141,Crafting,Headgear,2ad,1,19,,Black Grass + Insect Carapace + Insect Carapace + Old Bandage
+Lucky Strike,39,Crafting,Accessories,28c,1,78,,Critical Ring + Tablet of Truth + Dangerous Scissors + Iron
+Magic Charm,37,Crafting,Accessories,28b,40,66,,Round Stone + Turnip's Miracle + Spore + Earth Crystal
+Magic Earrings,32,Crafting,Accessories,28b,2,45,,Diamond + Ruby + Iron
+Magic Ring,E,Crafting,Accessories,286,20,51,,Platinum + Earth Crystal
+Magic Shield,167,Crafting,Shield,2b1,80,37,,Gold + Silver + Mysterious Powder + Earth Crystal
+Magical Shield,16D,Crafting,Shield,2b2,20,65,,Crimson Scale + Left Rock Shard + Right Rock Shard + Rune Crystal
+Mail,49,Crafting,Armor,28e,1,16,,Bronze + Glue
+Mercenary's Cloak,51,Crafting,Armor,28f,1,53,,Quality Worn Cloth + Big Bird's Comb + Puppetry Strings
+Monkey Plush,162,Crafting,Shield,2b1,4,12,,Yellow Down + Insect Carapace + Insect Carapace
+Orange Ribbon,149,Crafting,Headgear,2ae,1,35,,Orange Grass + Insect Carapace + Old Bandage
+Paralysis Ring,C,Crafting,Accessories,286,8,28,,Silver + Scorpion Tail
+Piyo Sandals,176,Crafting,Shoes,2b3,40,11,,Insect Carapace + Insect Carapace
+Platinum Bracelet,5,Crafting,Accessories,285,10,50,,Platinum + Insect Carapace
+Platinum Mail,4F,Crafting,Armor,28e,40,44,,Platinum + Platinum + Blk. Tortoise Shell + Insect Carapace
+Platinum Ring,8,Crafting,Accessories,285,80,75,,Dragonic Stone + Platinum
+Platinum Shield,169,Crafting,Shield,2b2,2,43,,Platinum + Platinum + Blk. Tortoise Shell
+Poison Ring,D,Crafting,Accessories,286,10,27,,Silver + Poison Powder
+Power Gloves,2F,Crafting,Accessories,28a,40,42,,Giant's Gloves + Blue Giant's Glove
+Power Protector,55,Crafting,Armor,28f,10,69,,Orichalcum + Orichalcum + Orichalcum + MTGU Plate + Dangerous Scissors
+Prism Shield,16E,Crafting,Shield,2b2,40,78,,Blue Scale + Glitter Scale + Crimson Scale + Light Ore + Small Crystal
+Proof of Wisdom,3E,Crafting,Accessories,28c,20,74,,Moving Branch + Small Crystal + Rune Crystal
+Protector,4E,Crafting,Armor,28e,20,38,,Shoulder Piece + Diamond
+Pumpkin Headgear,152,Crafting,Headgear,2af,2,20,,Pumpkin
+Purple Ribbon,137,Crafting,Headgear,2ab,40,6,,Purple Grass + Insect Carapace + Old Bandage
+Red Ribbon,147,Crafting,Headgear,2ad,40,30,,Red Grass + Insect Carapace + Old Bandage
+Rocket Wing,180,Crafting,Shoes,2b5,1,99,,Dragon Fin + Earthwyrm Scale + Firewyrm Scale + Wind Dragon Tooth + Yellow Down
+Rosary,35,Crafting,Accessories,28b,10,68,,Silver + Puppetry Strings
+Round Shield,163,Crafting,Shield,2b1,8,15,,Bronze
+Royal Garter,57,Crafting,Armor,28f,40,90,,Dragonic Stone + Ancient Orc Cloth + Love Scale + Small Crystal + White Stone
+Ruby Brooch,1C,Crafting,Accessories,288,8,55,,Platinum + Ruby
+Ruby Ring,15,Crafting,Accessories,287,10,15,,Silver + Ruby
+Rune Shield,16F,Crafting,Shield,2b2,80,94,,Dragonic Stone + Dragon Fin + Earthwyrm Scale + Rune Crystal + Small Crystal
+Rune Vest,56,Crafting,Armor,28f,20,76,,Golem Spirit Stone + Rune Crystal + Rune Crystal + Insect Carapace + Old Bandage
+Sapphire Brooch,1B,Crafting,Accessories,288,4,55,,Platinum + Sapphire
+Sapphire Ring,14,Crafting,Accessories,287,8,15,,Silver + Sapphire
+Scale Vest,4B,Crafting,Armor,28e,4,25,,Silver + Pretty Carapace + Root
+Secret Shoes,17B,Crafting,Shoes,2b4,8,14,,Glue + Iron
+Shield Ring,9,Crafting,Accessories,286,1,44,,Blk. Tortoise Shell + Turtle Shell + Iron
+Shirt,46,Crafting,Armor,28d,20,2,,Insect Carapace
+Silent Ring,B,Crafting,Accessories,286,4,29,,Silver + Lamp Squid
+Silk Hat,153,Crafting,Headgear,2af,4,17,,Black Grass + Insect Carapace
+Silver Boots,181,Crafting,Shoes,2b5,2,18,,Silver + Blade Shard
+Silver Bracelet,3,Crafting,Accessories,285,4,25,,Silver + Insect Carapace
+Silver Hairpin,146,Crafting,Headgear,2ad,20,26,,Silver
+Silver Pendant,24,Crafting,Accessories,289,8,20,,Silver
+Silver Ring,6,Crafting,Accessories,285,20,24,,Silver + Earth Crystal
+Small Shield,15F,Crafting,Shield,2b0,80,2,,Iron
+Sneaking Boots,17D,Crafting,Shoes,2b4,20,23,,Invisible Stone + Insect Carapace + Old Bandage
+Snow Boots,174,Crafting,Shoes,2b3,10,37,,Shoulder Piece + Lightning Mane + Ambrosia's Thorns
+Sparkling Shirt,4C,Crafting,Armor,28e,8,28,,Gold + Fur + Insect Carapace
+Spectacles,139,Crafting,Headgear,2ac,1,7,,Aquamarine + Aquamarine
+Star Pendant,25,Crafting,Accessories,289,10,40,,Silver Pendant + Gold + Love Crystal
+Stay-up Ring,10,Crafting,Accessories,286,80,46,,Holy Spore + Iron
+Step-In Boots,177,Crafting,Shoes,2b3,80,48,,Warrior's Proof + Shiny Screw + Insect Carapace + Old Bandage
+Strange Pendant,2B,Crafting,Accessories,28a,4,85,,Amethyst + Ruby + Iron
+Straw Hat,13A,Crafting,Headgear,2ac,2,8,,Old Bandage + Old Bandage
+Strider Boots,17A,Crafting,Shoes,2b4,4,40,,Pretty Thread + Platinum + Gold + Insect Carapace
+Sun Pendant,26,Crafting,Accessories,289,20,45,,Silver Pendant + Gold + Fire Crystal
+Talisman,36,Crafting,Accessories,28b,20,71,,Rafflesia Petal + Ambrosia's Thorns + Old Bandage
+Throwing Ring,F,Crafting,Accessories,286,40,33,,Puppetry Strings + Old Bandage + Iron
+Turnip Headgear,151,Crafting,Headgear,2af,1,30,,Turnip
+Turtle Shield,164,Crafting,Shield,2b1,10,20,,Turtle Shell + Bronze + Glue
+Umbrella,160,Crafting,Shield,2b1,1,6,,Insect Carapace + Old Bandage + Insect Horn
+Vest,47,Crafting,Armor,28d,40,8,,Insect Carapace + Fur
+Water Ring,21,Crafting,Accessories,289,1,96,,Orichalcum + Water Crystal
+Water Shoes,17F,Crafting,Shoes,2b4,80,75,,Pretty Thread + Insect Horn + Insect Carapace + Fur
+Wet Boots,17C,Crafting,Shoes,2b4,10,20,,Wet Scale + Wet Scale
+White Ribbon,14B,Crafting,Headgear,2ae,4,38,,White Grass + Insect Carapace + Old Bandage
+Wind Cloak,4D,Crafting,Armor,28e,10,32,,Black Bird Feather + Wind Crystal + Emerald + Insect Carapace + Old Bandage
+Wind Ring,20,Crafting,Accessories,288,80,93,,Orichalcum + Wind Crystal
+Witch Earrings,31,Crafting,Accessories,28b,1,30,,Gold + Emerald + Mysterious Powder
+Wooly Shirt,52,Crafting,Armor,28f,2,56,,Electro Crystal + Wooly Furball + Wooly Furball + Old Bandage
+Work Gloves,2D,Crafting,Accessories,28a,10,4,,Insect Carapace
+Yarn,0,Crafting,Accessories,284,80,6,,Fur
+Yellow Ribbon,143,Crafting,Headgear,2ad,4,22,,Yellow Grass + Insect Carapace + Old Bandage
+Acutorimass,257,Forging,Dual Blade,2d3,1,23,,Silver + Silver + Iron + Iron
+Aerial Blade,198,Forging,Short Sword,2b8,1,54,,Orichalcum + Lightning Mane + Wind Crystal + Emerald + Insect Jaw
+Algernon,232,Forging,Staff,2ce,8,91,,Moving Branch + Ambrosia's Thorns + Wind Dragon Tooth + Charm Blue + Lamp Grass
+Alldale,208,Forging,Axe/Hammer,2c6,20,69,,Orichalcum + Orichalcum + Dangerous Scissors + White Stone + Yellow Core
+Amethyst Rod,216,Forging,Staff,2ca,80,6,,Amethyst + Insect Horn
+Animal Puppets,265,Forging,Fist,2d4,40,60,,Turnip's Miracle + Rune Crystal + Puppetry Strings + Fur + Fur
+Aqua Sword,18A,Forging,Short Sword,2b6,4,15,,Silver + Aquamarine
+Aquamarine Rod,217,Forging,Staff,2cb,1,8,,Aquamarine + Insect Horn
+Axe,213,Forging,Axe/Hammer,2c8,1,9,,Cheap Axe + Iron
+Back Scratcher,1A4,Forging,Short Sword,2b9,10,20,,Glue + Insect Horn
+Balmung,1C2,Forging,Long Sword,2bd,4,84,,Dragonic Stone + Tablet of Truth + Golem Tablet + Insect Jaw
+Basilisk Fang,1F7,Forging,Axe/Hammer,2c4,10,30,,Gold + Paralysis Poison + Insect Jaw + Insect Jaw
+Basket,234,Forging,Staff,2ce,20,4,,Old Bandage + Old Bandage + Insect Carapace
+Bat,1EC,Forging,Axe/Hammer,2c3,2,9,,Bronze
+Battle Axe,1EB,Forging,Axe/Hammer,2c3,1,6,,Iron + Insect Jaw
+Battle Hammer,1EA,Forging,Axe/Hammer,2c2,80,3,,Iron
+Battle Scythe,1EE,Forging,Axe/Hammer,2c3,8,13,,Bronze + Insect Jaw
+Bazal Katar,26A,Forging,Fist,2d5,8,90,,Dragonic Stone + Earthwyrm Scale + Firewyrm Scale + Crystal Skull + Insect Carapace
+Bear Claws,25C,Forging,Fist,2d3,20,28,,Gold + Insect Carapace
+Beginner's Pole,130,Forging,Farm Tool,2aa,80,15,,Bronze + Insect Horn + Old Bandage
+Belvarose,1E2,Forging,Spear,2c1,4,76,,Dragonic Stone + Ambrosia's Thorns + Tablet of Truth + MTGU Plate + Insect Horn
+Belzebuth,1BC,Forging,Long Sword,2bc,10,58,,Ammonite + Devil Blood + Dark Crystal
+Big Knife,1B0,Forging,Long Sword,2bb,1,32,,Diamond + Insect Jaw + Insect Horn
+Bio Smasher,1B3,Forging,Long Sword,2bb,8,40,,Platinum + Paralysis Poison + Poison Powder + Pom-Pom Grass
+Bjor,1E1,Forging,Spear,2c1,2,74,,Melody Bottle + Holy Spore + Orichalcum + Small Crystal + Insect Horn
+Blessed Hoe,11A,Forging,Farm Tool,2a8,2,80,,Platinum
+Blood Lance,1D8,Forging,Spear,2c0,1,43,,Platinum + Cursed Doll + Thick Stick + Magic Claw + Devil Blood
+Blue-Eyed Blade,1C1,Forging,Long Sword,2bd,2,79,,Dragonic Stone + Orichalcum + Blue Core + Insect Jaw
+Bone Hammer,1F8,Forging,Axe/Hammer,2c4,20,31,,Gold + Giant's Gloves + Turtle Shell + Turtle Shell
+Brass Knuckles,259,Forging,Fist,2d3,4,10,,Bronze + Insect Carapace
+Braveheart,1C3,Forging,Long Sword,2bd,8,89,,Dragonic Stone + Earthwyrm Scale + Love Crystal + Light Crystal + Sapphire
+Brionac,1DB,Forging,Spear,2c0,8,51,,Orichalcum + Light Crystal + Sapphire + Lightning Mane + Insect Horn
+Broadsword,186,Forging,Short Sword,2b5,40,1,,Iron
+Broken Wall,249,Forging,Dual Blade,2d1,4,48,,Left Rock Shard + Right Rock Shard + Earth Crystal
+Bubble Staff,229,Forging,Staff,2cd,4,53,,Blue Core + Water Dragon Ash + Orichalcum + Insect Horn
+Burning Sword,18D,Forging,Short Sword,2b6,20,20,,Gold + Fire Crystal
+Caestus,267,Forging,Fist,2d5,1,69,,Orichalcum + Dangerous Scissors + Red Lion Fur + Blue Lion Fur
+Caliburn,1C6,Forging,Long Sword,2bd,40,99,,Rune Sphere Shard + Wind Dragon Tooth + Dragon Fin + Earthwyrm Scale + Firewyrm Scale
+Cat Punch,264,Forging,Fist,2d4,20,57,,Orichalcum + Quality Worn Cloth + Yellow Feather + Big Bird's Comb + Chimera's Claw
+Chaos Blade,194,Forging,Short Sword,2b7,10,42,,Platinum + Gold + Magic + Holy Spore
+Chaos Edge,247,Forging,Dual Blade,2d1,1,40,,Platinum + Platinum + Quality Propeller + Quality Propeller + Holy Spore
+Cheap Axe,12A,Forging,Farm Tool,2aa,2,5,,Material Stone + Insect Horn
+Cheap Hammer,125,Forging,Farm Tool,2a9,10,5,,Iron + Insect Horn
+Cheap Hoe,116,Forging,Farm Tool,2a7,20,5,,Iron
+Cheap Pole,12F,Forging,Farm Tool,2aa,40,5,,Insect Horn + Old Bandage
+Cheap Sickle,120,Forging,Farm Tool,2a8,80,5,,Iron + Blade Shard
+Cheap Waterpot,11B,Forging,Farm Tool,2a8,4,5,,Iron + Insect Carapace
+Chopping Axe,12B,Forging,Farm Tool,2aa,4,15,,Bronze + Material Stone + Insect Horn
+Claymore,1A7,Forging,Long Sword,2b9,80,2,,Iron
+Corsesca,1D1,Forging,Spear,2bf,2,27,,Gold + Rigid Horn + Insect Horn
+Corsesca+,1D2,Forging,Spear,2bf,4,29,,Corsesca + Black Bird Feather
+Crescent Axe,200,Forging,Axe/Hammer,2c5,20,46,,Platinum + Chimera's Claw + Devil Horn
+Crescent Axe+,201,Forging,Axe/Hammer,2c5,40,47,,Crescent Axe + Warrior's Proof + Proof of Rank
+Crimson Staff,228,Forging,Staff,2cd,2,50,,Red Core + Fire Dragon Ash + Devil Horn
+Crystal Hammer,205,Forging,Axe/Hammer,2c6,4,57,,Orichalcum + Crystal Skull + Big Crystal + Blade Shard
+Cutlass,189,Forging,Short Sword,2b6,2,7,,Bronze + Insect Jaw
+Cyclone Blade,1AC,Forging,Long Sword,2ba,10,25,,Gold + Emerald
+Cyclone Rod,22B,Forging,Staff,2cd,10,60,,Green Core + Grimoire Scale + Turnip's Miracle + Insect Horn
+Daicone,1C8,Forging,Long Sword,2be,1,28,,Radish
+Dancing Dicer,1B5,Forging,Long Sword,2bb,20,43,,Platinum + Dragon Fang + Dragon Bones
+Dark Invitation,24E,Forging,Dual Blade,2d1,80,68,,Dangerous Scissors + Blue Lion Fur + Red Lion Fur + Legendary Scale + Dark Crystal
+Deep Blizzard,24D,Forging,Dual Blade,2d1,40,63,,Icy Nose + Icy Nose + Water Crystal + Water Crystal
+Defender,18C,Forging,Short Sword,2b6,10,19,,Sapphire + Insect Jaw
+Dekash,1C7,Forging,Long Sword,2bd,80,42,,Tuna
+Demon Axe,1FB,Forging,Axe/Hammer,2c5,1,35,,Diamond + Scorpion Pincer + Devil Blood
+Desert Wind,248,Forging,Dual Blade,2d1,2,44,,Malm Claw + Wind Crystal + Earth Crystal + MTGU Plate
+Devil Finger,20A,Forging,Axe/Hammer,2c6,80,73,,Love Scale + Legendary Scale + Water Dragon Ash + Fire Dragon Ash + Earth Dragon Ash
+Diamond Rod,223,Forging,Staff,2cc,10,33,,Diamond + Insect Horn
+Double Edge,207,Forging,Axe/Hammer,2c6,10,65,,Big Giant's Nail + Queen's Jaw + Red Lion Fur + Blue Lion Fur
+Double Scratch,256,Forging,Dual Blade,2d2,80,12,,Back Scratcher + Back Scratcher
+Dragon Claws,260,Forging,Fist,2d4,2,42,,Platinum + Dragon Fang + Wet Scale + Insect Carapace
+Dragon Slayer,1A0,Forging,Short Sword,2b9,1,82,,Dragonic Stone + Dragonic Stone + Black Scale + Blue Scale + Glitter Scale
+Dragon's Fang,1E5,Forging,Spear,2c1,20,86,,Earthwyrm Scale + Big Crystal + Rune Crystal + Insect Horn
+Dragoon Claw,251,Forging,Dual Blade,2d2,4,76,,Dragon Fang + Blue Scale + Glitter Scale + Grimoire Scale + Small Crystal
+Durendal,197,Forging,Short Sword,2b7,80,50,,Platinum + Platinum + Malm Claw + Devil Horn + Ambrosia's Thorns
+Earnest Edge,254,Forging,Dual Blade,2d2,20,90,,Dragonic Stone + Earthwyrm Scale + Earthwyrm Scale + Glitta Augite + Glitta Augite
+Earth Shade,1AF,Forging,Long Sword,2ba,80,30,,Gold + Silver + Black Bird Feather + Earth Crystal
+Earth Staff,220,Forging,Staff,2cc,2,28,,Earth Crystal + Insect Horn
+Efreet,250,Forging,Dual Blade,2d2,2,74,,Red Core + Crimson Scale + Golem Spirit Stone + Fire Dragon Ash + Fire Dragon Ash
+Elvish Harp,237,Forging,Staff,2cf,1,24,,Old Bandage + Insect Horn
+Emerald Edge,252,Forging,Dual Blade,2d2,8,79,,Dragonic Stone + Green Core + Green Core
+Emerald Rod,21B,Forging,Staff,2cb,10,18,,Emerald + Insect Horn
+Executioner,20C,Forging,Axe/Hammer,2c7,2,81,,Dragonic Stone + Golem Spirit Stone + Light Ore + Chimera Tail + Dark Crystal
+Famous Pole,132,Forging,Farm Tool,2ab,2,45,,Gold + Insect Horn + Old Bandage
+Fatal Crush,20E,Forging,Axe/Hammer,2c7,8,90,,Wind Dragon Tooth + Throne of the Empire + Dragonic Stone + Dragonic Stone + Dragonic Stone
+Feather Lance,1D6,Forging,Spear,2bf,40,38,,Platinum + Silver + Thick Stick + Wind Crystal + Yellow Down
+Fenrir,26B,Forging,Fist,2d5,10,99,,Rune Sphere Shard + Rune Crystal + Red Lion Fur + Blue Lion Fur + Broken Ice Wall
+Fists of Dark,261,Forging,Fist,2d4,4,46,,Malm Claw + Dark Crystal + Cursed Doll
+Fists of Fire,25E,Forging,Fist,2d3,80,33,,Diamond + Fire Crystal + Insect Carapace
+Fists of Light,263,Forging,Fist,2d4,10,53,,Orichalcum + Light Crystal + Light Crystal + Big Crystal
+Fists of the Earth,25D,Forging,Fist,2d3,40,30,,Gold + Rigid Horn + Earth Crystal + Insect Carapace
+Fists of Water,25F,Forging,Fist,2d4,1,38,,Platinum + Water Crystal + Aquamarine + Insect Carapace
+Fists of Wind,262,Forging,Fist,2d4,8,50,,Malm Claw + Wind Crystal + Chimera's Claw
+Fivestaff,1D4,Forging,Spear,2bf,10,34,,Diamond + Insect Horn + Wet Scale + Wet Scale
+Flamberge,1B6,Forging,Long Sword,2bb,40,45,,Platinum + Platinum + Magic Claw + Thunderbird Feather + Big Bird's Comb
+Flamberge+,1B7,Forging,Long Sword,2bb,80,46,,Flamberge + Malm Claw
+Flame Hammer,1FC,Forging,Axe/Hammer,2c5,2,36,,Diamond + Fire Crystal + Ruby + Blade Shard
+Flame Saber,1B2,Forging,Long Sword,2bb,4,39,,Diamond + Gold Wolf Fang + Fire Crystal
+Flare Lance,1DA,Forging,Spear,2c0,4,49,,Platinum + Devil Horn + Proof of Rank + Fire Crystal + Dragon Bones
+Flare Staff,21D,Forging,Staff,2cb,40,22,,Fire Crystal + Insect Horn
+Force Divide,24A,Forging,Dual Blade,2d1,8,51,,Orichalcum + Fire Crystal + Water Crystal + Red Core + Blue Core
+Force Element,1C4,Forging,Long Sword,2bd,10,91,,Firewyrm Scale + Green Core + Red Core + Yellow Core + Blue Core
+Friendly Rod,218,Forging,Staff,2cb,2,13,,Love Crystal + Insect Horn
+Frost Axe,1FF,Forging,Axe/Hammer,2c5,10,42,,Platinum + Dragon Fang + Big Crystal + Water Crystal + Aquamarine
+Frost Edge,23B,Forging,Dual Blade,2cf,10,13,,Aquamarine + Aquamarine + Glue
+Gae Bolg,1E3,Forging,Spear,2c1,8,81,,Dragonic Stone + Orichalcum + Grimoire Scale + Black Scale + Moving Branch
+Gaia Rod,22A,Forging,Staff,2cd,8,56,,Yellow Core + Earth Dragon Ash + Yellow Feather + Insect Horn
+Gaia Sword,18F,Forging,Short Sword,2b6,80,27,,Gold + Earth Crystal + Rigid Horn
+Gigant Hammer,1FD,Forging,Axe/Hammer,2c5,4,38,,Platinum + Gold + Silver + Blade Shard
+Gigant Hammer+,209,Forging,Axe/Hammer,2c6,40,71,,Gigant Hammer + Golem Spirit Stone + Orichalcum + Small Crystal
+Gladius,1A2,Forging,Short Sword,2b9,4,90,,Dragonic Stone + Firewyrm Scale + Throne of the Empire + Small Crystal + Insect Jaw
+Gloves,25B,Forging,Fist,2d3,10,20,,Giant's Gloves
+Golden Hammer,128,Forging,Farm Tool,2a9,80,45,,Gold + Insect Horn
+Golden Turnip Staff,235,Forging,Staff,2ce,40,80,,Golden Turnip + Insect Horn
+Golem Punch,268,Forging,Fist,2d5,2,75,,Orichalcum + Golem Spirit Stone + Golem Tablet + MTGU Plate + Shiny Screw
+Gorgeous Lx,240,Forging,Dual Blade,2d0,2,28,,Gorgeous Sword + Gorgeous Sword
+Gorgeous Sword,18E,Forging,Short Sword,2b6,40,23,,Gold + Gold + Gold + Gold
+Grand Smasher,1BB,Forging,Long Sword,2bc,8,55,,Yellow Feather + Earth Crystal + Ambrosia's Thorns + Earth Dragon Ash
+Grantale,199,Forging,Short Sword,2b8,2,59,,Orichalcum + Yellow Feather + Earth Crystal + Amethyst + Cursed Doll
+Graviton Hammer,202,Forging,Axe/Hammer,2c5,80,49,,Grimoire Scale + Earth Crystal + Iron
+Great Axe,1F4,Forging,Axe/Hammer,2c4,2,23,,Gold + Insect Jaw
+Great Hammer,1F3,Forging,Axe/Hammer,2c4,1,22,,Silver + Blade Shard
+Great Sword,1AA,Forging,Long Sword,2ba,4,16,,Bronze + Glue
+Gungnir,1E4,Forging,Spear,2c1,10,91,,Dragon Fin + Green Core + Earth Dragon Ash + Fire Dragon Ash + Insect Horn
+Halberd,1D0,Forging,Spear,2bf,1,25,,Gold + Insect Horn
+Hammer,211,Forging,Axe/Hammer,2c7,40,7,,Cheap Hammer + Iron
+Hand of God,269,Forging,Fist,2d5,4,82,,Dragonic Stone + Chimera Tail + Ambrosia's Thorns + Small Crystal + Insect Carapace
+Heart Fire,24B,Forging,Dual Blade,2d1,10,54,,Fire Dragon Ash + Fire Dragon Ash + Yellow Feather + Fire Crystal
+Heat Axe,204,Forging,Axe/Hammer,2c6,2,53,,Orichalcum + Fire Crystal + Ruby + Fire Dragon Ash
+Heaven Asunder,1C5,Forging,Long Sword,2bd,20,92,,Rune Sphere Shard + Dragonic Stone + Water Dragon Ash + Fire Dragon Ash + Earth Dragon Ash
+Heavy Lance,1D5,Forging,Spear,2bf,20,37,,Platinum + Gold + Insect Horn
+Hell Branch,227,Forging,Staff,2cd,1,49,,Skull + Warrior's Proof + Proof of Rank + Devil Horn
+Hell Curse,231,Forging,Staff,2ce,4,87,,Moving Branch + Dragon Fin + Cursed Doll + Crystal Skull + Small Crystal
+Ice Hammer,1F5,Forging,Axe/Hammer,2c4,4,26,,Gold + Aquamarine + Blade Shard
+Ice Staff,222,Forging,Staff,2cc,8,31,,Water Crystal + Insect Horn
+Iceberg,1D7,Forging,Spear,2bf,80,41,,Platinum + Platinum + Thick Stick + Water Crystal + Aquamarine
+Icifier,19B,Forging,Short Sword,2b8,8,68,,Orichalcum + Icy Nose + Water Crystal + Aquamarine + Insect Jaw
+Invisiblade,18B,Forging,Short Sword,2b6,8,16,,Invisible Stone + Insect Jaw + Earth Crystal
+Iron Bat,1F1,Forging,Axe/Hammer,2c3,40,18,,Bat + Silver
+Iron Edge,23D,Forging,Dual Blade,2cf,40,21,,Iron + Iron + Silver
+Iron Hammer,126,Forging,Farm Tool,2a9,20,15,,Bronze + Insect Horn
+Iron Sickle,121,Forging,Farm Tool,2a9,1,15,,Bronze + Blade Shard
+Ironleaf Fists,266,Forging,Fist,2d4,80,64,,Orichalcum + Crimson Scale + MTGU Plate + Ironleaf + Ironleaf
+Joy Waterpot,11F,Forging,Farm Tool,2a8,40,80,,Platinum + Insect Carapace
+Katana,1B1,Forging,Long Sword,2bb,2,35,,Diamond + Magic + Insect Jaw
+Katzbalger,1AE,Forging,Long Sword,2ba,40,29,,Gold + Silver + Rigid Horn
+Kongo,20B,Forging,Axe/Hammer,2c7,1,77,,Strong Stone + Dragonic Stone + Small Crystal
+Kote,25A,Forging,Fist,2d3,8,16,,Iron + Palm Claw + Insect Carapace
+Lance,1CB,Forging,Spear,2be,8,9,,Iron + Insect Horn
+Lance+,1CC,Forging,Spear,2be,10,12,,Lance + Bronze
+Leather Gloves,258,Forging,Fist,2d3,2,2,,Insect Carapace
+Legendary Sickle,124,Forging,Farm Tool,2a9,8,80,,Platinum + Blade Shard
+Legion,1E6,Forging,Spear,2c1,40,99,,Rune Sphere Shard + Firewyrm Scale + Dragon Fin + Light Ore + Insect Horn
+Lightning Wand,221,Forging,Staff,2cc,4,30,,Wind Crystal + Insect Horn
+Lion Waterpot,11D,Forging,Farm Tool,2a8,10,30,,Silver + Insect Carapace
+Lollipop,214,Forging,Axe/Hammer,2c8,2,28,,Butter + Apple
+Love-Love Rod,219,Forging,Staff,2cb,4,15,,Friendly Rod + Love Crystal + Love Crystal + Love Crystal
+Luck Blade,191,Forging,Short Sword,2b7,2,35,,Diamond + Scorpion Pincer + Insect Jaw
+Lumber Axe,12C,Forging,Farm Tool,2aa,8,30,,Silver + Material Stone + Insect Horn
+Mage's Staff,225,Forging,Staff,2cc,40,40,,Platinum + Insect Horn
+Mage's Staff+,22E,Forging,Staff,2cd,80,76,,Dragonic Stone + Orichalcum + Love Scale + Love Crystal + Insect Horn
+Magic Broom,22F,Forging,Staff,2ce,1,82,,Ancient Orc Cloth + Moving Branch + Rune Crystal + Big Crystal + Old Bandage
+Magic Shot,230,Forging,Staff,2ce,2,85,,Earthwyrm Scale + Melody Bottle + Rune Crystal + Small Crystal + Insect Horn
+Magical Lance,1D9,Forging,Spear,2c0,2,47,,Devil Horn + Cursed Doll + Puppetry Strings + Round Stone + Earth Crystal
+Metus,1DE,Forging,Spear,2c0,40,60,,Orichalcum + Queen's Jaw + Cursed Doll + Legendary Scale + Insect Horn
+Miracle Axe,12E,Forging,Farm Tool,2aa,20,80,,Platinum + Material Stone + Insect Horn
+Mjolnir,20D,Forging,Axe/Hammer,2c7,4,86,,Earthwyrm Scale + Dragonic Stone + Small Crystal + Rune Crystal
+Monk Staff,1DD,Forging,Spear,2c0,20,57,,Orichalcum + Turnip's Miracle + Glitta Augite + Insect Horn
+Moon Shadow,1C0,Forging,Long Sword,2bd,1,76,,Glitter Scale + Light Crystal + Earth Crystal + Red Lion Fur + Blue Lion Fur
+Mountain Axe,12D,Forging,Farm Tool,2aa,10,45,,Gold + Material Stone + Insect Horn
+Needle Spear,1CD,Forging,Spear,2be,20,15,,Bronze + Wolf Fang + Insect Horn
+Orcus Sword,24C,Forging,Dual Blade,2d1,20,57,,Turnip's Miracle + Earth Dragon Ash + Earth Dragon Ash + Glitta Augite + Glitta Augite
+Orochi,1BD,Forging,Long Sword,2bc,20,63,,Queen's Jaw + Grimoire Scale + Wet Scale + Wet Scale + Old Bandage
+Overbreak,1E0,Forging,Spear,2c1,1,69,,Blue Scale + Left Rock Shard + Right Rock Shard + Grimoire Scale + Insect Horn
+Pine Club,1E9,Forging,Spear,2c2,2,40,,Pineapple + Insect Horn
+Pitchfork,1E7,Forging,Spear,2c1,80,14,,Wolf Fang + Fodder + Insect Horn
+Platinum Edge,245,Forging,Dual Blade,2d0,40,37,,Platinum + Platinum + Dragon Fang + Dragon Fang
+Platinum Hammer,129,Forging,Farm Tool,2aa,1,80,,Platinum + Insect Horn
+Platinum Sword,192,Forging,Short Sword,2b7,4,38,,Platinum + Silver + Insect Jaw + Insect Horn
+Platinum Sword+,19F,Forging,Short Sword,2b8,80,79,,Platinum Sword + Dragonic Stone
+Poison Blade,1AD,Forging,Long Sword,2ba,20,27,,Gold + Silver + Poison Powder
+Poison Queen,1DC,Forging,Spear,2c0,10,55,,Orichalcum + Orichalcum + Poison King + Holy Spore + Poison Powder
+Poison Spear,1D3,Forging,Spear,2bf,8,30,,Diamond + Poison Powder + Insect Horn
+Pole Axe,1F0,Forging,Axe/Hammer,2c3,20,16,,Wolf Fang + Bronze + Insect Horn
+Pole Axe+,1F2,Forging,Axe/Hammer,2c3,80,20,,Pole Axe + Silver
+Priest Saber,24F,Forging,Dual Blade,2d2,1,72,,Dangerous Scissors + MTGU Plate + MTGU Plate + Light Crystal + Light Crystal
+Psycho,1B9,Forging,Long Sword,2bc,2,50,,Devil Horn + Malm Claw + Dark Crystal + Rafflesia Petal
+Punisher,1BE,Forging,Long Sword,2bc,40,68,,Dangerous Scissors + Tablet of Truth + Iron
+Quality Sickle,122,Forging,Farm Tool,2a9,2,30,,Silver + Blade Shard
+Rainbow Waterpot,11E,Forging,Farm Tool,2a8,20,45,,Gold + Insect Carapace
+Rampage,243,Forging,Dual Blade,2d0,10,33,,Diamond + Diamond + Gold Wolf Fang
+Raventine,19D,Forging,Short Sword,2b8,20,74,,Orichalcum + Orichalcum + Golem Spirit Stone + Fire Crystal + Fire Dragon Ash
+Rock Axe,1F9,Forging,Axe/Hammer,2c4,40,32,,Gold + Silver + Giant's Gloves + Earth Crystal
+Rod,215,Forging,Staff,2ca,40,2,,Insect Horn
+Ruby Rod,21E,Forging,Staff,2cb,80,23,,Ruby + Insect Horn
+Rune Blade,1A1,Forging,Short Sword,2b9,2,85,,Dragonic Stone + Earthwyrm Scale + Rune Crystal + Insect Jaw + Insect Horn
+Rune Edge,253,Forging,Dual Blade,2d2,10,87,,Dragonic Stone + Rune Crystal + Rune Crystal
+Rune Legend,1A3,Forging,Short Sword,2b9,8,99,,Rune Sphere Shard + Dragonic Stone + Rune Crystal + Green Core + Wind Dragon Tooth
+Rune Staff,22D,Forging,Staff,2cd,40,70,,Rune Crystal + Rune Crystal + Crimson Scale + Insect Horn
+Sacred Pole,133,Forging,Farm Tool,2ab,4,80,,Platinum + Insect Horn + Old Bandage
+Safety Lance,1E8,Forging,Spear,2c2,1,13,,Ghost Hood + Insect Horn
+Saint Axe,20F,Forging,Axe/Hammer,2c7,10,98,,Rune Sphere Shard + Light Crystal + White Crystal + Small Crystal + Big Crystal
+Sakura,195,Forging,Short Sword,2b7,20,44,,Platinum + Paralysis Poison + Poison Powder + Cherry Grass
+Salamander,244,Forging,Dual Blade,2d0,20,35,,Diamond + Diamond + Fire Crystal + Cheap Propeller
+Sapphire Rod,21F,Forging,Staff,2cc,1,26,,Sapphire + Insect Horn
+Schnabel,206,Forging,Axe/Hammer,2c6,8,60,,Orichalcum + Ammonite + Blue Core + Blade Shard
+Sea Cutter,1AB,Forging,Long Sword,2ba,8,21,,Silver + Aquamarine
+Seasoned Hoe,118,Forging,Farm Tool,2a7,80,30,,Silver
+Shine Blade,1BA,Forging,Long Sword,2bc,4,52,,Orichalcum + Platinum + Light Crystal + Sapphire
+Shiny Hoe,119,Forging,Farm Tool,2a8,1,45,,Gold
+Shooting Star Staff,226,Forging,Staff,2cc,80,43,,Fairy Elixir + Golem Stone + Insect Horn
+Short Dagger,239,Forging,Dual Blade,2cf,4,5,,Iron + Iron
+Silent Grave,1DF,Forging,Spear,2c0,80,65,,Orichalcum + Dangerous Scissors + Crystal Skull + Blade Shard + Insect Horn
+Silver Hammer,127,Forging,Farm Tool,2a9,40,30,,Silver + Insect Horn
+Silver Staff,21C,Forging,Staff,2cb,20,21,,Silver + Insect Horn
+Skilled Pole,131,Forging,Farm Tool,2ab,1,30,,Silver + Insect Horn + Old Bandage
+Sky Hammer,1FE,Forging,Axe/Hammer,2c5,8,40,,Platinum + Wind Crystal + Emerald + Thunderbird Feather
+Smash Blade,19A,Forging,Short Sword,2b8,4,64,,Orichalcum + Pirate's Armor + 4-Leaf Clover + Chimera's Claw + Insect Jaw
+Snakesword,190,Forging,Short Sword,2b7,1,30,,Diamond + Insect Jaw
+Snow Crown,1B4,Forging,Long Sword,2bb,10,42,,Platinum + Gold + Water Crystal + Aquamarine
+Sonic Dagger,246,Forging,Dual Blade,2d0,80,39,,Platinum + Platinum + Emerald + Emerald + Thunderbird Feather
+Sorcerer's Wand,233,Forging,Staff,2ce,10,99,,Rune Sphere Shard + Dragon Fin + Rune Crystal + Small Crystal + Moving Branch
+Soul Eater,19C,Forging,Short Sword,2b8,10,70,,Orichalcum + Dangerous Scissors + Love Crystal + Legendary Scale + Earth Dragon Ash
+Spear,1C9,Forging,Spear,2be,2,3,,Iron
+Spiked Hammer,203,Forging,Axe/Hammer,2c6,1,50,,Left Rock Shard + Right Rock Shard + Insect Jaw + Insect Horn
+Splash Star,210,Forging,Axe/Hammer,2c7,20,99,,Rune Sphere Shard + Wind Dragon Tooth + Dragon Fin + Earthwyrm Scale + Firewyrm Scale
+Spoon,1A5,Forging,Short Sword,2b9,20,25,,Silver + Silver
+Staff,21A,Forging,Staff,2cb,8,16,,Magic Crystal + Insect Horn
+Star Saber,19E,Forging,Short Sword,2b8,40,77,,Orichalcum + Golem Spirit Stone + Wind Crystal + Emerald + Electro Crystal
+Steel Edge,23A,Forging,Dual Blade,2cf,8,9,,Iron + Iron + Bronze
+Steel Katana,241,Forging,Dual Blade,2d0,4,30,,Gold + Gold + Black Bird Feather
+Steel Slicer,1BF,Forging,Long Sword,2bc,80,73,,Orichalcum + Orichalcum + Golem Spirit Stone + MTGU Plate
+Steel Sword,187,Forging,Short Sword,2b5,80,3,,Iron + Insect Jaw
+Steel Sword+,188,Forging,Short Sword,2b6,1,4,,Steel Sword + Iron
+Storm Wand,22C,Forging,Staff,2cd,20,65,,Mealy Apple + Electro Crystal + Orichalcum + Insect Horn
+Strong Stone,1FA,Forging,Axe/Hammer,2c4,80,33,,Diamond + Material Stone + Wet Scale + Old Bandage
+Sturdy Hoe,117,Forging,Farm Tool,2a7,40,15,,Bronze
+Sunspot,196,Forging,Short Sword,2b7,40,46,,Platinum + Gold + Warrior's Proof + Fire Crystal + Ruby
+Super Sickle,123,Forging,Farm Tool,2a9,4,45,,Gold + Blade Shard
+Sweet Potato Staff,236,Forging,Staff,2ce,80,10,,Sweet Potato + Insect Horn
+Syringe,238,Forging,Staff,2cf,2,29,,Silver + Fur + Insect Horn
+Thief Knife,23E,Forging,Dual Blade,2cf,80,23,,Silver + Silver
+Tin Waterpot,11C,Forging,Farm Tool,2a8,8,15,,Bronze + Insect Carapace
+Tomahawk,1F6,Forging,Axe/Hammer,2c4,8,28,,Silver + Emerald + Silk Cloth + Insect Jaw
+Toy Hammer,212,Forging,Axe/Hammer,2c7,80,8,,Insect Horn + Insect Carapace
+Trident,1CE,Forging,Spear,2be,40,18,,Silver + Insect Horn
+Twin Blade,242,Forging,Dual Blade,2d0,8,32,,Gold + Gold + Rigid Horn + Rigid Horn + Paralysis Poison
+Twin Justice,255,Forging,Dual Blade,2d2,40,99,,Rune Sphere Shard + Firewyrm Scale + Dragon Fin + Fire Dragon Ash + Water Dragon Ash
+Twin Leeks,23C,Forging,Dual Blade,2cf,20,39,,Leek + Leek
+Veggieblade,1A6,Forging,Short Sword,2b9,40,32,,Carrot
+Volcanon,1B8,Forging,Long Sword,2bc,1,48,,Devil Horn + Fire Crystal + Ruby + Chimera's Claw
+War Hammer,1ED,Forging,Axe/Hammer,2c3,4,11,,Bronze + Blade Shard
+War Hammer+,1EF,Forging,Axe/Hammer,2c3,10,15,,War Hammer + Glue
+Water Spear,1CF,Forging,Spear,2be,80,21,,Silver + Aquamarine + Insect Horn
+Wind Edge,23F,Forging,Dual Blade,2d0,1,25,,Emerald + Emerald + Palm Claw
+Wind Sword,193,Forging,Short Sword,2b7,8,40,,Platinum + Silver + Wind Crystal
+Wizard's Staff,224,Forging,Staff,2cc,20,35,,Magic + Insect Horn
+Wood Staff,1CA,Forging,Spear,2be,4,6,,Insect Horn
+Zweihaender,1A8,Forging,Long Sword,2ba,1,6,,Iron + Insect Jaw
+Zweihaender+,1A9,Forging,Long Sword,2ba,2,11,,Zweihaender + Bronze
