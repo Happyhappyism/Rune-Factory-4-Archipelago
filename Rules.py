@@ -314,7 +314,6 @@ def set_rules(world: "RF4World"):
 
     for name, data in outfit_data_table.items():
         loc_name = f"Selphia Clothing Shop - {name}"
-        logger.warning(f"outfit: {name}")
         if loc_name not in player_locations:
             continue
         location = world.multiworld.get_location(loc_name, world.player)
