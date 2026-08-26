@@ -291,18 +291,18 @@ def patch_game(ctx):
             pc_write_bytes(ctx.pm,ctx.processes_base+0x2044B2,bytes([0x75]))
             pc_write_bytes(ctx.pm,ctx.processes_base+0x2273A2,bytes([0x75]))
         
-        pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 26, 0) & 1
+        pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0) & 1
         if pandora: 
             pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
         else:
             pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
         
-        iris = pc_read_bit(ctx.pm, ctx.game_flags + 254, 0) & 2
+        iris = pc_read_bit(ctx.pm, ctx.game_flags + 0x254, 0) & 2
         if iris:
             pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
             pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
         
-        king_order = pc_read_bit(ctx.pm, ctx.game_flags + 254, 0) & 1
+        king_order = pc_read_bit(ctx.pm, ctx.game_flags + 0x254, 0) & 1
         if king_order:
             pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
         
@@ -420,7 +420,7 @@ def process_items(ctx, item_list, start_index):
                         give_furniture(ctx.pm, ctx.processes_base, "Steamer",0x42,99,198)
                         give_furniture(ctx.pm, ctx.processes_base, "Pot",0x42,99,175)
                     case 0x1C3B2D: # Pandoras Mandate
-                        pc_set_bit(ctx.pm, ctx.ExpGainAd + 26, 0)
+                        pc_set_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0)
                         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
                 item_data = item_data_table[order_flag_items[item_id]]
                 if item_data.set_byte is not None:

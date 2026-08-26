@@ -44,11 +44,11 @@ Ventuswill's Wind,2B,1C3B29,1,,L,2A,4,,,useful,Powerup,,TRUE,Player Speed increa
 Clorica's Pillow,2C,1C3B2B,1,,S,,,,,useful,Powerup,,TRUE,Enable setting the date by viewing the calendar (By the power of just sleeping through all the time between.),FALSE
 Pia's Secret Spring,2D,1C3B2C,1,,S,,,,,useful,Powerup,,TRUE,Working no longer decreases Monster worker's health.,FALSE
 Pandora's Mandate,2A,1C3B2D,1,,L,2B,0,,,progression,Powerup,,TRUE,Monsters have their friendship levels clamped to 10.,TRUE
-Iris's Song,2E,1C3B2A,1,,S,254,1,,,useful,Powerup,,TRUE,(non healing)Spells no longer consume RP.,TRUE
+Iris's Song,2E,1C3B2A,1,,S,254,1,,,useful,Powerup,TRUE,TRUE,(non healing)Spells no longer consume RP.,
 Alicia's Crystal Ball (WIP),2F,1C3B2E,1,,S,,,,,useful,Powerup,,TRUE,Allow the player to set weather from the calendar.,FALSE
 Tabitha's Fodder Bin,30,1C3B2F,1,,S,,,,,useful,Powerup,,TRUE,Monsters no longer require Fodder.,TRUE
 Medical Debt Trap (WIP),31,1C3B30,0,,S,,,,,trap,Trap,,FALSE,"The Jones revival event plays out wherever you are, taking his usual amount of money.",FALSE
-King's Order,32,1C3B31,1,,S,,,,,useful,Powerup,,TRUE,Townsfolk will join your party regardless of current FP.,TRUE
+King's Order,32,1C3B31,1,,S,254,0,,,useful,Powerup,TRUE,TRUE,Townsfolk will join your party regardless of current FP.,
 Slippery Boots,33,1C3B32,0,3,T,,,,,trap,Trap,,FALSE,Chance for player to trip,FALSE
 Popularity,34,1C3B33,0,,S,,,,,progression,Powerup,,FALSE,Raises everyone's friendship level by one when friendsanity is enabled as items,TRUE
 Carmen's Bait,35,1C3B34,1,,L,2A,0,,,useful,Powerup,,TRUE,Will cause 20 fish to spawn when a map loads,TRUE

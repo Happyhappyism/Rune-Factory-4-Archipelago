@@ -26,12 +26,12 @@ Steel Edge,17,1C4077,Obsidian Mansion,A3,215,40,Obsidian Mansion A3 Chest,Obsidi
 Flash Strike Lv.1,18,1C4078,Obsidian Mansion,B6,216,1,Obsidian Mansion B6 Chest,Obsidian Mansion B6 Chest - Flash Strike Lv.1,2,,,534
 Black Ribbon,19,1C4079,Selphia Plains - West,C5,216,4,Selphia Plains - West C5 Chest,Selphia Plains - West C5 Chest - Black Ribbon,2,,Mostly obscured behind the fence to the right of Obsidian Mansion's Entrance,534
 Recovery Potion x3 + Heart Drink,1A,1C407A,Obsidian Mansion,A9,216,8,Obsidian Mansion A9 Chest,Obsidian Mansion A9 Chest - Recovery Potion x3 + Heart Drink,2,,,534
-Cure Lv.1,1B,1C407B,Obsidian Mansion,B8,216,10,Obsidian Mansion B8 Chest,Obsidian Mansion B8 Chest - Cure Lv.1,2,,"Placed here for logical purposes, it's actually outside on the Obsidian Mansion side of Dragon Lake in Selphia.",534
+Cure Lv.1,1B,1C407B,Obsidian Mansion,B8,216,10,Obsidian Mansion B8 Chest,Obsidian Mansion B8 Chest - Cure Lv.1,2,,Placed here for logical purposes it's actually outside on the Obsidian Mansion side of Dragon Lake in Selphia.,534
 Recovery Potion x2 + Para-Gone + Cotton Cloth,1C,1C407C,Yokmir Cave F2,C2,216,20,Yokmir Cave F2 C2 Chest,Yokmir Cave F2 C2 Chest - Recovery Potion x2 + Para-Gone + Cotton Cloth,3,,,534
 Sonic Wind Lv.1,1D,1C407D,Yokmir Cave F2,D4,216,40,Yokmir Cave F2 D4 Chest,Yokmir Cave F2 D4 Chest - Sonic Wind Lv.1,3,,,534
 Onigiri + Salmon Onigiri,1E,1C407E,Yokmir Cave F2,A1,216,80,Yokmir Cave F2 A1 Chest,Yokmir Cave F2 A1 Chest - Onigiri + Salmon Onigiri,3,,,534
 Bronze Bracelet + Staff,1F,1C407F,Yokmir Cave F3,F2,217,2,Yokmir Cave F3 F2 Chest,Yokmir Cave F3 F2 Chest - Bronze Bracelet + Staff,3,,,535
-Bronze x3 + Silver,20,1C4080,Yokmir Cave F3,D4,217,8,Yokmir Cave F3 D4 Chest,Yokmir Cave F3 D4 Chest - Bronze x3 + Silver,11,,Have a villager in your party and inspect the rock on the left side of E2 to gain access to the switch that gives access to this chest.*,535
+Bronze x3 + Silver,20,1C4080,Yokmir Cave F3,D4,217,8,Yokmir Cave F3 D4 Chest,Yokmir Cave F3 D4 Chest - Bronze x3 + Silver,11,,Have Margaret Forte Kiel Doug Dolce or Leon in your party and inspect the rock on the left side of E2 to gain access to the switch that gives access to this chest.*,535
 Yam Seeds x4,21,1C4081,Yokmir Cave F3,B1,217,80,Yokmir Cave F3 B1 Chest,Yokmir Cave F3 B1 Chest - Yam Seeds x4,3,,Kill all enemies,535
 Dash Slash Lv.1,22,1C4082,Yokmir Cave F3,A1,218,1,Yokmir Cave F3 A1 Chest,Yokmir Cave F3 A1 Chest - Dash Slash Lv.1,3,,,536
 Screw Rock Lv.1,23,1C4083,Autumn Road,G11,218,10,Autumn Road G11 Chest,Autumn Road G11 Chest - Screw Rock Lv.1,3,,,536
@@ -59,10 +59,10 @@ Stardust Upper Lv.1,38,1C4098,Sercerezo Hill,C7,21e,20,Sercerezo Hill C7 Chest,S
 Shine Lv. 3,39,1C4099,Sercerezo Hill,C1,21e,40,Sercerezo Hill C1 Chest,Sercerezo Hill C1 Chest - Shine Lv. 3,5,,,542
 Silver Staff,3A,1C409A,Sercerezo Hill,C6,21f,1,Sercerezo Hill C6 Chest,Sercerezo Hill C6 Chest - Silver Staff,5,,Left side,543
 12250G,3B,1C409B,Sercerezo Hill,D4,21f,2,Sercerezo Hill D4 Chest,Sercerezo Hill D4 Chest - 12250G,5,,,543
-Scaled Vest,3C,1C409C,Sercerezo Hill,D5,21f,4,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Scaled Vest,5,,"Hit the hidden swiatch on the left side of the screen in D4, Take teleporter that appears.",543
-Storm Lv.1,3D,1C409D,Sercerezo Hill,D5,21f,8,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Storm Lv.1,5,,"Hit the hidden swiatch on the left side of the screen in D4, Take teleporter that appears.",543
-Grilled Shrimp + Grape Liqueur,3E,1C409E,Sercerezo Hill,D5,21f,10,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Grilled Shrimp + Grape Liqueur,5,,"Hit the hidden swiatch on the left side of the screen in D4, Take teleporter that appears.",543
-Empty...?,3F,1C409F,Idra Cave B1,C1,21f,20,Idra Cave B1 C1 Chest,Idra Cave B1 C1 Chest - Empty...?,5,,"(Contains note: To those who come after, my apologies. This treasure has been claimed by the dark treasure hunter)",543
+Scaled Vest,3C,1C409C,Sercerezo Hill,D5,21f,4,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Scaled Vest,5,,Hit the hidden switch on the left side of the screen in D4 Take teleporter that appears.,543
+Storm Lv.1,3D,1C409D,Sercerezo Hill,D5,21f,8,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Storm Lv.1,5,,Hit the hidden switch on the left side of the screen in D4 Take teleporter that appears.,543
+Grilled Shrimp + Grape Liqueur,3E,1C409E,Sercerezo Hill,D5,21f,10,Sercerezo Hill D5 Chest,Sercerezo Hill D5 Chest - Grilled Shrimp + Grape Liqueur,5,,Hit the hidden switch on the left side of the screen in D4 Take teleporter that appears.,543
+Empty...?,3F,1C409F,Idra Cave B1,C1,21f,20,Idra Cave B1 C1 Chest,Idra Cave B1 C1 Chest - Empty...?,5,,(Contains note: To those who come after my apologies. This treasure has been claimed by the dark treasure hunter),543
 Mediparalyze Lv.1,40,1C40A0,Idra Cave B1,D3,220,1,Idra Cave B1 D3 Chest,Idra Cave B1 D3 Chest - Mediparalyze Lv.1,5,,Enter from C3 through bottom wall,544
 Mind Thrust Lv. 1,41,1C40A1,Idra Cave B1,C1,220,20,Idra Cave B1 C1 Chest,Idra Cave B1 C1 Chest - Mind Thrust Lv. 1,5,,Enter by walking through the south wall of B1,544
 Wind Edge,42,1C40A2,Idra Cave B2,F3,221,1,Idra Cave B2 F3 Chest,Idra Cave B2 F3 Chest - Wind Edge,5,,,545
@@ -77,7 +77,7 @@ Earth Spike Lv.3,4A,1C40AA,Idra Cave B2,E4,223,4,Idra Cave B2 E4 Chest,Idra Cave
 Mediseal Lv.1,4B,1C40AB,Maya Underground (1),C3,224,2,Maya Underground (1) C3 Chest,Maya Underground (1) C3 Chest - Mediseal Lv.1,6,,Throw an item onto the pressure switch in B5,548
 Pineapple Seeds,4C,1C40AC,Maya Road F1,B2,224,10,Maya Road F1 B2 Chest,Maya Road F1 B2 Chest - Pineapple Seeds,6,,,548
 Delta Strike Lv.1,4D,1C40AD,Maya Underground (1),C1,224,20,Maya Underground (1) C1 Chest,Maya Underground (1) C1 Chest - Delta Strike Lv.1,6,,Kill all Enemies,548
-Blitz Lv. 1,4E,1C40AE,Maya Road F1,A3,224,80,Maya Road F1 A3 Chest,Maya Road F1 A3 Chest - Blitz Lv. 1,6,,"Logically requires heavy boots or a fast mount, Out of logic, can be opened with just dashes",548
+Blitz Lv. 1,4E,1C40AE,Maya Road F1,A3,224,80,Maya Road F1 A3 Chest,Maya Road F1 A3 Chest - Blitz Lv. 1,6,,Logically requires heavy boots or a fast mount Out of logic can be opened with just dashes,548
 Dark Snake Lv. 3,4F,1C40AF,Maya Underground (2),A3,225,1,Maya Underground (2) A3 Chest,Maya Underground (2) A3 Chest - Dark Snake Lv. 3,6,,,549
 Prism Lv.4,50,1C40B0,Maya Underground (2),B5,225,20,Maya Underground (2) B5 Chest,Maya Underground (2) B5 Chest - Prism Lv.4,6,,Fall from the upper right of Maya Road F2 B11,549
 2300 G,51,1C40B1,Maya Road F2,A7,225,80,Maya Road F2 A7 Chest,Maya Road F2 A7 Chest - 2300 G,6,,,549
@@ -86,7 +86,7 @@ Rail Strike Lv.1,53,1C40B3,Maya Underground (2),B1,226,8,Maya Underground (2) B1
 Gloves,54,1C40B4,Maya Underground (2),B1,226,10,Maya Underground (2) B1 Chest,Maya Underground (2) B1 Chest - Gloves,6,,,550
 Mystery Potion x 4,55,1C40B5,Maya Road F2,A4,227,8,Maya Road F2 A4 Chest,Maya Road F2 A4 Chest - Mystery Potion x 4,6,,,551
 Axel Disaster Lv.1,56,1C40B6,Maya Road F2,C1,227,10,Maya Road F2 C1 Chest,Maya Road F2 C1 Chest - Axel Disaster Lv.1,6,,,551
-Mystery Potion x x3 + Levelizer,57,1C40B7,Sechs Territory F1,I2,227,20,Sechs Territory F1 I2 Chest,Sechs Territory F1 I2 Chest - Mystery Potion x x3 + Levelizer,7,,,551
+Mystery Potion x3 + Levelizer,57,1C40B7,Sechs Territory F1,I2,227,20,Sechs Territory F1 I2 Chest,Sechs Territory F1 I2 Chest - Mystery Potion x3 + Levelizer,7,,,551
 Master Cure Lv.1,58,1C40B8,Sechs Territory F1,G3,229,1,Sechs Territory F1 G3 Chest,Sechs Territory F1 G3 Chest - Master Cure Lv.1,7,,Requires same switch as the two above.,553
 Water Crystal x4 + Big Crystal,59,1C40B9,Sechs Territory F1,D5,229,2,Sechs Territory F1 D5 Chest,Sechs Territory F1 D5 Chest - Water Crystal x4 + Big Crystal,7,,Walk through trees on right side of D4,553
 8000G,5A,1C40BA,Sechs Territory F1,C4,229,8,Sechs Territory F1 C4 Chest,Sechs Territory F1 C4 Chest - 8000G,7,,,553
@@ -97,8 +97,8 @@ Miracle Axe Recipe,5E,1C40BE,Sechs Territory F1,B1,22a,4,Sechs Territory F1 B1 C
 Star Pendant,5F,1C40BF,Sechs Territory F1,E5,22a,10,Sechs Territory F1 E5 Chest,Sechs Territory F1 E5 Chest - Star Pendant,7,,Kill all enemies,554
 Steel Heart Lv.1,60,1C40C0,Sechs Territory F1,F8,22a,40,Sechs Territory F1 F8 Chest,Sechs Territory F1 F8 Chest - Steel Heart Lv.1,7,,Set items on all the switches,554
 Mystery Potion x4,61,1C40C1,Sechs Territory (Cave),C4,22b,10,Sechs Territory (Cave) C4 Chest,Sechs Territory (Cave) C4 Chest - Mystery Potion x4,7,,,555
-Ice Cream,62,1C40C2,Sechs Territory F1,B7,22b,20,Sechs Territory F1 B7 Chest,Sechs Territory F1 B7 Chest - Ice Cream,7,,The switch requires you to pass through the right wall of C4 in Sechs Territory Cave. (Logically fine: it's taught in the area),555
-Throwing Ring,63,1C40C3,Sechs Territory F1,E3,22b,40,Sechs Territory F1 E3 Chest,Sechs Territory F1 E3 Chest - Throwing Ring,7,,"Same as above, but also Kill all Enemies.",555
+Ice Cream,62,1C40C2,Sechs Territory F1,B7,22b,20,Sechs Territory F1 B7 Chest,Sechs Territory F1 B7 Chest - Ice Cream,7,,The switch requires you to pass through the right wall of C4 in Sechs Territory Cave.,555
+Throwing Ring,63,1C40C3,Sechs Territory F1,E3,22b,40,Sechs Territory F1 E3 Chest,Sechs Territory F1 E3 Chest - Throwing Ring,7,,Kill all Enemies.,555
 Giga Swing Lv.1,64,1C40C4,Sechs Territory (Cave),D1,22c,4,Sechs Territory (Cave) D1 Chest,Sechs Territory (Cave) D1 Chest - Giga Swing Lv.1,7,,,556
 Rune Crystal,65,1C40C5,Sechs Territory (Cave),D2,22c,8,Sechs Territory (Cave) D2 Chest,Sechs Territory (Cave) D2 Chest - Rune Crystal,7,,,556
 Straight Punch Lv.1,66,1C40C6,Sechs Territory F2,E3,22d,4,Sechs Territory F2 E3 Chest,Sechs Territory F2 E3 Chest - Straight Punch Lv.1,7,,Kill all enemies,557
@@ -126,11 +126,11 @@ Grand Impact Lv.1,7B,1C40DB,Floating Empire - East,E5,236,40,Floating Empire - E
 Small Crystal,7C,1C40DC,Floating Empire - East,F3,236,80,Floating Empire - East F3 Chest,Floating Empire - East F3 Chest - Small Crystal,8,,,566
 Avenger Rock Lv.5,7D,1C40DD,Floating Empire - East,C1,237,1,Floating Empire - East C1 Chest,Floating Empire - East C1 Chest - Avenger Rock Lv.5,8,,,567
 Round Break Lv.1,7E,1C40DE,Floating Empire - East,C1,237,2,Floating Empire - East C1 Chest,Floating Empire - East C1 Chest - Round Break Lv.1,8,,,567
-Gold Cabbage Seed + Gold Pumpkin Seed + Gold Potato Seed,7F,1C40DF,Floating Empire - East,C6,237,4,Floating Empire - East C6 Chest,Floating Empire - East C6 Chest - Gold Cabbage Seed + Gold Pumpkin Seed + Gold Potato Seed,8,,"Place items on the first, second, and fourth switch.",567
-Miracle Axe Recipe,80,1C40E0,Floating Empire - East,C6,237,8,Floating Empire - East C6 Chest,Floating Empire - East C6 Chest - Miracle Axe Recipe,8,Miracle Axe,"Place items on the first, second, and fourth switch.",567
-Hurricane Lv.5,81,1C40E1,Leon Karnak,F6,238,2,Leon Karnak F6 Chest,Leon Karnak F6 Chest - Hurricane Lv.5,9,,"Activate switches that appear after killing all enemies in F5 and G2, Then Kill all enemies in F6.",568
+Gold Cabbage Seed + Gold Pumpkin Seed + Gold Potato Seed,7F,1C40DF,Floating Empire - East,C6,237,4,Floating Empire - East C6 Chest,Floating Empire - East C6 Chest - Gold Cabbage Seed + Gold Pumpkin Seed + Gold Potato Seed,8,,Place items on the first second and fourth switch.,567
+Miracle Axe Recipe,80,1C40E0,Floating Empire - East,C6,237,8,Floating Empire - East C6 Chest,Floating Empire - East C6 Chest - Miracle Axe Recipe,8,Miracle Axe,Place items on the first second and fourth switch.,567
+Hurricane Lv.5,81,1C40E1,Leon Karnak,F6,238,2,Leon Karnak F6 Chest,Leon Karnak F6 Chest - Hurricane Lv.5,9,,Activate switches that appear after killing all enemies in F5 and G2 Then Kill all enemies in F6.,568
 Devil Horn x2 + Platinum,82,1C40E2,Leon Karnak,F6,238,4,Leon Karnak F6 Chest,Leon Karnak F6 Chest - Devil Horn x2 + Platinum,9,,,568
-3x Vital Gummi + Lamellar Vest,83,1C40E3,Leon Karnak,G2,239,4,Leon Karnak G2 Chest,Leon Karnak G2 Chest - 3x Vital Gummi + Lamellar Vest,9,,"Activate switch after killing all enemies in F5, Set an item on the switch in G2, enter from bottom ladder.",569
+3x Vital Gummi + Lamellar Vest,83,1C40E3,Leon Karnak,G2,239,4,Leon Karnak G2 Chest,Leon Karnak G2 Chest - 3x Vital Gummi + Lamellar Vest,9,,Activate switch after killing all enemies in F5 Set an item on the switch in G2 enter from bottom ladder.,569
 Salted Taimen Recipe,84,1C40E4,Leon Karnak,F2,239,8,Leon Karnak F2 Chest,Leon Karnak F2 Chest - Salted Taimen Recipe,9,Salted Taimen,,569
 Darkness Lv.5,85,1C40E5,Leon Karnak,D2,239,40,Leon Karnak D2 Chest,Leon Karnak D2 Chest - Darkness Lv.5,9,,,569
 Blessed Hoe Recipe + Legendary Sickle Recipe,86,1C40E6,Leon Karnak,B1,23a,1,Leon Karnak B1 Chest,Leon Karnak B1 Chest - Blessed Hoe Recipe + Legendary Sickle Recipe,9,Blessed Hoe + Legendary Sickle,Kill the enemy in B1,570
@@ -141,15 +141,15 @@ Anette's Necklace Recipe,8A,1C40EA,Rune Prana F2,B3,23d,4,Rune Prana F2 B3 Chest
 Greenifier+ x4,8B,1C40EB,Rune Prana F2,B3,23d,8,Rune Prana F2 B3 Chest,Rune Prana F2 B3 Chest - Greenifier+ x4,10,,Heavy Boots Required,573
 Double Kick Lv.8,8C,1C40EC,Rune Prana F2,D1,23e,1,Rune Prana F2 D1 Chest,Rune Prana F2 D1 Chest - Double Kick Lv.8,10,,,574
 Dry Curry Recipe,8D,1C40ED,Rune Prana F4,D4,23f,2,Rune Prana F4 D4 Chest,Rune Prana F4 D4 Chest - Dry Curry Recipe,10,Dry Curry,,575
-Pineapple Juice Recipe + Magical Potion x2 + Orichalcum + Leveliser,8E,1C40EE,Rune Prana F4,A2,241,1,Rune Prana F4 A2 Chest,Rune Prana F4 A2 Chest - Pineapple Juice Recipe + Magical Potion x2 + Orichalcum + Leveliser,10,Pineapple Juice,"From B1, walk through the East wall, then the north exit. Kill all enemies",577
+Pineapple Juice Recipe + Magical Potion x2 + Orichalcum + Leveliser,8E,1C40EE,Rune Prana F4,A2,241,1,Rune Prana F4 A2 Chest,Rune Prana F4 A2 Chest - Pineapple Juice Recipe + Magical Potion x2 + Orichalcum + Leveliser,10,Pineapple Juice,From B1 walk through the East wall then the north exit. Kill all enemies,577
 Mediseal Lv.10,8F,1C40EF,Rune Prana F5,C4,241,80,Rune Prana F5 C4 Chest,Rune Prana F5 C4 Chest - Mediseal Lv.10,10,,,577
 Grilled G. Snapper Recipe,90,1C40F0,Rune Prana F5,A1,242,40,Rune Prana F5 A1 Chest,Rune Prana F5 A1 Chest - Grilled G. Snapper Recipe,10,Grilled G. Snapper,,578
 Fireball Lv.8,91,1C40F1,Rune Prana F6,B4,244,2,Rune Prana F6 B4 Chest,Rune Prana F6 B4 Chest - Fireball Lv.8,10,,,580
 Gyoza Recipe,92,1C40F2,Rune Prana F6,D1,244,20,Rune Prana F6 D1 Chest,Rune Prana F6 D1 Chest - Gyoza Recipe,10,Gyoza,,580
 Fluffy Scarf Recipe,93,1C40F3,Rune Prana F6,A3,245,2,Rune Prana F6 A3 Chest,Rune Prana F6 A3 Chest - Fluffy Scarf Recipe,10,Fluffy Scarf,,581
-Art of Attack Recipe + Art of Defense Recipe + Art of Magic Recipe,94,1C40F4,Rune Prana F7,G1,245,8,Rune Prana F7 G1 Chest,Rune Prana F7 G1 Chest - Art of Attack Recipe + Art of Defense Recipe + Art of Magic Recipe,10,Art of Attack + Art of Defense + Art of Magic,Requires Doom Pumpkin,581
-Knight Boots Recipe,95,1C40F5,Rune Prana F7,E7,245,40,Rune Prana F7 E7 Chest,Rune Prana F7 E7 Chest - Knight Boots Recipe,10,Knight Boots,Requires King Cabbage,581
-Dragon Slayer Recipe + Balmung Recipe,96,1C40F6,Rune Prana F7,E7,245,80,Rune Prana F7 E7 Chest,Rune Prana F7 E7 Chest - Dragon Slayer Recipe + Balmung Recipe,10,Dragon Slayer + Balmung,Requires King Gold Cabbage,581
+Knight Boots Recipe,94,1C40F4,Rune Prana F7,E7,245,40,Rune Prana F7 E7 Chest,Rune Prana F7 E7 Chest - Knight Boots Recipe,10,Knight Boots,Requires King Cabbage,581
+Dragon Slayer Recipe + Balmung Recipe,95,1C40F5,Rune Prana F7,E7,245,80,Rune Prana F7 E7 Chest,Rune Prana F7 E7 Chest - Dragon Slayer Recipe + Balmung Recipe,10,Dragon Slayer + Balmung,Requires King Gold Cabbage,581
+Art of Attack Recipe + Art of Defense Recipe + Art of Magic Recipe,96,1C40F6,Rune Prana F7,G1,246,8,Rune Prana F7 G1 Chest,Rune Prana F7 G1 Chest - Art of Attack Recipe + Art of Defense Recipe + Art of Magic Recipe,10,Art of Attack + Art of Defense + Art of Magic,Requires Doom Pumpkin,582
 Gae Bolg Recipe + Kongo Recipe,97,1C40F7,Rune Prana F7,G1,246,10,Rune Prana F7 G1 Chest,Rune Prana F7 G1 Chest - Gae Bolg Recipe + Kongo Recipe,10,Gae Bolg + Kongo,Requires Gold Doom Pumpkin,582
 Crown Recipe,98,1C40F8,Rune Prana F7,B6,247,20,Rune Prana F7 B6 Chest,Rune Prana F7 B6 Chest - Crown Recipe,10,Crown,Requires Princely Potato,583
 Magic Broom Recipe + Hand of God Recipe,99,1C40F9,Rune Prana F7,B6,247,40,Rune Prana F7 B6 Chest,Rune Prana F7 B6 Chest - Magic Broom Recipe + Hand of God Recipe,10,Magic Broom + Hand of God,Requires Gold Prince Potato,583
@@ -171,7 +171,7 @@ Strawberry Seeds x$,A8,1C4108,Sercerezo Hill,A2,24c,4,Sercerezo Hill A2 Chest,Se
 Turnip Seed x4,A9,1C4109,Selphia Plains,B1,24c,8,Selphia Plains B1 Chest,Selphia Plains B1 Chest - Turnip Seed x4,1,,,588
 Toy Herb Seed x4,AA,1C410A,Selphia Plains,B1,24c,10,Selphia Plains B1 Chest,Selphia Plains B1 Chest - Toy Herb Seed x4,1,,,588
 Carrot Seeds x4,AB,1C410B,Autumn Field,J1,24c,20,Autumn Field J1 Chest,Autumn Field J1 Chest - Carrot Seeds x4,3,,,588
-Leek Seeds x4,AC,1C410C,Selphia Plains - West,E1,24c,40,Selphia Plains - West E1 Chest,Selphia Plains - West E1 Chest - Leek Seeds x4,1,,,588
+Leek Seeds x4,AC,1C410C,Winter Field,E1,24c,40,Winter Field E1 Chest,Winter Field E1 Chest - Leek Seeds x4,1,,,588
 Healing Potion x4,AD,1C410D,Demon's Den,A1,24c,80,Demon's Den A1 Chest,Demon's Den A1 Chest - Healing Potion x4,5,,,588
 Golden Turnip Staff Recipe,AE,1C410E,Autumn Road,G1,24e,2,Autumn Road G1 Chest,Autumn Road G1 Chest - Golden Turnip Staff Recipe,8,Golden Turnip Staff,Water Shoes Required,590
 Joy Waterpot Recipe,AF,1C410F,Autumn Road,G1,24e,4,Autumn Road G1 Chest,Autumn Road G1 Chest - Joy Waterpot Recipe,8,Joy Waterpot,Water Shoes Required,590
@@ -179,4 +179,4 @@ Glitter Sashimi Recipe,B0,1C4110,Autumn Road,G1,24e,8,Autumn Road G1 Chest,Autum
 Intelligencer,B1,1C4111,Autumn Road,G1,24e,10,Autumn Road G1 Chest,Autumn Road G1 Chest - Intelligencer,8,,Water Shoes Required,590
 Dragonic Stone x2,B2,1C4112,Rune Prana F7,E1,24e,20,Rune Prana F7 E1 Chest,Rune Prana F7 E1 Chest - Dragonic Stone x2,10,,,590
 Medipoison,B3,1C4113,Sercerezo Hill,B2,24e,40,Sercerezo Hill B2 Chest,Sercerezo Hill B2 Chest - Medipoison,5,,Fridays Only,590
-Millionstrike Lv.1,B4,1C4114,Idra Cave B1,C6,24e,80,Idra Cave B1 C6 Chest,Idra Cave B1 C6 Chest - Millionstrike Lv.1,5,,"Must be entered from F4 B2, which is entered by walking through the Right wall of F3",590
+Millionstrike Lv.1,B4,1C4114,Idra Cave B1,C6,24e,80,Idra Cave B1 C6 Chest,Idra Cave B1 C6 Chest - Millionstrike Lv.1,5,,Must be entered from F4 B2 which is entered by walking through the Right wall of F3,590

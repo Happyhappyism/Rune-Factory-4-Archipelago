@@ -148,7 +148,7 @@ def write_save_data(world:World):
     if shopbox_link: # Add shopbox furniture
         save_data[0x1E6DE] = 0x40 # MapID
         save_data[0x1E6DF] = 0x80 # Enabled
-        save_data[0x1E6E0] = 0x7C # Shop Box Obj
+        save_data[0x1E6E0] = 0x7C # Shop Box ObjY
         save_data[0x1E6E1] = 0x01
         save_data[0x1E6E2] = 0xBC # Xpos
         save_data[0x1E6E3] = 0x00
