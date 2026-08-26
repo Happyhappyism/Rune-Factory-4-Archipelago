@@ -1,6 +1,6 @@
 # Setup Guide
 ## Necessary Software: 
-[Archipelago Latest Release](https://github.com/ArchipelagoMW/Archipelago/releases/latest)
+[Archipelago Latest Release](https://github.com/Happyhappyism/Rune-Factory-4-Archipelago/releases)
 [quick bms](https://aluigi.altervista.org/quickbms.htm)
 RF4S APworld `rune4.apworld`
 
