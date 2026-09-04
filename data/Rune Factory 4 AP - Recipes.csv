@@ -251,7 +251,7 @@ Four Dragons' Vest,58,Crafting,Armor,28f,80,99,,Dragon Fin + Earthwyrm Scale + F
 Four Seasons,14C,Crafting,Headgear,2ae,8,44,,Spring Headdress + Summer Headdress + Autumn Headdress + Winter Headdress
 Free Farming Shoes,185,Crafting,Shoes,2b5,20,8,,Old Bandage + Fur
 Ghost Boots,178,Crafting,Shoes,2b4,1,65,,Quality Worn Cloth + Dragon Scale + Crimson Scale + Crystal Skull + Old Bandage
-Gloves,2E,Crafting,Accessories,28a,20,18,,Giant's Gloves
+Gloves (Accessory),2E,Crafting,Accessories,28a,20,18,,Giant's Gloves
 Gold Boots,182,Crafting,Shoes,2b5,4,28,,Gold + Gold + Blade Shard
 Gold Bracelet,4,Crafting,Accessories,285,8,39,,Gold + Insect Carapace
 Gold Hairpin,14E,Crafting,Headgear,2ae,20,60,,Turnip's Miracle + Gold
@@ -464,7 +464,7 @@ Gaia Sword,18F,Forging,Short Sword,2b6,80,27,,Gold + Earth Crystal + Rigid Horn
 Gigant Hammer,1FD,Forging,Axe/Hammer,2c5,4,38,,Platinum + Gold + Silver + Blade Shard
 Gigant Hammer+,209,Forging,Axe/Hammer,2c6,40,71,,Gigant Hammer + Golem Spirit Stone + Orichalcum + Small Crystal
 Gladius,1A2,Forging,Short Sword,2b9,4,90,,Dragonic Stone + Firewyrm Scale + Throne of the Empire + Small Crystal + Insect Jaw
-Gloves,25B,Forging,Fist,2d3,10,20,,Giant's Gloves
+Gloves (Weapon),25B,Forging,Fist,2d3,10,20,,Quality Cloth + Fur (M) + Old Bandage
 Golden Hammer,128,Forging,Farm Tool,2a9,80,45,,Gold + Insect Horn
 Golden Turnip Staff,235,Forging,Staff,2ce,40,80,,Golden Turnip + Insect Horn
 Golem Punch,268,Forging,Fist,2d5,2,75,,Orichalcum + Golem Spirit Stone + Golem Tablet + MTGU Plate + Shiny Screw

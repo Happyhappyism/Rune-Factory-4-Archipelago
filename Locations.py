@@ -3,6 +3,8 @@ from typing import Callable, Dict, NamedTuple, Optional, TYPE_CHECKING
 from BaseClasses import Location
 
 import logging
+import pkgutil
+import json
 
 from .game_data import friendsanity_data, friend_items, outfit_data
 
@@ -69,6 +71,9 @@ class RF4RequestData(NamedTuple):
     loc_name: str = None
     byte: int = 0
     mask: int = 0
+    prog: int = 0
+    reqid: int = 0
+    include: bool = False
     request_req: str = None
     item_req: list = None
     tier: int = None
@@ -104,6 +109,15 @@ class RF4OutfitData(NamedTuple):
     mask: int = 0
     tier: int = 0
     cost: int = 0
+
+class RF4MapObj(NamedTuple):
+    apid: int = 0
+    region: str = None
+    room_number: int = 0
+    field_flag: int = None
+    loc_name: str = None
+    map_type: str = None
+
 
 class RF4LocationData(NamedTuple):
     name: str = None
@@ -242,13 +256,23 @@ def parse_request(cell):
             case "APID" | "Byte" | "Mask":
                 if cell_value:
                     cell[col_name] = int(cell[col_name],16)
+                else:
+                    cell[col_name] = None
+            case "Prog" | "Request ID":
+                if cell_value:
+                    cell[col_name] = int(cell[col_name])
+                else:
+                    cell[col_name] = None
             case "Item Requirements":
                 if cell_value:
                     cell[col_name] = (((cell[col_name]).replace('"','')).split(" + "))
                 else:
                     cell[col_name] = []
-    return RF4RequestData(name = cell['Name'], apid = cell['APID'],  byte= cell['Byte'], mask= cell['Mask'], 
-                          request_req = cell['Region Connect'], item_req= cell['Item Requirements'],
+            case "Include":
+                if cell_value:
+                    cell[col_name] = bool(cell[col_name])
+    return RF4RequestData(name = cell['Name'], apid = cell['APID'],  byte= cell['Byte'], mask= cell['Mask'], prog= cell['Prog'],
+                          request_req = cell['Region Connect'], item_req= cell['Item Requirements'], reqid= cell['Request ID'], include= cell['Include'],
                           loc_name= f"Selphia Request - {cell['Name']}")
             
 
@@ -285,7 +309,7 @@ def parse_tame(cell):
 
 def parse_csv(csv_name):
     #import csv
-    import pkgutil
+    
 
     # ##DEBUGGING PURPOSES ONLY
     # import requests
@@ -343,6 +367,34 @@ def parse_csv(csv_name):
         row_num += 1
     return csvdata
 
+def parse_mapobj_json(json_name, ap_base, loc_type):
+    mobj_file = pkgutil.get_data(__name__, f"data/{json_name}.json").decode("utf-8")
+    mobj_json = json.loads(mobj_file)
+    mapobj_data_table = {}
+    ap_address = ap_base
+    for map_file in mobj_json:
+        field_flags = set(map_file["field_flags"])
+        map_region = map_file["region"]
+        room_num = map_file["room_number"]
+        mtype = map_file["map_type"]
+        base_name = f"{map_region} {loc_type} - Room {room_num}"
+        if len(field_flags) > 1:
+            flag_idx = 0
+            for flag in field_flags:
+                flag_idx += 1
+                ap_address += 1
+                name = base_name + f" {loc_type} {flag_idx}"
+                mapobj_data_table[name] = RF4MapObj(
+                            apid = ap_address, field_flag = flag, region = map_region, room_number = room_num, map_type= mtype, loc_name = name
+                        )
+        else:
+            ap_address +=1
+            flag = next(iter(field_flags))
+            mapobj_data_table[base_name] = RF4MapObj(
+                apid = ap_address, field_flag = flag, region = map_region, room_number = room_num, map_type= mtype, loc_name = base_name
+            )
+    return mapobj_data_table
+
 shipment_data_table = parse_csv("Rune Factory 4 AP - Shipments")
 chest_data_table = parse_csv("Rune Factory 4 AP - Chests")
 recipe_data_table = parse_csv("Rune Factory 4 AP - Recipes")
@@ -385,6 +437,11 @@ for name, data in outfit_data.items():
         byte=outfit_byte, mask=outfit_mask, tier = outfit_tier, cost=outfit_cost
     )
     index += 1
+
+# Generate Barriers and Boxes
+barrier_data_table = parse_mapobj_json("barrier_flags", 0x1C4600, "Barrier")
+box_data_table = parse_mapobj_json("box_flags", 0x1C4700, "Box")
+search_data_table = parse_mapobj_json("search_flags", 0x1C4800, "Search")
 #logger.warning(f"{friend_data_table}")
 
 #Shipments
@@ -418,15 +475,31 @@ location_data_table.update({name:
     RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "outfit")
     for name, data in outfit_data_table.items()
 })
+# Barriersanity
+location_data_table.update({name:
+    RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "barrier")
+    for name, data in barrier_data_table.items()
+})
+# Boxsanity
+location_data_table.update({name:
+    RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "box")
+    for name, data in box_data_table.items()
+})
+# Searchsanity
+location_data_table.update({name:
+    RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "box")
+    for name, data in search_data_table.items()
+})
 
 location_table = {data.loc_name: data.address for name, data in location_data_table.items() if data.address is not None}
 locked_locations = {name: data for name, data in location_data_table.items() if data.locked_item}
 
 shipment_data = {data.apid: [data.start_byte, data.start_bit] for name, data in shipment_data_table.items() if data.shipable == True}
 chest_data =    {data.apid: [data.byte, data.mask] for name, data in chest_data_table.items()}
-request_data =  {data.apid: [data.byte, data.mask] for name, data in request_data_table.items() if data.mask is not None}
+request_data =  {data.apid: [data.byte, data.mask, data.prog] for name, data in request_data_table.items() if data.include}
 tame_data =     {data.index: data.apid for name, data in tame_data_table.items() if data.liked_item is not None}
 recipe_levels = {data.name: [data.level, data.craft_type, data.ingredients] for name, data in recipe_data_table.items() if data.level is not None}
+
 
 spell_list = [data.loc_name for name, data in shipment_data_table.items() if data.type == "Spell" and data.shipable == True]
 filler_items = {name: [data.apid, data.fill_weight, data.id, data.type, data.fill_amount] for name, data in shipment_data_table.items() if data.fill_weight != 0 and data.fill_weight is not None}
@@ -435,9 +508,12 @@ item_to_region = {name: data.region for name, data in shipment_data_table.items(
 request_rules = {name: [data.request_req, data.item_req] for name, data in request_data_table.items() if data.item_req is not None}
 request_list = list(request_data_table)
 top_requests = [name for name, data in request_data_table.items() if "Fenrir" in data.item_req]
-request_data = {data.apid: [data.byte, data.mask] for name, data in request_data_table.items() if data.byte is not None}
+# request_data = {data.apid: [data.byte, data.mask] for name, data in request_data_table.items() if data.byte is not None}
 
 outfit_game_data = {data.apid: [data.byte, data.mask] for name, data in outfit_data_table.items()}
+barrier_flag_data = {data.apid: data.field_flag for name, data in barrier_data_table.items()}
+box_flag_data = {data.apid: data.field_flag for name, data in box_data_table.items()}
+search_flag_data = {data.apid: data.field_flag for name, data in search_data_table.items()}
 
 ship_loc_name = {data.name: data.loc_name  for name, data in shipment_data_table.items()}
 recipe_loc_name = {data.name:data.loc_name  for name, data in recipe_data_table.items()}
@@ -453,8 +529,15 @@ request_loc_list = [data.loc_name for name, data in request_data_table.items()]
 friend_loc_list = [data.loc_name for name, data in friend_data_table.items()]
 tame_loc_list = [data.loc_name for name, data in tame_data_table.items()]
 outfit_loc_list = [data.loc_name for name, data in outfit_data_table.items()]
+barrier_loc_list = [data.loc_name for name, data in barrier_data_table.items()]
+box_loc_list = [data.loc_name for name, data in box_data_table.items()]
+search_loc_list = [data.loc_name for name, data in box_data_table.items()]
 
 recipe_tiering = {}
+
+#location_list = {f"{hex(data.address)}": name for name, data in location_data_table.items()}
+#blogger.warning(f"location_list: {location_list}")
+
 for name, data in recipe_data_table.items():
     #logger.warning(f"{name}")
     recipe_tier_list = []

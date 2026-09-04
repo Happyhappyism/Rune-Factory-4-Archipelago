@@ -1,0 +1,1968 @@
+[
+  {
+    "map_name": "MAP_DUNG_A01.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Forest",
+    "room_number": 1,
+    "field_flags": [
+      596
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_A04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Forest",
+    "room_number": 4,
+    "field_flags": [
+      75
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_A08.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Forest",
+    "room_number": 8,
+    "field_flags": [
+      76
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 4,
+    "field_flags": [
+      80
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B06.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 6,
+    "field_flags": [
+      158,
+      158
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B10.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 10,
+    "field_flags": [
+      82
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B13.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 13,
+    "field_flags": [
+      83
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B14.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 14,
+    "field_flags": [
+      84,
+      84
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_B16.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Water Ruins",
+    "room_number": 16,
+    "field_flags": [
+      600
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_C07.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Obsidian Mansion",
+    "room_number": 7,
+    "field_flags": [
+      90
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_C09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Obsidian Mansion",
+    "room_number": 9,
+    "field_flags": [
+      91,
+      91
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_C10.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Obsidian Mansion",
+    "room_number": 10,
+    "field_flags": [
+      92
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_C13.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Obsidian Mansion",
+    "room_number": 13,
+    "field_flags": [
+      95
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_C19.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Obsidian Mansion",
+    "room_number": 19,
+    "field_flags": [
+      98,
+      98
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D03.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 3,
+    "field_flags": [
+      448
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 5,
+    "field_flags": [
+      453
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D06.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 6,
+    "field_flags": [
+      451
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D07.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 7,
+    "field_flags": [
+      455
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 9,
+    "field_flags": [
+      460
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D10.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 10,
+    "field_flags": [
+      471
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D14.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 14,
+    "field_flags": [
+      475
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 15,
+    "field_flags": [
+      465
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D16.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 16,
+    "field_flags": [
+      478
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D17.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 17,
+    "field_flags": [
+      472
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D20.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 20,
+    "field_flags": [
+      456
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D21.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 21,
+    "field_flags": [
+      469
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_D23.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Leon Karnak",
+    "room_number": 23,
+    "field_flags": [
+      473
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E08.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 8,
+    "field_flags": [
+      382
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E10.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 10,
+    "field_flags": [
+      624
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E11.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 11,
+    "field_flags": [
+      381
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E12.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 12,
+    "field_flags": [
+      383
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 15,
+    "field_flags": [
+      397,
+      397
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E20.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 20,
+    "field_flags": [
+      387
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E23.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 23,
+    "field_flags": [
+      392
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E25.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 25,
+    "field_flags": [
+      390
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E32.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 32,
+    "field_flags": [
+      374
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E34.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 34,
+    "field_flags": [
+      373,
+      373
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E37.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 37,
+    "field_flags": [
+      403,
+      403
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E41.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 41,
+    "field_flags": [
+      404
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E45.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 45,
+    "field_flags": [
+      405,
+      405
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E48.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 48,
+    "field_flags": [
+      407
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E49.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 49,
+    "field_flags": [
+      406
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E59.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 59,
+    "field_flags": [
+      411
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E62.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 62,
+    "field_flags": [
+      412
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E71.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 71,
+    "field_flags": [
+      427
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E79.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 79,
+    "field_flags": [
+      437,
+      437
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E82.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 82,
+    "field_flags": [
+      429
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E83.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 83,
+    "field_flags": [
+      444
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E84.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 84,
+    "field_flags": [
+      433
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E85.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 85,
+    "field_flags": [
+      436
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E89.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 89,
+    "field_flags": [
+      434
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_E90.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Floating Empire",
+    "room_number": 90,
+    "field_flags": [
+      435
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 4,
+    "field_flags": [
+      141
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 5,
+    "field_flags": [
+      142,
+      142
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 9,
+    "field_flags": [
+      89
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G12.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 12,
+    "field_flags": [
+      94
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 15,
+    "field_flags": [
+      93
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G19.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 19,
+    "field_flags": [
+      97
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G22.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 22,
+    "field_flags": [
+      184
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G23.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 23,
+    "field_flags": [
+      186
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G25.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 25,
+    "field_flags": [
+      188
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G30.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 30,
+    "field_flags": [
+      193
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_G31.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Yokmir Cave",
+    "room_number": 31,
+    "field_flags": [
+      194
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 5,
+    "field_flags": [
+      209
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H06.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 6,
+    "field_flags": [
+      210
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H08.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 8,
+    "field_flags": [
+      211
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 9,
+    "field_flags": [
+      215
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H10.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 10,
+    "field_flags": [
+      213
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H11.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 11,
+    "field_flags": [
+      216,
+      216,
+      216
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H12.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 12,
+    "field_flags": [
+      217,
+      217
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 15,
+    "field_flags": [
+      220
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H16.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 16,
+    "field_flags": [
+      222
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H20.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 20,
+    "field_flags": [
+      224
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H23.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 23,
+    "field_flags": [
+      228
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H24.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 24,
+    "field_flags": [
+      241
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H25.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 25,
+    "field_flags": [
+      413
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H27.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 27,
+    "field_flags": [
+      230,
+      230
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H30.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 30,
+    "field_flags": [
+      232,
+      232,
+      232
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H32.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 32,
+    "field_flags": [
+      234,
+      234
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H36.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 36,
+    "field_flags": [
+      236
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H38.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 38,
+    "field_flags": [
+      237
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_H39.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Delirium Lava Ruins",
+    "room_number": 39,
+    "field_flags": [
+      237,
+      237
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_I02.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Forest Of Beginnings",
+    "room_number": 2,
+    "field_flags": [
+      103
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_I03.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Forest Of Beginnings",
+    "room_number": 3,
+    "field_flags": [
+      104
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_I04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Forest Of Beginnings",
+    "room_number": 4,
+    "field_flags": [
+      105
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_I05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Forest Of Beginnings",
+    "room_number": 5,
+    "field_flags": [
+      106
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_I06.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Forest Of Beginnings",
+    "room_number": 6,
+    "field_flags": [
+      107
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J02.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 2,
+    "field_flags": [
+      109
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 5,
+    "field_flags": [
+      110,
+      110,
+      110
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J07.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 7,
+    "field_flags": [
+      111
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J08.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 8,
+    "field_flags": [
+      112,
+      112,
+      112
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 9,
+    "field_flags": [
+      113
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 15,
+    "field_flags": [
+      115
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J17.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 17,
+    "field_flags": [
+      116
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J18.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 18,
+    "field_flags": [
+      117,
+      117
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J24.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 24,
+    "field_flags": [
+      118
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J27.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 27,
+    "field_flags": [
+      120,
+      120,
+      120,
+      120
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J33.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 33,
+    "field_flags": [
+      122
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J37.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 37,
+    "field_flags": [
+      124,
+      124
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J40.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 40,
+    "field_flags": [
+      126,
+      126
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J41.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 41,
+    "field_flags": [
+      127,
+      127,
+      127
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J45.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 45,
+    "field_flags": [
+      128
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J50.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 50,
+    "field_flags": [
+      130,
+      130
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J51.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 51,
+    "field_flags": [
+      131,
+      131
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_J52.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Idra Cave",
+    "room_number": 52,
+    "field_flags": [
+      132
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 4,
+    "field_flags": [
+      616
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 9,
+    "field_flags": [
+      618
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K19.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 19,
+    "field_flags": [
+      617
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K20.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 20,
+    "field_flags": [
+      123
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K21.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 21,
+    "field_flags": [
+      294
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K29.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 29,
+    "field_flags": [
+      297
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K30.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 30,
+    "field_flags": [
+      133
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K38.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 38,
+    "field_flags": [
+      302
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K49.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 49,
+    "field_flags": [
+      304
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K50.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 50,
+    "field_flags": [
+      305
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K53.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 53,
+    "field_flags": [
+      311
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K56.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 56,
+    "field_flags": [
+      312
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K59.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 59,
+    "field_flags": [
+      313
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_K60.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Maya Road",
+    "room_number": 60,
+    "field_flags": [
+      314
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L12.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 12,
+    "field_flags": [
+      341
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 15,
+    "field_flags": [
+      351
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L17.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 17,
+    "field_flags": [
+      333
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L29.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 29,
+    "field_flags": [
+      337
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L35.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 35,
+    "field_flags": [
+      326
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L51.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 51,
+    "field_flags": [
+      363
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L56.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 56,
+    "field_flags": [
+      366,
+      368
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L60.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 60,
+    "field_flags": [
+      621
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_L61.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Sechs Territory",
+    "room_number": 61,
+    "field_flags": [
+      622
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 4,
+    "field_flags": [
+      495
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M05.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 5,
+    "field_flags": [
+      479
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M06.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 6,
+    "field_flags": [
+      484
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M07.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 7,
+    "field_flags": [
+      481
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M08.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 8,
+    "field_flags": [
+      485
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 9,
+    "field_flags": [
+      483
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M13.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 13,
+    "field_flags": [
+      487
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M14.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 14,
+    "field_flags": [
+      488
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M15.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 15,
+    "field_flags": [
+      489
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M17.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 17,
+    "field_flags": [
+      493
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M18.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 18,
+    "field_flags": [
+      494
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M26.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 26,
+    "field_flags": [
+      497
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M30.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 30,
+    "field_flags": [
+      498
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M32.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 32,
+    "field_flags": [
+      499
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M36.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 36,
+    "field_flags": [
+      500
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M37.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 37,
+    "field_flags": [
+      504
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M38.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 38,
+    "field_flags": [
+      506
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M39.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 39,
+    "field_flags": [
+      508
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M40.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 40,
+    "field_flags": [
+      510
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M41.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 41,
+    "field_flags": [
+      512
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M43.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 43,
+    "field_flags": [
+      515
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M44.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 44,
+    "field_flags": [
+      517
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M45.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 45,
+    "field_flags": [
+      519
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M46.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 46,
+    "field_flags": [
+      521
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M49.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 49,
+    "field_flags": [
+      524
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M50.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 50,
+    "field_flags": [
+      523
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M51.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 51,
+    "field_flags": [
+      526
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M54.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 54,
+    "field_flags": [
+      529
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M56.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 56,
+    "field_flags": [
+      530
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M57.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 57,
+    "field_flags": [
+      531
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M58.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 58,
+    "field_flags": [
+      533
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M59.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 59,
+    "field_flags": [
+      535
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M60.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 60,
+    "field_flags": [
+      536
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M65.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 65,
+    "field_flags": [
+      542
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M66.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 66,
+    "field_flags": [
+      538
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M67.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 67,
+    "field_flags": [
+      540
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M68.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 68,
+    "field_flags": [
+      543
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M69.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 69,
+    "field_flags": [
+      544
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M70.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 70,
+    "field_flags": [
+      546
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M73.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 73,
+    "field_flags": [
+      547
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M75.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 75,
+    "field_flags": [
+      548
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M77.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 77,
+    "field_flags": [
+      554
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M78.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 78,
+    "field_flags": [
+      550
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M79.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 79,
+    "field_flags": [
+      551
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_M81.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana",
+    "room_number": 81,
+    "field_flags": [
+      552
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N02.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 2,
+    "field_flags": [
+      633
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N03.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 3,
+    "field_flags": [
+      634
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N04.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 4,
+    "field_flags": [
+      584
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N09.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 9,
+    "field_flags": [
+      635
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N12.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 12,
+    "field_flags": [
+      636
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N13.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 13,
+    "field_flags": [
+      637
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N14.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 14,
+    "field_flags": [
+      638
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N16.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 16,
+    "field_flags": [
+      639
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N17.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 17,
+    "field_flags": [
+      569
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N20.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 20,
+    "field_flags": [
+      640
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N21.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 21,
+    "field_flags": [
+      641
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N22.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 22,
+    "field_flags": [
+      642,
+      642
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N23.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 23,
+    "field_flags": [
+      643
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N24.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 24,
+    "field_flags": [
+      571
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N29.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 29,
+    "field_flags": [
+      644
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N30.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 30,
+    "field_flags": [
+      645
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N31.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 31,
+    "field_flags": [
+      646
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N32.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 32,
+    "field_flags": [
+      647,
+      647
+    ]
+  },
+  {
+    "map_name": "MAP_DUNG_N33.rf4m",
+    "obj_type": 47,
+    "map_type": "DUNG",
+    "region": "Rune Prana F7",
+    "room_number": 33,
+    "field_flags": [
+      586,
+      586
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_54.rf4m",
+    "obj_type": 47,
+    "map_type": "FIELD",
+    "region": "Autumn Road",
+    "room_number": 54,
+    "field_flags": [
+      606
+    ]
+  }
+]

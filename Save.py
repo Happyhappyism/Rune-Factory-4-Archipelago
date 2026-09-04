@@ -8,6 +8,7 @@ import logging
 import io
 from typing import TYPE_CHECKING, Dict, List, Optional, cast
 import zipfile
+import zlib
 #from . import RF4World
 from worlds.AutoWorld import World
 
@@ -165,5 +166,11 @@ def write_save_data(world:World):
             break
         save_data[0x1D97A + offset] = player_name_bytes[offset]
 
+    
+    save_crc = zlib.crc32(bytes(save_data[4:0x223a8])) & 0xFFFFFFFF
+    logger.warning(f"save crc: {hex(save_crc)}")
+    for x in range(4):
+        crc_byte = (save_crc >> (8 * x)) & 0xFF
+        save_data[x] = crc_byte
     return bytes(save_data)
 

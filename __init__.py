@@ -3,7 +3,8 @@ from typing import List, Dict, Any, ClassVar
 from BaseClasses import Region, Tutorial, MultiWorld, ItemClassification
 from worlds.AutoWorld import WebWorld, World
 from .Items import RF4Item, item_data_table, item_table, item_filler, item_filler_weight, trap_filler, trap_filler_weight, top_tools
-from .Locations import RF4Location, location_data_table, location_table, locked_locations,bugged_locs, request_list, top_requests, friend_data_table, tame_data_table, outfit_data_table
+from .Locations import RF4Location, location_data_table, location_table, locked_locations,bugged_locs, request_list, top_requests, \
+    friend_data_table, tame_data_table, outfit_data_table, chest_loc_list, barrier_data_table, box_data_table, search_data_table
 from .Options import RF4Options, rf4_options_group
 from .Regions import region_data_table
 from .Rules import *
@@ -28,11 +29,12 @@ import settings
 #import math
 import logging
 import json
+import zlib
 
 logger = logging.getLogger("Rune Factory 4")
-def launch_client():
+def launch_client(*args: str):
     from .Client import launch
-    launch_subprocess(launch, name="Rune Factory 4 Client")
+    launch_subprocess(launch, name="Rune Factory 4 Client", args=args)
 
 components.append(Component("Rune Factory 4 Client", "RF4Client", func=launch_client, component_type=Type.CLIENT,icon="Rune Factory 4",))
 icon_paths["Rune Factory 4"] = "ap:worlds.rune4/data/icon.png"
@@ -49,10 +51,10 @@ class RF4Settings(settings.Group):
         copy_to = None
         description = "Rune Factory 4 Special install directory"
 
-    class BMSPath(settings.UserFolderPath):
-        """Path to the QuickBMS directory"""
-        copy_to = None
-        description = "QuickBMS Folder"
+    # class BMSPath(settings.UserFolderPath):
+    #     """Path to the QuickBMS directory"""
+    #     copy_to = None
+    #     description = "QuickBMS Folder"
 
     class SavePath(settings.UserFolderPath):
         """Folder Path to Rune Factory 4 Saves"""
@@ -61,7 +63,7 @@ class RF4Settings(settings.Group):
 
 
     exe_file: RomFile = RomFile(RomFile.copy_to)
-    bms_path: BMSPath = BMSPath(BMSPath.copy_to)
+    #bms_path: BMSPath = BMSPath(BMSPath.copy_to)
     save_file_path: SavePath = SavePath(SavePath.copy_to)
     rf4s_install_path: BaseRF4Directory = BaseRF4Directory(BaseRF4Directory.copy_to)
 
@@ -239,12 +241,16 @@ class RF4World(World):
                 if data.tier >= self.options.max_ship_tier:
                     del duplicate_data_table[name]
                     continue
-        # if not self.options.requestsanity:
-        for name in request_list:
-            del duplicate_data_table[name]
-        # elif self.options.game_goal.value != 5:
-        #     for name in top_requests:
-        #         del duplicate_data_table[name]
+        if not self.options.requestsanity:
+            for name in request_list:
+                del duplicate_data_table[name]
+        elif self.options.game_goal.value != 5:
+            for name in top_requests:
+                del duplicate_data_table[name]
+
+        if not self.options.chestsanity:
+            for name in chest_loc_list:
+                del duplicate_data_table[name]
 
         max_friend = self.options.max_friendship.value
         friendsanity_type = self.options.friendsanity.value
@@ -265,6 +271,19 @@ class RF4World(World):
         for name, data in outfit_data_table.items():
             if not self.options.outfitsanity:
                 del duplicate_data_table[name]
+
+        for name, data in barrier_data_table.items():
+            if not self.options.barriersanity:
+                del duplicate_data_table[name]
+                        
+        for name, data in box_data_table.items():
+            if not self.options.boxsanity:
+                del duplicate_data_table[name]
+
+        for name, data in search_data_table.items():
+            if not self.options.searchsanity:
+                del duplicate_data_table[name]
+        
 
         for name in bugged_locs:
             if name in duplicate_data_table:
@@ -303,8 +322,14 @@ class RF4World(World):
             "Goal": self.options.game_goal.value,
             "GoalLoc": goal_loc,
             "Shipping_Percent": self.options.shipment_percentage_requirement.value,
+            "ChestSanity": self.options.chestsanity.value,
             "Friendsanity": self.options.friendsanity.value,
+            "RequestSanity": self.options.requestsanity.value,
             "Tamesanity": self.options.tamesanity.value,
+            "OutfitSanity": self.options.outfitsanity.value,
+            "BarrierSanity": self.options.barriersanity.value,
+            "BoxSanity": self.options.boxsanity.value,
+            "SearchSanity": self.options.searchsanity.value,
             "fortress_runespheres": self.options.fortress_runespheres.value,
             "runeprana_runespheres": self.options.runeprana_runespheres.value,
             "sphere_hunt_spheres": self.options.sphere_hunt_spheres.value,
@@ -315,7 +340,7 @@ class RF4World(World):
             "drop_rate_increase": self.options.drop_rate_increase.value,
             "open_airship": self.options.out_of_logic_airship.value,
             "gay_dating": self.options.gay_dating.value,
-            "start_weapon": self.starting_weapon,
+            "start_weapon": self.options.start_weapon.value,
             "progressive_weapon": self.options.progressive_weapon.value,
             "progressive_armor": self.options.progressive_armor.value,
             "progressive_accessory": self.options.progressive_accessory.value,

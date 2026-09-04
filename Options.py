@@ -168,6 +168,9 @@ class RecipeStart(DefaultOnToggle):
 class FreeDoctor(DefaultOnToggle):
     """Removes Jone's doctor fee"""
 
+class ChestSanity(DefaultOnToggle):
+    """Include Chests as locations"""
+
 class CropSanity(DefaultOnToggle):
     """Include normal Crop shipments as locations"""
 
@@ -208,8 +211,18 @@ class GrocerySanity (DefaultOnToggle):
     """Include Groceries, Breads, Fruits, Eggs, and Milk as shipments as locations"""
 
 class RequestSanity(Toggle):
-    """Include requests as locations (Currently not implemented, do not toggle on)"""
+    """Include requests as locations"""
 
+class BarrierSanity(Toggle):
+    """Include monster barriers as locations"""
+
+class BoxSanity(Toggle):
+    """Include boxes as locations"""
+
+class SearchSanity(Toggle):
+    """Misleading placeholder name for now, for now these are the one time pickup items in a few maps
+    Not recommended very RNG heavy"""
+    
 class MusicShuffle(Toggle):
     """Shuffle background music tracks"""
 
@@ -413,10 +426,14 @@ rf4_options_group = [
         GrocerySanity
     ]),
     OptionGroup("Other Sanities", [
+        ChestSanity,
         RequestSanity,
         Friendsanity,
         Petsanity,
         OutfitSanity,
+        BarrierSanity,
+        BoxSanity,
+        SearchSanity
     ]),
     OptionGroup("Location Limitations", [
         MaxItemTier,
@@ -452,6 +469,7 @@ rf4_options_group = [
     OptionGroup("Quality Of Life", [
         ExpMultiplier,
         SkillExpMultiplier,
+        FPMultiplier,
         DropRate,
         FreeDoctor,
         ShowEneLevels,
@@ -493,6 +511,7 @@ class RF4Options(PerGameCommonOptions):
     max_ship_tier: MaxItemTier
     max_sell_value: MaxSell
 
+    chestsanity: ChestSanity
     cropsanity: CropSanity
     fishsanity: Fishsanity
     craftsanity: CraftSanity
@@ -506,6 +525,9 @@ class RF4Options(PerGameCommonOptions):
     foragesanity: ForageSanity
     chemicsanity: ChemicSanity
     grocerysanity: GrocerySanity
+    barriersanity: BarrierSanity
+    boxsanity: BoxSanity
+    searchsanity: SearchSanity
 
     background_music: BGM
     shuffle_music: MusicShuffle

@@ -21,6 +21,7 @@ from io import BytesIO
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog
+import zlib
 
 logger = logging.getLogger("Rune Factory 4 Launcher")
 
@@ -37,6 +38,13 @@ def get_save_bytes(save_file_path, offset, byte_count=1):
         byte_list = f.read(byte_count)
     return byte_list
 
+def compute_crc(file_bytes, start=None, end=None):
+    if (start is not None) and (end is not None):
+        crc = zlib.crc32(bytes(file_bytes[start:end])) & 0xFFFFFFFF
+    else:
+        crc = zlib.crc32(bytes(file_bytes[0:len(file_bytes)])) & 0xFFFFFFFF
+    return crc
+
 def check_files():
     install_path = get_settings().rf4_settings.rf4s_install_path
     if not os.path.isdir(install_path):
@@ -49,17 +57,17 @@ def check_files():
     if not os.path.isdir(ap_install_path):
         os.mkdir(ap_install_path)
         
-    bms_path = get_settings().rf4_settings.bms_path
-    if not os.path.exists(bms_path):
-        bms_path= Utils.user_path(bms_path)
-        while not os.path.exists(f"{bms_path}//quickbms.exe"):
-            logger.warning(f"quickbms.exe not found")
-            bms_path= Utils.user_path(bms_path)
-    savetext_path = os.path.join(bms_path, "rf4save.txt")
-    if not os.path.exists(savetext_path):
-        savetext_bytes = pkgutil.get_data(__name__, f"data/rf4save.txt")
-        with open(savetext_path,"wb") as f:
-            f.write(savetext_bytes)
+    # bms_path = get_settings().rf4_settings.bms_path
+    # if not os.path.exists(bms_path):
+    #     bms_path= Utils.user_path(bms_path)
+    #     while not os.path.exists(f"{bms_path}//quickbms.exe"):
+    #         logger.warning(f"quickbms.exe not found")
+    #         bms_path= Utils.user_path(bms_path)
+    # savetext_path = os.path.join(bms_path, "rf4save.txt")
+    # if not os.path.exists(savetext_path):
+    #     savetext_bytes = pkgutil.get_data(__name__, f"data/rf4save.txt")
+    #     with open(savetext_path,"wb") as f:
+    #         f.write(savetext_bytes)
 
     save_file_path = get_settings().rf4_settings.save_file_path
     if not os.path.exists(save_file_path):
@@ -419,6 +427,7 @@ def modify_npc_params(install_path,ap_mod_path,drop_increase,monster_options, pl
 
 
 def patch_game_and_launch(install_path):
+    # Never called, unused
     exe_path = os.path.join(install_path,"RF4S.exe")
     patched_path = os.path.join(install_path,"RF4S_AP.exe")
     patch_bytes = pkgutil.get_data(__name__, f"data/base_patch.ips")
@@ -471,32 +480,33 @@ def patch_map_files(install_path,ap_mod_path):
 
 def process_new_save(ap_save_file):
     from datetime import date
-    save_file_name = Path(ap_save_file).name
+    ap_save_name = Path(ap_save_file).stem
+    ap_save_dir = Path(ap_save_file).parent
     
     save_file_path = get_settings().rf4_settings.save_file_path
+    
     logger.warning(f"ap_save_file = {ap_save_file}, save_file_path = {save_file_path} ")
-    bms_path = get_settings().rf4_settings.bms_path
-    save_slot = (ap_save_file.split(".")[0])[-2:]
-    shutil.copy(ap_save_file, bms_path)
-    command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", save_file_name]
-    subprocess.call(command_list, cwd=bms_path, shell=True)
+    save_slot = ap_save_name[-2:]
     new_file_name = f"rf4_s{save_slot}.sav"
-    os.rename(os.path.join(bms_path, save_file_name),os.path.join(bms_path, new_file_name))
+    renamed_save_path = os.path.join(ap_save_dir, new_file_name)
+    new_file_path = os.path.join(save_file_path, new_file_name)
+    shutil.copy(ap_save_file,renamed_save_path)
     try:
         today = date.today()
         os.rename(os.path.join(save_file_path, new_file_name), os.path.join(save_file_path, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
     except Exception as e:
         logger.warning(f"No existing save to backup: {e}")  
-    shutil.move(os.path.join(bms_path, new_file_name), os.path.join(save_file_path, new_file_name))
-    write_sys_save(bms_path, save_file_name, save_slot, save_file_path)
+    shutil.move(renamed_save_path,new_file_path)
+    write_sys_save(ap_save_name, save_slot, save_file_path)
     
     
 
-def write_sys_save(bms_path, save_file_name, save_slot, save_file_path):
-    bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
+def write_sys_save(save_file_name, save_slot, save_file_path):
+    #bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
     slot_idx = int(save_slot) - 1
     player_name = save_file_name.split("_")[3]
-    shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
+    sys_file_path = os.path.join(save_file_path,"rf4_sys.sav")
+    #shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
     save_offset = 0x4F0 + (slot_idx * 0xA4)
     name_offset = save_offset + 0x14
     farm_offset = save_offset + 0x27
@@ -514,7 +524,7 @@ def write_sys_save(bms_path, save_file_name, save_slot, save_file_path):
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     ])
     player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
-    with open(bms_sys_path, "r+b") as f:
+    with open(sys_file_path, "r+b") as f:
         f.seek(8)
         used_slots = int.from_bytes((f.read(4)),"little")
         mask = 1 << slot_idx
@@ -527,9 +537,17 @@ def write_sys_save(bms_path, save_file_name, save_slot, save_file_path):
         f.write(player_string)
         f.seek(farm_offset)
         f.write(farm_name_bytes)
-    command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", "rf4_sys.sav"]
-    subprocess.call(command_list, cwd=bms_path, shell=True)
-    shutil.move(bms_sys_path, os.path.join(save_file_path, "rf4_sys.sav"))
+
+        f.seek(8)
+        file_bytes = f.read()
+        crc = compute_crc(file_bytes)
+        logger.warning(f"crc: {hex(crc)}")
+        f.seek(4)
+        f.write(crc.to_bytes(4,'little'))
+    #command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", "rf4_sys.sav"]
+
+    #subprocess.call(command_list, cwd=bms_path, shell=True)
+    #shutil.move(bms_sys_path, os.path.join(save_file_path, "rf4_sys.sav"))
 
 def check_new_save():
     #save_path = get_settings().rf4_settings.save_file
@@ -539,9 +557,9 @@ def check_new_save():
         old_run_path = f"{install_path}//Archipelago//Seeds"
         if not os.path.isdir(old_run_path):
             os.mkdir(old_run_path)
-        bms_path = get_settings().rf4_settings.bms_path
-        if not os.path.exists(bms_path):
-            bms_path= Utils.user_path(bms_path)
+        #bms_path = get_settings().rf4_settings.bms_path
+        #if not os.path.exists(bms_path):
+        #    bms_path= Utils.user_path(bms_path)
         else:
             pobj = Path(ap_save_path)
             save_list = []

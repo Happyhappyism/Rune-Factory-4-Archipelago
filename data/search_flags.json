@@ -1,0 +1,129 @@
+[
+  {
+    "map_name": "MAP_DUNG_A04.rf4m",
+    "obj_type": 35,
+    "map_type": "DUNG",
+    "region": "Yokmir Forest",
+    "room_number": 4,
+    "field_flags": [
+      757,
+      758,
+      759
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_08.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 8,
+    "field_flags": [
+      762,
+      763,
+      764
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_14.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 14,
+    "field_flags": [
+      777,
+      778
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_15.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 15,
+    "field_flags": [
+      775,
+      776
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_16.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 16,
+    "field_flags": [
+      765,
+      766,
+      767,
+      768,
+      769,
+      770,
+      771,
+      772
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_17.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 17,
+    "field_flags": [
+      779
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_23.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Selphia Plains",
+    "room_number": 23,
+    "field_flags": [
+      773,
+      774
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_47.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Autumn Road",
+    "room_number": 47,
+    "field_flags": [
+      803
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_56.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Autumn Road",
+    "room_number": 56,
+    "field_flags": [
+      804,
+      805,
+      806
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_59.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Autumn Road",
+    "room_number": 59,
+    "field_flags": [
+      808,
+      809
+    ]
+  },
+  {
+    "map_name": "MAP_FIELD_81.rf4m",
+    "obj_type": 35,
+    "map_type": "FIELD",
+    "region": "Keeno Lake",
+    "room_number": 81,
+    "field_flags": [
+      780
+    ]
+  }
+]

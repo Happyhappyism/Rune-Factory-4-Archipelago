@@ -62,8 +62,9 @@ region_data_table: Dict[str, RF4RegionData] = {
         "Leon Karnak",
         "Autumn Road",
     ]),
-    "Leon Karnak": RF4RegionData(["Rune Prana","Leon Karnak (Boss)"]),
+    "Leon Karnak": RF4RegionData(["Rune Prana","Leon Karnak (Boss)","Forest Of Beginnings"]),
     "Leon Karnak (Boss)": RF4RegionData(),
+    "Forest Of Beginnings": RF4RegionData(),
     
 
     "Autumn Road": RF4RegionData([

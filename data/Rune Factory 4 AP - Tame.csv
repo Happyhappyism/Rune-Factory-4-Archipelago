@@ -1,5 +1,4 @@
 Name,ID,Region,Is Boss,Produce,Friend Item,Tier,APID,Drop,Drop Chance
-???,B2,Maya Road,,,,6,1C4500,Drop 1 + Drop 2 + Drop 3 + Drop 4,Drop Chance + Drop Chance + Drop Chance + Scarcity 4
 Airror,64,Maya Road,,,Wind Crystal,6,1C4502,Magic Crystal + Wind Crystal +  + ,80 + 120 + 0 + 0
 Ambrosia,E5,Yokmir Forest (Boss),Yes,,Ultra Toyherb,0,1C4503,Ambrosia's Thorns + Ambrosia's Thorns + Toyherb + Plant Stem,600 + 100 + 100 + 10
 Ancient Bone,DE,Revival Cave (Boss),,,,5,1C4504,Dragon Bones + Skull + Fish Fossil + Fish Fossil,500 + 100 + 120 + 50
@@ -149,7 +148,7 @@ Sealy,60,Sechs Territory,,,Fish Fossil,7,1C459A,Wet Scale + Fish Fossil + Can + 
 Sechs Golem,D4,Floating Empire - West (Boss),,,,8,1C459B,Golem Tablet + Golem Tablet + Platinum + Diamond,600 + 50 + 20 + 50
 Sechs Tank,F9,Floating Empire - East (Boss),,,,8,1C459C,Shiny Screw + Shiny Screw + Rusty Screw + Platinum,600 + 150 + 200 + 50
 Shadow Panther,4D,Obsidian Mansion,,,Fur,2,1C459D,Panther Claw + Fur + Quality Fur + ,160 + 10 + 70 + 0
-Shmooly,AF,Selphia Plains - East,,Fur (S),Lumber,4,1C459E,Wooly Furball + Clippers + Fur (S) + Fur (M),15 + 20 + 80 + 30
+Shmooly,AF,Selphia Plains - East,,Fur (S),Clippers,4,1C459E,Wooly Furball + Clippers + Fur (S) + Fur (M),15 + 20 + 80 + 30
 Silver Wolf,4F,Yokmir Cave,,Wolf Fang,Fur,3,1C459F,Wolf Fang + Fur + Quality Fur + ,160 + 80 + 40 + 0
 Siren,D7,Rune Prana F5 (Boss),Yes,,Great 4-Leaf Clover,10,1C45A0,Melody Bottle + Melody Bottle + Intelligencer + ,600 + 50 + 90 + 0
 Sky Fish,5F,Water Ruins,,,Fish Fossil,1,1C45A1,Fish Fossil + Fish Fossil + Can + Rare Can,60 + 40 + 60 + 1

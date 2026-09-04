@@ -1,8 +1,9 @@
 {
     "minimum_ap_version": "0.6.3", 
-    "world_version": "0.1.3",
+    "world_version": "0.2.0",
     "authors": ["Happyhappyism","Caidryn"],
     "version": 7,
     "compatible_version": 7,
-    "game": "Rune Factory 4"
+    "game": "Rune Factory 4",
+    "tracker": "https://github.com/rdpeake/rune4-poptracker"
 }

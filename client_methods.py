@@ -9,6 +9,7 @@ import traceback
 import base64
 import struct
 import random
+import math
 
 loggerExt = logging.getLogger("Rune Factory 4 Client Lib")
 
@@ -199,6 +200,30 @@ def reverse_bits(val, size):
         res |= (bit << (size-1 - i))
     return res
 
+def read_em_value(game_flags, offset, start_bit, bit_width):
+    start_offset = offset -  0x1E8C4
+    end_bit = start_bit + (bit_width - 1)
+    byte_size = 1
+    while end_bit >= 8:
+        end_bit -= 8
+        byte_size += 1
+    raw_value = int.from_bytes(game_flags[start_offset:start_offset+byte_size],'little')
+    mask_1 = (1 << (bit_width + start_bit)) | ((1 << bit_width + start_bit) - 1)
+    masked_value = raw_value & mask_1
+    masked_value >>= start_bit
+    em_value = reverse_bits(masked_value, bit_width)
+    print(f"start_offset: {hex(start_offset)}, end_bit: {end_bit}, byte_size: {byte_size}, raw_value:{hex(raw_value)}, mask_1:{mask_1:b}, masked_value:{hex(masked_value)}, em_value:{em_value}")
+    return em_value
+    
+
+def check_field_flag(game_flags, flag_id):
+    flag_offset = int(math.floor(flag_id / 8))
+    flag_byte = flag_offset + 0x200
+    flag_bit = flag_id - (flag_offset * 8)
+    flag_mask = 1 << flag_bit
+    flag_status = game_flags[flag_byte] & flag_mask
+    return bool(flag_status)
+
 def check_friendship_level(pm, friend_base):
     try:
         friend_dict = {}
@@ -297,12 +322,12 @@ def patch_game(ctx):
         else:
             pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
         
-        iris = pc_read_bit(ctx.pm, ctx.game_flags + 0x254, 0) & 2
+        iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 2
         if iris:
             pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
             pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
         
-        king_order = pc_read_bit(ctx.pm, ctx.game_flags + 0x254, 0) & 1
+        king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 1
         if king_order:
             pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
         
@@ -358,8 +383,8 @@ def set_airship_flags(ctx, airship_base, story_item):
 def process_items(ctx, item_list, start_index):
     
     try:
-        #loggerExt.warning(f"recv_adr: {hex(ctx.game_flags + RECV_INDEX)}")
-        ap_port = pc_read(ctx.pm, ctx.game_flags + RECV_INDEX)
+        #loggerExt.warning(f"recv_adr: {hex(ctx.game_flags_ptr + RECV_INDEX)}")
+        ap_port = pc_read(ctx.pm, ctx.game_flags_ptr + RECV_INDEX)
         recv_index = ap_port & 0xFFFF
         #loggerExt.warning(f"Processing items: {item_list} from {start_index} with recv_idx: {recv_index}")
         new_idx = start_index
@@ -370,7 +395,7 @@ def process_items(ctx, item_list, start_index):
             item_id = netItem.item
             ctx.recieved_items.add(item_id_to_name[item_id])
             new_idx += 1
-            loggerExt.warning(f"item:{item_id_to_name[item_id]} start_idx: {start_index}, new_idx {new_idx}, recv_idx: {recv_index}")
+            #loggerExt.warning(f"item:{item_id_to_name[item_id]} start_idx: {start_index}, new_idx {new_idx}, recv_idx: {recv_index}")
             if recv_index >= new_idx:
                 #loggerExt.warning(f"Skipping {item_id_to_name[item_id]}")
                 continue
@@ -379,12 +404,12 @@ def process_items(ctx, item_list, start_index):
                 item_data = item_data_table[story_flag_items[item_id]]
 
                 if item_data.set_byte is not None:
-                    pc_set_bit(ctx.pm, ctx.game_flags + item_data.set_byte, item_data.set_bit)
+                    pc_set_bit(ctx.pm, ctx.game_flags_ptr + item_data.set_byte, item_data.set_bit)
                     if item_id == 0x1C3B01: # Obsidian Bridge
-                        pc_set_bit(ctx.pm, ctx.game_flags + 0x209, 2)
-                        pc_set_bit(ctx.pm, ctx.game_flags + 0x209, 1, reset=True)
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x209, 2)
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x209, 1, reset=True)
                 if item_data.reset_byte is not None:
-                    pc_set_bit(ctx.pm, ctx.game_flags + item_data.reset_byte, item_data.reset_bit, reset=True)
+                    pc_set_bit(ctx.pm, ctx.game_flags_ptr + item_data.reset_byte, item_data.reset_bit, reset=True)
                 # Handle Airship flags
                 airship_base = ctx.ExpGainAd + 0x2C
                 if story_flag_items[item_id] in airship_flags:
@@ -429,7 +454,7 @@ def process_items(ctx, item_list, start_index):
                     pc_set_bit(ctx.pm, ctx.ExpGainAd + item_data.reset_byte, item_data.reset_bit, reset=True)
             elif item_id in special_items:
                 #try:
-                #game_flags = pc_read_bytes(ctx.pm, ctx.game_flags, 0x33F)
+                #game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
                 name = special_items[item_id]
                 #loggerExt.warning(f"{name}")
                 match name:
@@ -451,7 +476,7 @@ def process_items(ctx, item_list, start_index):
                         
                     
                     case "Progressive Farm":
-                        farm_org = pc_read(ctx.pm, ctx.game_flags + 0x7E)
+                        farm_org = pc_read(ctx.pm, ctx.game_flags_ptr + 0x7E)
                         current_farms = reverse_bits(((farm_org & 0x1C) >> 2), 3)
                         current_farms += 1
                         if current_farms > 4:
@@ -459,13 +484,13 @@ def process_items(ctx, item_list, start_index):
                         new_farms = reverse_bits((current_farms), 3)
                         farm_bits = new_farms << 2
                         farm_byte = (farm_org & 0xE3) | farm_bits
-                        pc_writeb(ctx.pm, ctx.game_flags + 0x7E, farm_byte)
+                        pc_writeb(ctx.pm, ctx.game_flags_ptr + 0x7E, farm_byte)
 
                     case "Progressive Barn":
-                        barn_int = pc_read(ctx.pm, ctx.game_flags + 0x66)
+                        barn_int = pc_read(ctx.pm, ctx.game_flags_ptr + 0x66)
                         #barn_int = struct.unpack_from('<I', game_flags, 0x66)[0]
                         new_barns = expand_barns(barn_int)
-                        pc_write(ctx.pm, ctx.game_flags + 0x66, new_barns)
+                        pc_write(ctx.pm, ctx.game_flags_ptr + 0x66, new_barns)
                         
                     case "Popularity":
                         friend_levels = check_friendship_level(ctx.pm, ctx.friend_ptr)
@@ -481,25 +506,25 @@ def process_items(ctx, item_list, start_index):
                         pc_write(ctx.pm, ctx.moneyPtr + 0xC, 0xC350) # Give 50000 fertilizer
                     
                     case "King's Order":
-                        pc_set_bit(ctx.pm, ctx.game_flags + 0x254,0)
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,0)
                         pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
                     
                     case "Iris's Song":
-                        pc_set_bit(ctx.pm, ctx.game_flags + 0x254,1)
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,1)
                         pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90]))
 
                     
                         #pc_writeb(p, ctx.processes_base + 0x21CE13, 0x00)
                     case "Rune Sphere":
-                        sphere_have = pc_readb(ctx.pm, ctx.game_flags + 0x1F8)
+                        sphere_have = pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
                         sphere_have += 1
                         ctx.rune_spheres = sphere_have
                         #loggerExt.warning(f"sphere_have: {sphere_have}, sphere_need: {ctx.fortress_sphere_need}")
-                        pc_writeb(ctx.pm, ctx.game_flags + 0x1F8, sphere_have)
+                        pc_writeb(ctx.pm, ctx.game_flags_ptr + 0x1F8, sphere_have)
                         if sphere_have >= ctx.fortress_sphere_need:
                             pc_set_bit(ctx.pm, ctx.ExpGainAd + 0x2D, 3) # Floating Fortress
                         if sphere_have >= ctx.prana_sphere_need:
-                            pc_set_bit(ctx.pm, ctx.game_flags + 0x21E, 4, reset=True)
+                            pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x21E, 4, reset=True)
             
             elif item_id in trap_items:
                 name = trap_items[item_id]
@@ -577,6 +602,6 @@ def process_items(ctx, item_list, start_index):
             #loggerExt.warning(f"writing outport:{recv_index} -> {new_idx}")
             outport = (ap_port & 0xFFFF0000) | new_idx
             #loggerExt.warning(f"Finished items: new_idx: {new_idx}, recv_idx: {recv_index}, start_idx: {start_index}")
-            pc_write(ctx.pm, ctx.game_flags + RECV_INDEX, outport)
+            pc_write(ctx.pm, ctx.game_flags_ptr + RECV_INDEX, outport)
     except Exception as e:
         loggerExt.critical(f"Error processing items {e}\n{traceback.format_exc()}")
