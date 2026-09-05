@@ -24,6 +24,7 @@ from tkinter import filedialog
 import zlib
 
 logger = logging.getLogger("Rune Factory 4 Launcher")
+save_file_path_raw = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
 
 def get_save_value(save_file_path, offset, byte_count=1):
     with open(save_file_path,'rb') as f:
@@ -46,6 +47,9 @@ def compute_crc(file_bytes, start=None, end=None):
     return crc
 
 def check_files():
+    manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
+    manifest_json = json.loads(manifest_file)
+    logger.warning(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
     install_path = get_settings().rf4_settings.rf4s_install_path
     if not os.path.isdir(install_path):
         install_path= Utils.user_path(install_path)
@@ -69,11 +73,12 @@ def check_files():
     #     with open(savetext_path,"wb") as f:
     #         f.write(savetext_bytes)
 
-    save_file_path = get_settings().rf4_settings.save_file_path
-    if not os.path.exists(save_file_path):
-        save_file_path = Utils.user_path(save_file_path)
-        while not os.path.exists(f"{save_file_path}//rf4_sys.sav"):
-            save_file_path= Utils.user_path(save_file_path)
+    
+    if not os.path.exists(save_file_path_raw):
+        logger.warning(f"Save file path not found")
+        #save_file_path = Utils.user_path(save_file_path)
+        #while not os.path.exists(f"{save_file_path}//rf4_sys.sav"):
+        #    save_file_path= Utils.user_path(save_file_path)
 
     if not os.path.isdir(f"{install_path}//Bundle//mods"):
         os.mkdir(f"{install_path}//Bundle//mods")
@@ -483,21 +488,20 @@ def process_new_save(ap_save_file):
     ap_save_name = Path(ap_save_file).stem
     ap_save_dir = Path(ap_save_file).parent
     
-    save_file_path = get_settings().rf4_settings.save_file_path
     
-    logger.warning(f"ap_save_file = {ap_save_file}, save_file_path = {save_file_path} ")
+    logger.warning(f"ap_save_file = {ap_save_file}, save_file_path = {save_file_path_raw} ")
     save_slot = ap_save_name[-2:]
     new_file_name = f"rf4_s{save_slot}.sav"
     renamed_save_path = os.path.join(ap_save_dir, new_file_name)
-    new_file_path = os.path.join(save_file_path, new_file_name)
+    new_file_path = os.path.join(save_file_path_raw, new_file_name)
     shutil.copy(ap_save_file,renamed_save_path)
     try:
         today = date.today()
-        os.rename(os.path.join(save_file_path, new_file_name), os.path.join(save_file_path, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
+        os.rename(os.path.join(save_file_path_raw, new_file_name), os.path.join(save_file_path_raw, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
     except Exception as e:
         logger.warning(f"No existing save to backup: {e}")  
     shutil.move(renamed_save_path,new_file_path)
-    write_sys_save(ap_save_name, save_slot, save_file_path)
+    write_sys_save(ap_save_name, save_slot, save_file_path_raw)
     
     
 

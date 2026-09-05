@@ -64,7 +64,7 @@ class RF4Settings(settings.Group):
 
     exe_file: RomFile = RomFile(RomFile.copy_to)
     #bms_path: BMSPath = BMSPath(BMSPath.copy_to)
-    save_file_path: SavePath = SavePath(SavePath.copy_to)
+    #save_file_path: SavePath = SavePath(SavePath.copy_to)
     rf4s_install_path: BaseRF4Directory = BaseRF4Directory(BaseRF4Directory.copy_to)
 
 

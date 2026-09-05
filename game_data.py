@@ -1,4 +1,3 @@
-import copy
 bundle_manifest = {
     "rf3mc.eng": [0x7099D94, 0x4E3C48],
     "rf3ParamMagic.bin": [0xE0E51FBB, 0x10204],
@@ -10,7 +9,6 @@ game_consts = {
     "total shipments": 1076,
 }
 friendship_ranks = {
-    1:  0x10,
     2:  0x2A,
     3:  0x53,
     4:  0x8C,
@@ -21,6 +19,7 @@ friendship_ranks = {
     9:  0x3F1,
     10: 0x541
 }
+
 crafting_level_offsets = {
     "Cooking Level Up":     0x88,
     "Forging Level Up":     0x90,

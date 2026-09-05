@@ -17,7 +17,7 @@ class Goal(Choice):
     option_runeprana = 2
     option_shipment_percentage = 3
     option_nationized_baths = 4
-    #option_eliza = 5
+    option_eliza = 5
     option_mariage = 6
     option_runehunt = 7
     option_homeowner = 8
