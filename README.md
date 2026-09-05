@@ -18,6 +18,8 @@ It should look something like the picture below.
 - Run the RF4S Client from the AP launcher. This will prompt you for the paths to your install folder, the BMS folder (which if you followed this guide is probably inside of your install folder), and your RF4S saves folder, which can usually be found at C:\Users(your username here)\AppData\Roaming\Rune Factory 4 Special
 - Once given the right paths, the client will automatically generate your save, back up the save it replaces, and open RF4S. From there, you need only connect to your server and play the game.
 
+## Additional Setup for Linux Users
+https://github.com/arryndoestech/Rune-Factory-4-Linux-Archipelago
 
 # Randomizations
 ## Goals
