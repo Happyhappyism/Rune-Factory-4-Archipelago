@@ -586,8 +586,8 @@ class RF4Client(CommonContext):
                     loggerExt.warning(f"Error recieving items {e}\n{traceback.format_exc()}")
                     self.recv_item_storage[start_index] = item_list
                     try:
-                        processes_base = pc_get_proc_base(pid)
-                        if processes_base:
+                        self.processes_base = pc_get_proc_base(pid)
+                        if self.processes_base:
                             self.setup_pointers()
                     except Exception as e:
                         loggerExt.critical(f"Could not find RF4S process {e}\n{traceback.format_exc()}")
@@ -721,8 +721,8 @@ class RF4Client(CommonContext):
                 if (seed_check != self.seed) or (seed_check == 0) or (self.seed is None):
                     if seed_check != 0:
                         logger.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(self.seed)}, Found: {hex(seed_check)}")
-                    processes_base = pc_get_proc_base(pid)
-                    if processes_base:
+                    self.processes_base = pc_get_proc_base(pid)
+                    if self.processes_base:
                         self.setup_pointers()
                     return False
                 else:
@@ -738,7 +738,10 @@ class RF4Client(CommonContext):
 
 async def game_watcher(ctx: RF4Client):
     try:
-        processes_base = ctx.processes_base
+        while not (ctx.processes_base) and not ctx.exit_event.is_set():
+            loggerExt.warning(f"Can not find process, attempting again")
+            ctx.processes_base = pc_get_proc_base(pid)
+            await asyncio.sleep(10)
         loggerExt.warning(f"Setting up first pointers")
         ctx.setup_pointers()
         # Old AOB scans, was inefficient delete later
@@ -994,8 +997,8 @@ async def game_watcher(ctx: RF4Client):
                     ctx.finished_game = True
             except TypeError:
                 try:
-                    processes_base = pc_get_proc_base(pid)
-                    if processes_base:
+                    ctx.processes_base = pc_get_proc_base(pid)
+                    if ctx.processes_base:
                         loggerExt.warning(f"Error {e}\n {traceback.format_exc()}")
                         ctx.setup_pointers()
                 except Exception as e:

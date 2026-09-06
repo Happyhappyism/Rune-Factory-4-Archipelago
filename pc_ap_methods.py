@@ -80,13 +80,11 @@ def pc_read_bit(pm, adr, bit):
         logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
 
 def pc_read_ptr(pm, adr):
-    #try:
-        #pm = pymem.Pymem(proc)
-    value = pm.read_longlong(adr)
-        #pm.close_process()
-    return value
-    #except Exception as e:
-    #    logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
+    try:
+        value = pm.read_longlong(adr)
+        return value
+    except Exception as e:
+        logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
 
 def pc_read_bytes(pm, adr, size):
     try:

@@ -485,69 +485,78 @@ def patch_map_files(install_path,ap_mod_path):
 
 def process_new_save(ap_save_file):
     from datetime import date
-    ap_save_name = Path(ap_save_file).stem
-    ap_save_dir = Path(ap_save_file).parent
-    
-    
-    logger.warning(f"ap_save_file = {ap_save_file}, save_file_path = {save_file_path_raw} ")
-    save_slot = ap_save_name[-2:]
-    new_file_name = f"rf4_s{save_slot}.sav"
-    renamed_save_path = os.path.join(ap_save_dir, new_file_name)
-    new_file_path = os.path.join(save_file_path_raw, new_file_name)
-    shutil.copy(ap_save_file,renamed_save_path)
     try:
-        today = date.today()
-        os.rename(os.path.join(save_file_path_raw, new_file_name), os.path.join(save_file_path_raw, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
+        ap_save_name = Path(ap_save_file).stem
+        ap_save_dir = Path(ap_save_file).parent
+        
+        
+        logger.warning(f"ap_save_file = {ap_save_file}, save_file_path = {save_file_path_raw} ")
+        save_slot = ap_save_name[-2:]
+        new_file_name = f"rf4_s{save_slot}.sav"
+        renamed_save_path = os.path.join(ap_save_dir, new_file_name)
+        new_file_path = os.path.join(save_file_path_raw, new_file_name)
+        shutil.copy(ap_save_file,renamed_save_path)
+        try:
+            today = date.today()
+            os.rename(os.path.join(save_file_path_raw, new_file_name), os.path.join(save_file_path_raw, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
+        except Exception as e:
+            logger.warning(f"No existing save to backup: {e}")  
+        shutil.move(renamed_save_path,new_file_path)
+        write_sys_save(ap_save_name, save_slot)
     except Exception as e:
-        logger.warning(f"No existing save to backup: {e}")  
-    shutil.move(renamed_save_path,new_file_path)
-    write_sys_save(ap_save_name, save_slot, save_file_path_raw)
+        logger.warning(f"Error processing new save: {e}\n{traceback.format_exc()}")  
     
     
 
-def write_sys_save(save_file_name, save_slot, save_file_path):
-    #bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
-    slot_idx = int(save_slot) - 1
-    player_name = save_file_name.split("_")[3]
-    sys_file_path = os.path.join(save_file_path,"rf4_sys.sav")
-    #shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
-    save_offset = 0x4F0 + (slot_idx * 0xA4)
-    name_offset = save_offset + 0x14
-    farm_offset = save_offset + 0x27
-    base_save_bytes = bytes([
-    0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80, 
-    0x00, 0x00, 0x00, 0x00,])
-    farm_name_bytes = bytes([
-    0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61, 
-    0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    ])
-    player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
-    with open(sys_file_path, "r+b") as f:
-        f.seek(8)
-        used_slots = int.from_bytes((f.read(4)),"little")
-        mask = 1 << slot_idx
-        new_slots = used_slots | mask
-        f.seek(8)
-        f.write(new_slots.to_bytes(4,'little'))
-        f.seek(save_offset)
-        f.write(base_save_bytes)
-        f.seek(name_offset)
-        f.write(player_string)
-        f.seek(farm_offset)
-        f.write(farm_name_bytes)
+def write_sys_save(save_file_name, save_slot):
+    try:
+        sys_file_path = os.path.join(save_file_path_raw,f"rf4_sys.sav")
+        shutil.copy(sys_file_path, os.path.join(save_file_path_raw, f"rf4_sys.backup"))
+        #bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
+        slot_idx = int(save_slot) - 1
+        player_name = save_file_name.split("_")[3]
+        
+        #shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
+        save_offset = 0x4F0 + (slot_idx * 0xA4)
+        name_offset = save_offset + 0x14
+        farm_offset = save_offset + 0x27
+        base_save_bytes = bytes([
+        0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80, 
+        0x00, 0x00, 0x00, 0x00,])
+        farm_name_bytes = bytes([
+        0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61, 
+        0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        ])
+        player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
+        with open(sys_file_path, "r+b") as f:
+            f.seek(8)
+            used_slots = int.from_bytes((f.read(4)),"little")
+            mask = 1 << slot_idx
+            new_slots = used_slots | mask
+            f.seek(8)
+            f.write(new_slots.to_bytes(4,'little'))
+            f.seek(save_offset)
+            f.write(base_save_bytes)
+            f.seek(name_offset)
+            f.write(player_string)
+            f.seek(farm_offset)
+            f.write(farm_name_bytes)
 
-        f.seek(8)
-        file_bytes = f.read()
-        crc = compute_crc(file_bytes)
-        logger.warning(f"crc: {hex(crc)}")
-        f.seek(4)
-        f.write(crc.to_bytes(4,'little'))
+            f.seek(8)
+            file_bytes = f.read()
+            crc = compute_crc(file_bytes)
+            logger.warning(f"sys crc: {hex(crc)}")
+            f.seek(4)
+            f.write(crc.to_bytes(4,'little'))
+    except Exception as e:
+        os.rename(os.path.join(save_file_path_raw, f"rf4_sys.backup"), sys_file_path)
+        logger.warning(f"Error writing sys save file: {e}\n{traceback.format_exc()}")  
     #command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", "rf4_sys.sav"]
 
     #subprocess.call(command_list, cwd=bms_path, shell=True)
@@ -556,6 +565,7 @@ def write_sys_save(save_file_name, save_slot, save_file_path):
 def check_new_save():
     #save_path = get_settings().rf4_settings.save_file
     try:
+        logger.warning(f"Save file path: {save_file_path_raw}")
         install_path = get_settings().rf4_settings.rf4s_install_path
         ap_save_path = f"{install_path}//Archipelago"
         old_run_path = f"{install_path}//Archipelago//Seeds"
