@@ -4,33 +4,39 @@ import sys
 import psutil
 import logging
 import traceback
+import ctypes
 
 # PC Memory Methods
 logging.getLogger("pymem").setLevel(logging.CRITICAL)
 logger = logging.getLogger("pc_ap_methods")
 
 
+def pc_get_proc_base(pm):
+    pbi = (ctypes.c_void_p * 6)()
+    ctypes.WinDLL("ntdll").NtQueryInformationProcess(ctypes.c_void_p(pm.process_handle), 0, pbi, ctypes.sizeof(pbi), None)
+    base = pm.read_ulonglong(pbi[1] + 0x10)             # PEB.ImageBaseAddress
+    return base
 
-def pc_get_proc_base(proc):
+# def pc_get_proc_base(pm):
+#     try:
+#         #pm = pymem.Pymem(proc)
+#         module = pymem.process.module_from_name(pm.process_handle, proc)
+#         if module:
+#             base_address = module.lpBaseOfDll
+#         else:
+#             base_address = pm.process_base.lpBaseOfDll 
+#         return base_address
+
+#     except Exception as e:
+#         logger.critical(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+#         return None
+
+def pc_check_process(pm):
     try:
-        pm = pymem.Pymem(proc)
-        module = pymem.process.module_from_name(pm.process_handle, proc)
-        if module:
-            base_address = module.lpBaseOfDll
+        if pm:
+            return True
         else:
-            base_address = pm.process_base.lpBaseOfDll 
-        pm.close_process()
-        return base_address
-
-    except Exception as e:
-        logger.critical(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
-        return None
-
-def pc_check_process(proc):
-    try:
-        pm = pymem.Pymem(proc)
-        pm.close_process()
-        return True
+            return False
     except Exception as e:
         logger.critical(f"Process not found {e}")
         return False

@@ -1,6 +1,8 @@
 from .pc_ap_methods import *
 from NetUtils import NetworkItem, ClientStatus
 from .game_data import *
+from .Locations import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
+box_flag_data, search_flag_data
 from .Items import item_data_table, wep_cats, story_flag_items, order_flag_items,special_items, perm_items, physical_items, item_id_to_name, trap_items, progressive_items
 from .game_routines import *
 from .Locations import recipe_tiering
@@ -18,35 +20,23 @@ RECV_INDEX = 0x1FC
 
 def find_free_inv_slot(inv_bytes,inv_ptr):
     try:
-        #loggerExt.warning(f"inv_ptr {hex(inv_ptr)}")
         offset = 0
         slot_item = int.from_bytes((inv_bytes[offset: offset+2]),"little")
-        #loggerExt.warning(f"slot item:{slot_item} at {hex(inv_ptr + offset)}")
         while (slot_item) != 0:
             offset += 0x30
             slot_item = int.from_bytes((inv_bytes[offset: offset+2]),"little")
-            #loggerExt.warning(f"slot item:{slot_item} at {hex(inv_ptr + offset)}")
             if offset >= len(inv_bytes):
-                #loggerExt.warning(f"No free slot found")
                 return None
-        #loggerExt.warning(f"Found free slot at {hex((inv_ptr) + offset)}")
         return (inv_ptr) + offset
     except Exception as e:
         loggerExt.warning(f"Error finding free slot {e}\n{traceback.format_exc()}")
-    #     ptr_check = pc_read_ptr(p, offset + 0x20)
-    #     if  ptr_check == inv_ptr - 0x18:
-    #         offset += 0x30
-    #         continue
-    #     else:
-    #         return None
-    # return offset
+
 
 def get_inv_bytes(pm, inv_ptr):
     try:
         entry_count = pc_read(pm, inv_ptr-0x10) & 0xFFFF
         read_size = entry_count * 0x30
         inv_bytes = pc_read_bytes(pm, inv_ptr, read_size)
-        #loggerExt.warning(f"read_size {read_size}, entry_count: {entry_count}, inv_ptr: {hex(inv_ptr)}")
         return inv_bytes
     except Exception as e:
         loggerExt.warning(f"Error getting inventory bytes {e}\n{traceback.format_exc()}")
@@ -60,19 +50,11 @@ def give_furniture(pm, processes_base, furniture,mapid,xpos,ypos):
         furniture_id= furniture
     offset = 0# + 0xE95D60
     slot_id = 0
-    #loggerExt.warning(f"furniture offset:{offset}")
     while (furniture_block[offset+1] != 0x00):
         offset += 8
         slot_id +=1
         if offset >= len(furniture_block):
             return None
-    # while ((pc_readb(pm, offset+1) != 0x00) and slot_id < 65):
-    #     loggerExt.warning(f"furniture offset:{offset}")
-    #     offset += 8
-    #     slot_id +=1
-    #     if slot_id >= 65:
-    #         return None
-    #loggerExt.warning(f"furniture offset:{offset}")
     map_bytes = mapid.to_bytes(1, byteorder='little')
     place_bytes = (0x80).to_bytes(1, byteorder='little')
     funiture_bytes = (furniture_id).to_bytes(2, byteorder='little')
@@ -87,18 +69,14 @@ def give_progressive_item(ctx, item_type, progress_offset, tier_base):
         progress_counter = pc_readb(ctx.pm, ctx.processes_base + 0xE90296 + progress_offset)
         tier_level = (progress_counter) + tier_base
         progress_counter += 1
-        #loggerExt.warning(f"tier_level:{tier_level}")
         if tier_level > 11:
             tier_level = 11
         while not recipe_tiering.get(item_type, {}).get(tier_level):
             tier_level += 1
             if tier_level > 20:
                 break
-        #loggerExt.warning(f"recipe_tiering:{recipe_tiering}")
         item_name = random.choice(recipe_tiering[item_type][tier_level])
-        #oggerExt.warning(f"item_name:{item_name}")
         item_idx = item_data_table[item_name].item_id
-        #loggerExt.warning(f"progressive item_idx:{item_idx}")
         give_item(ctx, item_idx)
         pc_writeb(ctx.pm, ctx.processes_base + 0xE90296 + progress_offset, progress_counter)
     except Exception as e:
@@ -114,7 +92,6 @@ def give_item(ctx, item_idx):
             item_amount = 1
             amount_mask = item_amount << 11
             item_write = item_idx | amount_mask
-            #loggerExt.warning(f"Getting item, storage base {hex(inv_ptr)}, free-slot: {hex(free_slot)}, item_idx: {hex(item_idx)}, amount: {hex(item_amount)}, amount_mask: {hex(amount_mask)}, item_write: {hex(item_write)}")
             pc_write(ctx.pm, free_slot, item_write)
         else: # Free slot not found
             loggerExt.warning(f"Could not get item: {item_idx}")
@@ -153,7 +130,6 @@ def get_inv_ptr(inventory, pm, processes_base):
     inventory_pointers = pc_read_ptr(pm, processes_base + 0xE6EED0)
     inventory_base = pc_read_ptr(pm, inventory_pointers + ptr_offset)
     inventory_first_slot = pc_read_ptr(pm, inventory_base)
-    #loggerExt.warning(f"step 1: {inventory_pointers}, step 2: {inventory_base}, step 3: {inventory_first_slot}")
     return inventory_first_slot
     
 
@@ -263,44 +239,30 @@ def expand_barns(barn_int):
         rebuild |= 5 << ((3 * rb)+ 2)
         count += 1
     rebuild |= barn_lvl_restore << ((3 *(count) )+2)
-    #loggerExt.warning(f"rebuild: {hex(rebuild)} barn_count {barn_count} barn_lvl: {barn_lvl} barn int: {hex(barn_int)}")
     return rebuild
 
 def varify_patches(ctx):
-    #loggerExt.warning(f"doctor_option: {ctx.doctor_option}, skill_exp_multi: {ctx.skill_exp_multi}, ctx.exp_multi: {ctx.exp_multi}")
     if ctx.doctor_option:
         byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x20D97F)
-        #loggerExt.warning(f"doctor_option = {byte_val}")
         if byte_val != 0x90:
-            #loggerExt.warning(f"doctor_option patch not active")
             patch_game(ctx)
     elif ctx.skill_exp_multi:
         byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB3E73)
-        #loggerExt.warning(f"skill_exp_multi = {byte_val}")
         if byte_val != 0x48:
-            #loggerExt.warning(f"skill_exp_multipatch not active")
             patch_game(ctx)
     elif ctx.exp_multi:
         byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB2874)
-        #loggerExt.warning(f"exp_multi = {byte_val}")
         if  byte_val != 0x48:
-            #loggerExt.warning(f"exp_multi patch not active")
             patch_game(ctx)
     byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x1F464B)
     if byte_val == 0xC1:
-        #loggerExt.warning(f"inject = {byte_val}")
         if ctx.extra_routine_ptr:
             pc_free_mem(ctx.pm,ctx.extra_routine_ptr)
-        #loggerExt.warning(f"injects not active")
         patch_injects(ctx)
 
 def patch_game(ctx):
     # Instead of a base patch, the client writes all patches directly to memory here
     try:
-        #loggerExt.warning(f"options: {options}")
-        # doctor_option = bool(ctx.seed_options[0] & 0x2)
-        # exp_multi = ctx.seed_options[1] & 3
-        # skill_exp_multi = (ctx.seed_options[1] & 0xC) >> 2
 
         #have_king_order = ctx.seed_options[0xA] & 1
         for offset, patch in basic_patches.items():
@@ -351,7 +313,7 @@ def patch_injects(ctx):
     ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
     logger.warning(f"ctx.extra_routine_ptr: {hex(ctx.extra_routine_ptr)}")
     MageEngine_GetStoragePath = ctx.processes_base+0x254D90
-    path_str = (ctx.seed_f.ap_save_seed_final_path).replace("\\","/")
+    path_str = (ctx.seed_f.ap_save_seed_path).replace("\\","/")
     pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
 
     pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x200, airship_mod())
@@ -613,3 +575,140 @@ def process_items(ctx, item_list, start_index):
             pc_write(ctx.pm, ctx.game_flags_ptr + RECV_INDEX, outport)
     except Exception as e:
         loggerExt.critical(f"Error processing items {e}\n{traceback.format_exc()}")
+
+def check_locations(ctx):
+    sending = []
+    shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
+# Check Shipment Locations
+    ctx.ship_count = 0
+    for loc_id, loc_data in shipment_data.items():
+
+        byte_slice = shipment_bytes[loc_data[0]: loc_data[0]+4]
+        shipment_val = mask_shipment(byte_slice, loc_data[1])
+        if shipment_val:
+            ctx.ship_count += 1
+            sending.append(loc_id)
+
+    # Check Chest Locations
+    if ctx.chestsanity:
+        for loc_id, loc_data in chest_data.items():
+            offset = loc_data[0]
+            mask = loc_data[1]
+            try:
+                if ctx.game_flags[offset] & mask:
+                    sending.append(loc_id)
+            except Exception as e:
+                loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
+
+    # Check Request Locations
+    #prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
+    if ctx.requestsanity:
+        for loc_id, loc_data in request_data.items():
+            offset = loc_data[0]
+            mask = loc_data[1]
+            prog = loc_data[2]
+            try:
+                if offset:
+                    if ctx.game_flags[offset] & mask:
+                        sending.append(loc_id)
+                elif prog:
+
+                    prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
+                    if prog_level >= prog:
+                        sending.append(loc_id)
+                    #logger.warning(f"prog_level: {prog_level}")
+                    # for early tutorial requests that don't set specific flags
+
+            except Exception as e:
+                loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
+
+    # Check Friendsanity Locations
+    if ctx.friendsanity == 1:
+        friend_levels = check_friendship_level(ctx.pm, ctx.friend_ptr)
+        for name, index in friendsanity_data.items():
+            for level in range(0,10):
+                loc_id = 0x1C4300 + ((index * 0x10) + level)
+                if friend_levels[name][0] > level:
+                    sending.append(loc_id)
+
+    # Check Tamesanity Locations
+    if ctx.tamesanity:
+        monster_bytes = pc_read_bytes(ctx.pm, ctx.monster_ptr, 0x1C20)
+        for monster_slot in range(0, 0x1C20, 0x24):
+            monster_id = monster_bytes[monster_slot+0x14]
+            if monster_id != 0 and (monster_id in tame_data):
+                loc_id = tame_data[monster_id]
+                sending.append(loc_id)
+
+    # Check Outfitsanity Locations
+    if ctx.outfitsanity:
+        for loc_id, data in outfit_game_data.items():
+            offset = data[0]
+            mask = data[1]
+            try:
+                if ctx.game_flags[offset] & mask:
+                    sending.append(loc_id)
+            except Exception as e:
+                loggerExt.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
+
+    # Check Barriersanity Locations
+    if ctx.barriersanity:
+        for loc_id, flag_id in barrier_flag_data.items():
+            if check_field_flag(ctx.game_flags, flag_id):
+                sending.append(loc_id)
+
+    # Check Boxsanity Locations
+    if ctx.boxsanity:
+        for loc_id, flag_id in box_flag_data.items():
+            if check_field_flag(ctx.game_flags, flag_id):
+                sending.append(loc_id)
+
+    # Check Boxsanity Locations
+    if ctx.searchsanity:
+        for loc_id, flag_id in search_flag_data.items():
+            if check_field_flag(ctx.game_flags, flag_id):
+                sending.append(loc_id)
+
+    return sending
+
+def check_goals(ctx):
+    story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
+    game_clear = False
+    #loggerExt.warning(f"story_state: {story_state}, game_goal: {ctx.game_goal}")
+    match ctx.game_goal:
+        case 1: # Ethelberd
+            if story_state == 0xEB:
+                game_clear = True
+
+
+        case 2: # Ragnarok
+            if story_state == 0xFF:
+                game_clear = True
+
+        case 3: # Ship percentage
+            if ((ctx.ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need:
+
+                game_clear = True
+        case 4: # Baths
+            if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
+                game_clear = True
+
+        case 6:
+            if 0x1C3FA0 in ctx.checked_locations: # Shipped White Stone
+                game_clear = True
+
+        case 7: #Rune Sphere Hunt
+            loggerExt.warning(f"rune_spheres: {ctx.rune_spheres} - sphere_hunt_spheres: {ctx.sphere_hunt_spheres}")
+            if ctx.rune_spheres >= ctx.sphere_hunt_spheres:
+                game_clear = True
+
+        case 8: # Homeowner
+            if not ctx.game_flags[0x20F] & 0x2:
+                game_clear = True
+
+        case 0: # Specific goal
+            if ctx.goal_loc in ctx.local_checked_locations:
+                game_clear = True
+    return game_clear
+    #loggerExt.warning(f"local locations: {ctx.local_checked_locations}")
+    

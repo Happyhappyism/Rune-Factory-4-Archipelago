@@ -8,9 +8,9 @@ from .client_methods import *
 from .game_routines import *
 #from .game_patches import *
 #from .Items import inventory_slots
-from .Locations import shipment_data, chest_data, request_data, \
+from .Locations import  \
 shipment_data_table, recipe_data_table, chest_data_table, request_data_table,\
-friend_items, tame_data, tame_data_table, outfit_game_data, barrier_flag_data, box_flag_data, search_flag_data
+friend_items, tame_data_table
 from .Launch import *
 
 import base64
@@ -316,6 +316,7 @@ class RF4Client(CommonContext):
     goal_loc = None
     player_to_slot = {}
     rune_spheres: int = 0
+    game_flags = None
 
     processes_base = None
     game_flag_ptr_base = None
@@ -384,40 +385,41 @@ class RF4Client(CommonContext):
     ship_percent_need = 100
     recv_item_storage = {}
     time_speed = 4096
+    ship_count: int = 0
 
     seed_f:SeedFileInfo = None
 
     #current_level_storage_key: str = ""
 
 
-    try:
-        if pc_check_process(pid):
-            processes_base = pc_get_proc_base(pid)
-            if pm:
-                pm.close_process()
-            pm = pymem.Pymem(pid)
-            game_flag_ptr_base = pc_read_ptr(pm, processes_base + 0xE9E4B0)
-            game_flags_ptr = pc_read_ptr(pm, game_flag_ptr_base + 8) #  0x1D7552 + 0xCC6F5E
-            seed_options = pc_read_bytes(pm,processes_base + 0xE90F4E, 0x12)
-            playerObj = pc_read_ptr(pm, processes_base + 0xE15078)
-            #ExpGainAd = get_ptr(0x6, 0xE, b"\\x48\\x83\\xEC\\x20\\xF7\\x05....\\x00\\x00\\x00\\x40\\x48\\x8B\\xD9")
-            ExpGainAd = processes_base + 0xE9AC14
-            storage_box_ptr = get_inv_ptr("Storage", pm, processes_base)
-            fridge_ptr = get_inv_ptr("Fridge", pm, processes_base)
-            rune_abilites_ptr = get_inv_ptr("Runes", pm, processes_base)
-            shop_box_ptr = get_inv_ptr("Shop", pm, processes_base)
-            rf4d = processes_base + 0xE704A0
-            shipment_base = rf4d - 0x1390
-            moneyPtr = processes_base + 0xE94FA0
-            datatblfile_base = pc_read_ptr(pm, processes_base + 0xE9E558)
-            npc_table_base = pc_read_ptr(pm,(datatblfile_base + ((0xAD94*8)-0x18) ))
-            #npc_table_base = pc_aob_scan(p, b"\\x4E\\x4C\\x43\\x4C\\x02\\x10\\x19\\x20")
-            monster_base = npc_table_base + 0x39DC
-            monster_ptr = processes_base + 0xE98FB0
-            #equip_effects = pc_read_ptr(pm, pc_read_ptr(pm, processes_base + 0xE98FB0) + 0x130)
-            #acc_eff_ptr =  pc_read_ptr(pm, equip_effects + 0x198)
-    except Exception as e:
-        loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
+    # try:
+    #     if pc_check_process(pid):
+    #         processes_base = pc_get_proc_base(pid)
+    #         #if pm:
+    #         #    pm.close_process()
+    #         #pm = pymem.Pymem(pid)
+    #         game_flag_ptr_base = pc_read_ptr(pm, processes_base + 0xE9E4B0)
+    #         game_flags_ptr = pc_read_ptr(pm, game_flag_ptr_base + 8) #  0x1D7552 + 0xCC6F5E
+    #         seed_options = pc_read_bytes(pm,processes_base + 0xE90F4E, 0x12)
+    #         playerObj = pc_read_ptr(pm, processes_base + 0xE15078)
+    #         #ExpGainAd = get_ptr(0x6, 0xE, b"\\x48\\x83\\xEC\\x20\\xF7\\x05....\\x00\\x00\\x00\\x40\\x48\\x8B\\xD9")
+    #         ExpGainAd = processes_base + 0xE9AC14
+    #         storage_box_ptr = get_inv_ptr("Storage", pm, processes_base)
+    #         fridge_ptr = get_inv_ptr("Fridge", pm, processes_base)
+    #         rune_abilites_ptr = get_inv_ptr("Runes", pm, processes_base)
+    #         shop_box_ptr = get_inv_ptr("Shop", pm, processes_base)
+    #         rf4d = processes_base + 0xE704A0
+    #         shipment_base = rf4d - 0x1390
+    #         moneyPtr = processes_base + 0xE94FA0
+    #         datatblfile_base = pc_read_ptr(pm, processes_base + 0xE9E558)
+    #         npc_table_base = pc_read_ptr(pm,(datatblfile_base + ((0xAD94*8)-0x18) ))
+    #         #npc_table_base = pc_aob_scan(p, b"\\x4E\\x4C\\x43\\x4C\\x02\\x10\\x19\\x20")
+    #         monster_base = npc_table_base + 0x39DC
+    #         monster_ptr = processes_base + 0xE98FB0
+    #         #equip_effects = pc_read_ptr(pm, pc_read_ptr(pm, processes_base + 0xE98FB0) + 0x130)
+    #         #acc_eff_ptr =  pc_read_ptr(pm, equip_effects + 0x198)
+    # except Exception as e:
+    #     loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
 
     def __init__(self, server_address, password) -> None:
         super(RF4Client, self).__init__(server_address, password)
@@ -576,7 +578,7 @@ class RF4Client(CommonContext):
                         # could result in lost items if all start index is 0
                         self.recv_item_storage[start_index] = item_list
                     else:
-                        loggerExt.warning(f"processing items from recieved items")
+                        #loggerExt.warning(f"processing items from recieved items")
                         process_items(self, item_list, start_index)
                     #ap_port = pc_read(p, self.game_flags+ RECV_INDEX)
                     #recv_index = ap_port & 0xFFFF
@@ -588,7 +590,7 @@ class RF4Client(CommonContext):
                     loggerExt.warning(f"Error recieving items {e}\n{traceback.format_exc()}")
                     self.recv_item_storage[start_index] = item_list
                     try:
-                        self.processes_base = pc_get_proc_base(pid)
+                        self.processes_base = pc_get_proc_base(self.pm)
                         if self.processes_base:
                             self.setup_pointers()
                     except Exception as e:
@@ -596,7 +598,7 @@ class RF4Client(CommonContext):
                 except Exception as e:
                     self.recv_item_storage[start_index] = item_list
                     loggerExt.warning(f"Error recieving item {e}\n{traceback.format_exc()}")
-                loggerExt.warning(f"finished recieving items, item_storage{self.recv_item_storage}")
+                #loggerExt.warning(f"finished recieving items, item_storage{self.recv_item_storage}")
         except Exception as e:
 
             loggerExt.critical(f"Error processing server package {e}\n{traceback.format_exc()}")
@@ -632,11 +634,11 @@ class RF4Client(CommonContext):
     def setup_pointers(self):
         try:
             loggerExt.warning(f"Setting up pointers")
-            self.processes_base = pc_get_proc_base(pid)
+            self.processes_base = pc_get_proc_base(self.pm)
             if self.processes_base:
-                if self.pm:
-                    self.pm.close_process()
-                self.pm = pymem.Pymem(pid)
+                #if self.pm:
+                #    self.pm.close_process()
+                #self.pm = pymem.Pymem(pid)
                 # reads all game pointers from game memory, if the process base is not found will instead
                 self.rf4d = self.processes_base + 0xE704A0
                 self.shipment_base = self.rf4d - 0x1390
@@ -729,7 +731,7 @@ class RF4Client(CommonContext):
                 if (seed_check != self.seed) or (seed_check == 0) or (self.seed is None):
                     if seed_check != 0:
                         logger.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(self.seed)}, Found: {hex(seed_check)}")
-                    self.processes_base = pc_get_proc_base(pid)
+                    self.processes_base = pc_get_proc_base(self.pm)
                     if self.processes_base:
                         self.setup_pointers()
                     return False
@@ -744,26 +746,27 @@ class RF4Client(CommonContext):
             self.setup_pointers()
             return False
 
+def attach_process_memory(ctx:RF4Client):
+    process_id = ctx.seed_f.process_obj.pid
+    ctx.pm = pymem.Pymem()
+    ctx.pm.open_process_from_id(process_id)
+
 async def game_watcher(ctx: RF4Client):
     try:
-
+        attach_process_memory(ctx)
         while not (ctx.processes_base) and not ctx.exit_event.is_set():
-            if pc_check_process(pid):
+            #if pc_check_process(pid):
+            ctx.processes_base = pc_get_proc_base(ctx.pm)
+            if ctx.processes_base:
+                logger.info(f"processes_base: {hex(ctx.processes_base)}")
+                patch_injects(ctx)
                 pc_process_resume(pid)
-                ctx.processes_base = pc_get_proc_base(pid)
-                if (ctx.processes_base):
-                    varify_patches(ctx)
+                varify_patches(ctx)
             else:
                 loggerExt.warning(f"Can not find process, attempting again")
             await asyncio.sleep(10)
         loggerExt.warning(f"Setting up first pointers")
         ctx.setup_pointers()
-        # Old AOB scans, was inefficient delete later
-        #ExpGainAd = get_ptr(0x6, 0xE, b"\\x48\\x83\\xEC\\x20\\xF7\\x05....\\x00\\x00\\x00\\x40\\x48\\x8B\\xD9")
-        #moneyPtr = get_ptr(0xA, 0xE, b"\\x48\\x8B\\x05....\\x44\\x8B\\x3D....\\x48\\x85\\xC0")
-        #playerObj = get_ptr(0x4, 0x8, b"\\x4C\\x0F\\x44\\x35....\\xF2\\x41\\x0F\\x10\\x46\\x58")
-        #game_flags = get_ptr(0,0,b'\\x48\\x8B\\x0D....\\x45\\x8B\\xC2\\x41\\x8B\\xD1')
-        #inv_base = get_base_inv()
 
         while not ctx.exit_event.is_set():
             try:
@@ -794,20 +797,12 @@ async def game_watcher(ctx: RF4Client):
                         sync_msg.append({"cmd": "LocationChecks", "locations": list(ctx.locations_checked)})
                     await ctx.send_msgs(sync_msg)
                     ctx.syncing = False
-                game_clear = False
-
-
 
                 if ctx.recv_item_storage:
                     loggerExt.warning(f"found item storage {ctx.recv_item_storage}")
                     for start_index, item_list in ctx.recv_item_storage.items():
                         process_items(ctx,item_list,start_index)
                     ctx.recv_item_storage.clear()
-
-                sending = []
-
-
-                shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
 
                 player_hp = pc_read(ctx.pm, ctx.combat_ptr)
                 player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
@@ -854,156 +849,17 @@ async def game_watcher(ctx: RF4Client):
                             "currentMap": ctx.map_id,
                         }
                     ])
-
                 ctx.prev_map = ctx.map_id
-
-                game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
-                #flag_status = check_field_flag(game_flags, 0x91)
-                #loggerExt.warning(f"chest_check: {flag_status}")
-                # if game_flags[0x5D] != 0xFF:
-                #     pc_writeb(p, ctx.game_flags + 0x5D, 0xFF) # Set tutorial flags
-
-
-                # Check Shipment Locations
-                ship_count = 0
-                for loc_id, loc_data in shipment_data.items():
-
-                    byte_slice = shipment_bytes[loc_data[0]: loc_data[0]+4]
-                    shipment_val = mask_shipment(byte_slice, loc_data[1])
-                    if shipment_val:
-                        ship_count += 1
-                        sending.append(loc_id)
-
-                # Check Chest Locations
-                if ctx.chestsanity:
-                    for loc_id, loc_data in chest_data.items():
-                        offset = loc_data[0]
-                        mask = loc_data[1]
-                        try:
-                            if game_flags[offset] & mask:
-                                sending.append(loc_id)
-                        except Exception as e:
-                            loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
-
-                # Check Request Locations
-                #prog_level = read_em_value(game_flags, 0x1E8E4, 3, 9)
-                if ctx.requestsanity:
-                    for loc_id, loc_data in request_data.items():
-                        offset = loc_data[0]
-                        mask = loc_data[1]
-                        prog = loc_data[2]
-                        try:
-                            if offset:
-                                if game_flags[offset] & mask:
-                                    sending.append(loc_id)
-                            elif prog:
-
-                                prog_level = read_em_value(game_flags, 0x1E8E4, 3, 9)
-                                if prog_level >= prog:
-                                    sending.append(loc_id)
-                                #logger.warning(f"prog_level: {prog_level}")
-                                # for early tutorial requests that don't set specific flags
-
-                        except Exception as e:
-                            loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
-
-                # Check Friendsanity Locations
-                if ctx.friendsanity == 1:
-                    friend_levels = check_friendship_level(ctx.pm, ctx.friend_ptr)
-                    for name, index in friendsanity_data.items():
-                        for level in range(0,10):
-                            loc_id = 0x1C4300 + ((index * 0x10) + level)
-                            if friend_levels[name][0] > level:
-                                sending.append(loc_id)
-
-                # Check Tamesanity Locations
-                if ctx.tamesanity:
-                    monster_bytes = pc_read_bytes(ctx.pm, ctx.monster_ptr, 0x1C20)
-                    for monster_slot in range(0, 0x1C20, 0x24):
-                        monster_id = monster_bytes[monster_slot+0x14]
-                        if monster_id != 0 and (monster_id in tame_data):
-                            loc_id = tame_data[monster_id]
-                            sending.append(loc_id)
-
-                # Check Outfitsanity Locations
-                if ctx.outfitsanity:
-                    for loc_id, data in outfit_game_data.items():
-                        offset = data[0]
-                        mask = data[1]
-                        try:
-                            if game_flags[offset] & mask:
-                                sending.append(loc_id)
-                        except Exception as e:
-                            loggerExt.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
-
-                # Check Barriersanity Locations
-                if ctx.barriersanity:
-                    for loc_id, flag_id in barrier_flag_data.items():
-                        if check_field_flag(game_flags, flag_id):
-                            sending.append(loc_id)
-
-                # Check Boxsanity Locations
-                if ctx.boxsanity:
-                    for loc_id, flag_id in box_flag_data.items():
-                        if check_field_flag(game_flags, flag_id):
-                            sending.append(loc_id)
-
-                # Check Boxsanity Locations
-                if ctx.searchsanity:
-                    for loc_id, flag_id in search_flag_data.items():
-                        if check_field_flag(game_flags, flag_id):
-                            sending.append(loc_id)
-
-                #loggerExt.warning(f"local locations: {ctx.local_checked_locations}")
+                ctx.game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
+                sending = check_locations(ctx)
+                # Send new Locations
                 if sending != ctx.local_checked_locations:
                     ctx.local_checked_locations = sending
-
-                # Send new Locations
                     message = [{"cmd": 'LocationChecks', "locations": sending}]
                     await ctx.send_msgs(message)
 
-                #ctx.c
-                # Process Client Commands
-                #if ctx.time_speed_command:
-                #    pass
-
                 # Check Goal completetion
-                story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
-                #loggerExt.warning(f"story_state: {story_state}, game_goal: {ctx.game_goal}")
-                match ctx.game_goal:
-                    case 1: # Ethelberd
-                        if story_state == 0xEB:
-                            game_clear = True
-
-
-                    case 2: # Ragnarok
-                        if story_state == 0xFF:
-                            game_clear = True
-
-                    case 3: # Ship percentage
-                        if ((ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need:
-
-                            game_clear = True
-                    case 4: # Baths
-                        if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
-                            game_clear = True
-
-                    case 6:
-                        if 0x1C3FA0 in ctx.checked_locations: # Shipped White Stone
-                            game_clear = True
-
-                    case 7: #Rune Sphere Hunt
-                        loggerExt.warning(f"rune_spheres: {ctx.rune_spheres} - sphere_hunt_spheres: {ctx.sphere_hunt_spheres}")
-                        if ctx.rune_spheres >= ctx.sphere_hunt_spheres:
-                            game_clear = True
-
-                    case 8: # Homeowner
-                        if not game_flags[0x20F] & 0x2:
-                            game_clear = True
-
-                    case 0: # Specific goal
-                        if ctx.goal_loc in ctx.local_checked_locations:
-                            game_clear = True
+                game_clear = check_goals(ctx)
 
                 if not ctx.finished_game and game_clear:
                     #loggerExt.warning(f"Goal!")
@@ -1011,7 +867,7 @@ async def game_watcher(ctx: RF4Client):
                     ctx.finished_game = True
             except TypeError:
                 try:
-                    ctx.processes_base = pc_get_proc_base(pid)
+                    ctx.processes_base = pc_get_proc_base(ctx.pm)
                     if ctx.processes_base:
                         loggerExt.warning(f"Error {e}\n {traceback.format_exc()}")
                         ctx.setup_pointers()
@@ -1031,14 +887,10 @@ async def game_watcher(ctx: RF4Client):
 
 def launch(*args):
     try:
-        seed_f = start_launch()
-
-        #player_name = None
-        #if save_file_name:
-            #save_file_data = save_file_name.split("_")
-            #player_name = save_file_data[3]
+        seed_f = SeedFileInfo()
+        start_launch(seed_f) # -> Launch.py
+        
     except Exception as e:
-        #seed_f.save_player_name = None
         loggerExt.error(f"Error: {e}\n{traceback.format_exc()}")
         return
 
@@ -1059,12 +911,10 @@ def launch(*args):
 
             await ctx.exit_event.wait()
             ctx.server_address = None
-            #loggerExt.warning(f"seed: {ctx.seed}, seed_name: {ctx.seed_name}")
-            #if ctx.seed_name:
 
             await progression_watcher
             loggerExt.warning(f"exiting script")
-            closing_functions(ctx.seed_name)
+            closing_functions(ctx.seed_f)
             await ctx.shutdown()
         except Exception as e:
             loggerExt.critical(f"Error Starting up client task {e}\n{traceback.format_exc()}")
