@@ -104,6 +104,11 @@ def set_seedf_paths(seed_f:SeedFileInfo):
     seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
     seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
 
+def launch_game_suspended(path):
+    CREATE_SUSPENDED = 0x00000004
+    process = subprocess.Popen([path], creationflags=CREATE_SUSPENDED)
+    return process
+
 def check_files():
     seed_f = SeedFileInfo()
     set_seedf_paths(seed_f)
@@ -112,7 +117,7 @@ def check_files():
     logger.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
     #seed_f.install_path = get_settings().rf4_settings.rf4s_install_path
     # I think searching once and then asking is the better choice
-    exe_path = os.path.join(seed_f.install_path, "RF4S.exea")
+    exe_path = os.path.join(seed_f.install_path, "RF4S.exe")
     if not os.path.isfile(exe_path):
         #TODO: Ask user for install directory if not found and try again then raise file not found error
         raise FileNotFoundError(f"RF4S.exe not found at {exe_path}")
@@ -164,8 +169,7 @@ def check_files():
     #patch_game_and_launch(install_path)
     try:
         if not pc_check_process("RF4S.exe"):
-            CREATE_SUSPENDED = 0x00000004
-            subprocess.Popen([f"{seed_f.install_path}/RF4S.exe"], creationflags=CREATE_SUSPENDED)
+            launch_game_suspended(f"{seed_f.install_path}/RF4S.exe")
             #pc_process_resume(proc_obj.pid)
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
