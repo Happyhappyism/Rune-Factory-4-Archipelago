@@ -92,7 +92,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
         for item in got_items:
             item_id = item.item
             #ogger.warning(f"{item_id_to_name[item_id]}")
-        
+
 
     def _cmd_deathlink(self):
         """Use this command to turn Death Link on and off."""
@@ -122,7 +122,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
 
     def _cmd_debug(self, *info_type:str):
         """Prints some debug information. Options are
-        goal, shopbox_link, seed, slot, goal_loc, rune_spheres, process_base, 
+        goal, shopbox_link, seed, slot, goal_loc, rune_spheres, process_base,
         fortress_sphere_need, time_speed, death_link, ship_percent_need"""
         try:
             if info_type:
@@ -164,7 +164,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
 
 
     def _cmd_info(self, *item_name:str):
-        """Get information on location, use Camel Case for item names ex. 'Earth Crystal'. 
+        """Get information on location, use Camel Case for item names ex. 'Earth Crystal'.
         For items that are two or more words be sure to include them in apostrophe ''
         Shipable items: shipped, monster, tier, region
         Recipies: ingredients, level, type
@@ -219,7 +219,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
                                 self.output(f"{item_name_var} has been shipped")
                             else:
                                 self.output(f"{item_name_var} was not shipped")
-                            
+
                 elif item_name_var in friend_items:
                     match info_type:
                         case None:
@@ -228,7 +228,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
                             self.output(f"{item_name_var} likes {friend_items[item_name_var][0]}")
                         case "loves":
                             self.output(f"{item_name_var} loves {friend_items[item_name_var][1]}")
-                
+
                 elif item_name_var in tame_data_table:
                     monster_data = tame_data_table[item_name_var]
                     drop_list = monster_data.drop
@@ -237,9 +237,9 @@ class RF4CommandProcessor(ClientCommandProcessor):
                     drop_celing = 1000 - pc_read(self.ctx.pm, self.ctx.ExpGainAd + 0x28)
                     loggerExt.warning(f"drop celing: {drop_celing} drop boost: {self.ctx.drop_boost}")
                     for x in range(len(drop_list)):
-                        
+
                         drop_rate = ((int(drop_chance[x]) + self.ctx.drop_boost) / drop_celing) * 100
-                        drop_str += f"{drop_list[x]}: {drop_rate:.2f}%, " 
+                        drop_str += f"{drop_list[x]}: {drop_rate:.2f}%, "
                     match info_type:
                         case None:
                             loc_id = monster_data.apid
@@ -277,7 +277,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
                     match info_type:
                         case "requires":
                             self.output(f"{item_name_var} requires {request_info.request_req}")
-                
+
                 elif item_name_var in chest_data_table:
                     chest_index = next((key for key, data in chest_data_table.items() if data.loc_name == item_name_var), None)
                     if chest_index:
@@ -293,7 +293,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
 
         except Exception as e:
             loggerExt.warning(f"Error getting info {e}\n{traceback.format_exc()}")
-            
+
 
 
 class RF4Client(CommonContext):
@@ -389,7 +389,7 @@ class RF4Client(CommonContext):
 
     #current_level_storage_key: str = ""
 
-    
+
     try:
         if pc_check_process(pid):
             processes_base = pc_get_proc_base(pid)
@@ -415,7 +415,7 @@ class RF4Client(CommonContext):
             monster_base = npc_table_base + 0x39DC
             monster_ptr = processes_base + 0xE98FB0
             #equip_effects = pc_read_ptr(pm, pc_read_ptr(pm, processes_base + 0xE98FB0) + 0x130)
-            #acc_eff_ptr =  pc_read_ptr(pm, equip_effects + 0x198) 
+            #acc_eff_ptr =  pc_read_ptr(pm, equip_effects + 0x198)
     except Exception as e:
         loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
 
@@ -447,7 +447,7 @@ class RF4Client(CommonContext):
             return [self.server]
         else:
             return []
-        
+
     async def shutdown(self):
         await super(RF4Client, self).shutdown()
 
@@ -493,7 +493,7 @@ class RF4Client(CommonContext):
                     self.barriersanity = args['slot_data']['BarrierSanity']
                 if(args['slot_data']['SearchSanity']):
                     self.searchsanity = args['slot_data']['SearchSanity']
-                    
+
                 if(args['slot_data']['fortress_runespheres']):
                     self.fortress_sphere_need = args['slot_data']['fortress_runespheres']
                 if(args['slot_data']['runeprana_runespheres']):
@@ -547,8 +547,8 @@ class RF4Client(CommonContext):
                     self.progressive_accessory = args['slot_data']['progressive_accessory']
                 if(args['slot_data']['character_appearance']):
                     self.character_appearance = args['slot_data']['character_appearance']
-                
-                
+
+
                 #loggerExt.warning(f"Player slots: {self.player_to_slot}")
             if cmd in {"Bounced"}:
                 try:
@@ -580,10 +580,10 @@ class RF4Client(CommonContext):
                         process_items(self, item_list, start_index)
                     #ap_port = pc_read(p, self.game_flags+ RECV_INDEX)
                     #recv_index = ap_port & 0xFFFF
-                    
+
                     #loggerExt.warning(f"args: {args}")
-                    
-                    
+
+
                 except TypeError as e:
                     loggerExt.warning(f"Error recieving items {e}\n{traceback.format_exc()}")
                     self.recv_item_storage[start_index] = item_list
@@ -598,14 +598,20 @@ class RF4Client(CommonContext):
                     loggerExt.warning(f"Error recieving item {e}\n{traceback.format_exc()}")
                 loggerExt.warning(f"finished recieving items, item_storage{self.recv_item_storage}")
         except Exception as e:
-            
+
             loggerExt.critical(f"Error processing server package {e}\n{traceback.format_exc()}")
 
     def run_gui(self):
         from kvui import GameManager
         class LOLManager(GameManager):
+            # Each pair becomes a tab in the client window showing that logger's output.
+            # Without the extra entries the world's own loggers only reach the log file.
             logging_pairs = [
-                ("Client", "Archipelago")
+                ("Client", "Archipelago"),
+                ("Rune Factory 4 Client", "RF4 Client"),
+                ("Rune Factory 4 Launcher", "RF4 Launcher"),
+                ("Rune Factory 4 Client Lib", "RF4 Lib"),
+                ("pc_ap_methods", "RF4 Memory"),
             ]
             base_title = "Archipelago Rune Factory 4 Client"
         self.ui = LOLManager(self)
@@ -631,7 +637,7 @@ class RF4Client(CommonContext):
                 if self.pm:
                     self.pm.close_process()
                 self.pm = pymem.Pymem(pid)
-                # reads all game pointers from game memory, if the process base is not found will instead 
+                # reads all game pointers from game memory, if the process base is not found will instead
                 self.rf4d = self.processes_base + 0xE704A0
                 self.shipment_base = self.rf4d - 0x1390
                 self.seed_options = pc_read_bytes(self.pm,self.processes_base + 0xE90F4E, 0x12)
@@ -642,7 +648,7 @@ class RF4Client(CommonContext):
                     self.combat_ptr = pc_read_ptr(self.pm, self.playerObj+ 0x130)
                     self.skill_base = pc_read_ptr(self.pm, self.playerObj + 0x138)
                 self.game_flag_ptr_base = pc_read_ptr(self.pm, self.processes_base + 0xE9E4B0)
-                
+
                 self.datatblfile_base = pc_read_ptr(self.pm, self.processes_base + 0xE9E558)
                 if self.datatblfile_base:
                     self.npc_table_base = pc_read_ptr(self.pm,(self.datatblfile_base + ((0xAD94*8)-0x18) ))
@@ -661,7 +667,7 @@ class RF4Client(CommonContext):
 
                 #self.equip_effects = pc_read_ptr(self.pm, pc_read_ptr(self.pm, self.processes_base + 0xE15078) + 0x130)
                 #if self.equip_effects:
-                #    self.acc_eff_ptr =  pc_read_ptr(self.pm, self.equip_effects + 0x198) 
+                #    self.acc_eff_ptr =  pc_read_ptr(self.pm, self.equip_effects + 0x198)
                 self.game_flags_ptr = pc_read_ptr(self.pm, self.game_flag_ptr_base + 8)
                 self.fodder_ptr = pc_read_ptr(self.pm, self.processes_base + 0xE9ABE0) + 0xFC
                 if self.game_flags_ptr:
@@ -675,7 +681,7 @@ class RF4Client(CommonContext):
                 patch_injects(self)
                 #loggerExt.warning(f"extra_routine_ptr: {hex(self.extra_routine_ptr)}")
                 patch_game(self)
-                
+
                 got_items = self.items_received
                 #loggerExt.warning(f"processing items from setup pointers")
                 process_items(self, got_items, 0)
@@ -683,10 +689,10 @@ class RF4Client(CommonContext):
                     pc_set_bit(self.pm, self.ExpGainAd + 0x2D, 6) # Give autumn field
 
                 #if self.processes_base:
-                
+
                 player_name_bytes = pc_read_bytes(self.pm, self.processes_base + 0xE90272, 0x20)
                 self.player_name = bytes([byte for byte in player_name_bytes if byte != 0]).decode("utf-8")
-                
+
                 if self.character_appearance:
                     #logger.warning(f"character_appearance:{self.character_appearance}")
                     pc_write(self.pm, self.processes_base + 0xE9AC38, self.character_appearance)
@@ -740,7 +746,7 @@ class RF4Client(CommonContext):
 
 async def game_watcher(ctx: RF4Client):
     try:
-        
+
         while not (ctx.processes_base) and not ctx.exit_event.is_set():
             if pc_check_process(pid):
                 pc_process_resume(pid)
@@ -765,7 +771,7 @@ async def game_watcher(ctx: RF4Client):
                     # This might be the cause of the client not connecting properly
                     await asyncio.sleep(10)
                     continue
-                
+
                 #loggerExt.warning(f"checking game_watcher seed")
                 # Make sure save file matches run seed
                 seed_check_result = ctx.seed_check()
@@ -773,7 +779,7 @@ async def game_watcher(ctx: RF4Client):
                     #print(f"Seed mismatch, please ensure you have loaded the correct save file")
                     await asyncio.sleep(2)
                     continue
-                
+
                 varify_patches(ctx)
 
                 if ctx.death_link and "DeathLink" not in ctx.tags:
@@ -799,10 +805,10 @@ async def game_watcher(ctx: RF4Client):
                     ctx.recv_item_storage.clear()
 
                 sending = []
-                
-                
+
+
                 shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
-                
+
                 player_hp = pc_read(ctx.pm, ctx.combat_ptr)
                 player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
                 menu_state = pc_readb(ctx.pm, ctx.processes_base + 0xE128F0)
@@ -827,12 +833,12 @@ async def game_watcher(ctx: RF4Client):
                         ctx.sending_death_link = False
                     # if ctx.pending_death_link:
                     #     loggerExt.warning("recieved death link")
-                        
+
                     #     ctx.pending_death_link = False
 
                 # Handle outbound shopbox link
                 if ctx.sending_item:
-                    #inv_ptr = 
+                    #inv_ptr =
                     inv_data = get_inv_slot_data(ctx.pm, ctx.shop_box_ptr, 0)
                     clear_inv_slot(ctx.pm, ctx.shop_box_ptr, 0)
                     shop_link_json = create_shop_link_json(inv_data, ctx.sending_item)
@@ -856,18 +862,18 @@ async def game_watcher(ctx: RF4Client):
                 #loggerExt.warning(f"chest_check: {flag_status}")
                 # if game_flags[0x5D] != 0xFF:
                 #     pc_writeb(p, ctx.game_flags + 0x5D, 0xFF) # Set tutorial flags
-                
-                
+
+
                 # Check Shipment Locations
                 ship_count = 0
                 for loc_id, loc_data in shipment_data.items():
-                    
+
                     byte_slice = shipment_bytes[loc_data[0]: loc_data[0]+4]
                     shipment_val = mask_shipment(byte_slice, loc_data[1])
                     if shipment_val:
                         ship_count += 1
                         sending.append(loc_id)
-                    
+
                 # Check Chest Locations
                 if ctx.chestsanity:
                     for loc_id, loc_data in chest_data.items():
@@ -891,13 +897,13 @@ async def game_watcher(ctx: RF4Client):
                                 if game_flags[offset] & mask:
                                     sending.append(loc_id)
                             elif prog:
-                                
+
                                 prog_level = read_em_value(game_flags, 0x1E8E4, 3, 9)
                                 if prog_level >= prog:
                                     sending.append(loc_id)
                                 #logger.warning(f"prog_level: {prog_level}")
                                 # for early tutorial requests that don't set specific flags
-                                
+
                         except Exception as e:
                             loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
@@ -909,7 +915,7 @@ async def game_watcher(ctx: RF4Client):
                             loc_id = 0x1C4300 + ((index * 0x10) + level)
                             if friend_levels[name][0] > level:
                                 sending.append(loc_id)
-                
+
                 # Check Tamesanity Locations
                 if ctx.tamesanity:
                     monster_bytes = pc_read_bytes(ctx.pm, ctx.monster_ptr, 0x1C20)
@@ -951,7 +957,7 @@ async def game_watcher(ctx: RF4Client):
                 #loggerExt.warning(f"local locations: {ctx.local_checked_locations}")
                 if sending != ctx.local_checked_locations:
                     ctx.local_checked_locations = sending
-                    
+
                 # Send new Locations
                     message = [{"cmd": 'LocationChecks', "locations": sending}]
                     await ctx.send_msgs(message)
@@ -968,15 +974,15 @@ async def game_watcher(ctx: RF4Client):
                     case 1: # Ethelberd
                         if story_state == 0xEB:
                             game_clear = True
-                        
-                        
+
+
                     case 2: # Ragnarok
                         if story_state == 0xFF:
                             game_clear = True
 
                     case 3: # Ship percentage
-                        if ((ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need: 
-                            
+                        if ((ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need:
+
                             game_clear = True
                     case 4: # Baths
                         if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
@@ -998,7 +1004,7 @@ async def game_watcher(ctx: RF4Client):
                     case 0: # Specific goal
                         if ctx.goal_loc in ctx.local_checked_locations:
                             game_clear = True
-                        
+
                 if not ctx.finished_game and game_clear:
                     #loggerExt.warning(f"Goal!")
                     await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
@@ -1026,14 +1032,16 @@ async def game_watcher(ctx: RF4Client):
 def launch(*args):
     try:
         seed_f = check_files()
-        
+
         #player_name = None
         #if save_file_name:
             #save_file_data = save_file_name.split("_")
             #player_name = save_file_data[3]
     except Exception as e:
         #seed_f.save_player_name = None
-        loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
+        loggerExt.error(f"Error: {e}\n{traceback.format_exc()}")
+        return
+
     async def main(args):
         try:
             ctx = RF4Client(args.connect, args.password)
@@ -1048,12 +1056,12 @@ def launch(*args):
             ctx.seed_f = seed_f
             progression_watcher = asyncio.create_task(
                 game_watcher(ctx), name="RF4ProgressionWatcher")
-            
+
             await ctx.exit_event.wait()
             ctx.server_address = None
             #loggerExt.warning(f"seed: {ctx.seed}, seed_name: {ctx.seed_name}")
             #if ctx.seed_name:
-            
+
             await progression_watcher
             loggerExt.warning(f"exiting script")
             closing_functions(ctx.seed_name)

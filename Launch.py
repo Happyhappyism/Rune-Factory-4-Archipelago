@@ -64,8 +64,8 @@ class SeedFileInfo:
     @name.setter  #  The name must match the property name exactly
     def name(self, value):
         self._name = value
-    
-        
+
+
 
 def get_save_value(save_file_path, offset, byte_count=1):
     with open(save_file_path,'rb') as f:
@@ -109,40 +109,28 @@ def check_files():
     set_seedf_paths(seed_f)
     manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
     manifest_json = json.loads(manifest_file)
-    logger.warning(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
+    logger.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
     #seed_f.install_path = get_settings().rf4_settings.rf4s_install_path
-    if not os.path.isdir(seed_f.install_path):
-        seed_f.install_path= Utils.user_path(seed_f.install_path)
-        while not os.path.exists(f"{seed_f.install_path}//RF4S.exe"):
-            logger.warning(f"RF4S.exe not found")
-            seed_f.install_path= Utils.user_path(seed_f.install_path)
+    # I think searching once and then asking is the better choice
+    exe_path = os.path.join(seed_f.install_path, "RF4S.exea")
+    if not os.path.isfile(exe_path):
+        #TODO: Ask user for install directory if not found and try again then raise file not found error
+        raise FileNotFoundError(f"RF4S.exe not found at {exe_path}")
+    logger.info(f"Executable found at {exe_path}")
 
     ap_install_path = f"{seed_f.install_path}//Archipelago"
     if not os.path.isdir(ap_install_path):
         os.mkdir(ap_install_path)
-        
-    # bms_path = get_settings().rf4_settings.bms_path
-    # if not os.path.exists(bms_path):
-    #     bms_path= Utils.user_path(bms_path)
-    #     while not os.path.exists(f"{bms_path}//quickbms.exe"):
-    #         logger.warning(f"quickbms.exe not found")
-    #         bms_path= Utils.user_path(bms_path)
-    # savetext_path = os.path.join(bms_path, "rf4save.txt")
-    # if not os.path.exists(savetext_path):
-    #     savetext_bytes = pkgutil.get_data(__name__, f"data/rf4save.txt")
-    #     with open(savetext_path,"wb") as f:
-    #         f.write(savetext_bytes)
 
-    
     if not os.path.exists(seed_f.save_file_path_raw):
-        logger.warning(f"Save file path not found")
+        logger.error(f"Save file path not found")
         #save_file_path = Utils.user_path(save_file_path)
         #while not os.path.exists(f"{save_file_path}//rf4_sys.sav"):
         #    save_file_path= Utils.user_path(save_file_path)
 
     if not os.path.isdir(f"{seed_f.install_path}//Bundle//mods"):
         os.mkdir(f"{seed_f.install_path}//Bundle//mods")
-    
+
     if not os.path.isdir(seed_f.ap_mod_path):
         os.mkdir(seed_f.ap_mod_path)
 
@@ -156,12 +144,12 @@ def check_files():
         #save_name = str(new_save)
         seed_f.player_model = get_save_value(save_file_path, 0x20740, 2)
         set_seed_params(seed_f)
-        
+
         modify_npc_params(seed_f)
         modify_sound(seed_f)
         if seed_f.trupin_option:
             #ap_save_path = f"{install_path}//Archipelago//{new_save}"
-            
+
             file_split = seed_f.save_file_name.split("rf4_")[0]
             seed_f.hint_file_path = f"{seed_f.install_path}//Archipelago//{file_split}rf4_hints.json"
             #logger.warning(f"hint_file_path:{seed_f.hint_file_path}")
@@ -184,9 +172,9 @@ def check_files():
         return seed_f
     seed_f.player_name_bytes = get_save_bytes(save_file_path, 0x1D97A, 0x20)
     seed_f.player_name_from_bytes = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
-    
+
     return seed_f
-    
+
 
 def write_turpin_hints(seed_f:SeedFileInfo):
     from .Locations import location_table, ship_loc_list, chest_loc_list, request_loc_list, friend_loc_list, tame_loc_list, outfit_loc_list
@@ -247,7 +235,7 @@ def write_turpin_hints(seed_f:SeedFileInfo):
             turpin_bytes += hint_bytes + b'\x00'
         else:
             turpin_bytes +=  b'\x00'
-            
+
         turpin_size = len(turpin_bytes)
         if turpin_size >= 64:
             try:
@@ -266,7 +254,7 @@ def write_turpin_hints(seed_f:SeedFileInfo):
         turpin_count += 1
     return turpin_dialog, turpin_count
 
-        
+
 
 def modify_dialog(seed_f:SeedFileInfo):
     try:
@@ -374,7 +362,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
     npc_param_bytes = get_bundle_bytes(bundle_path,npc_tbl_offset,size=npc_tbl_size)
     # Increase base drop rates
     out_param_bytes = bytearray(npc_param_bytes)
-    
+
     boss_list = [
         0xC8,0xC9,0xCA,0xCB,0xCC,0xCD,0xCE,0xCF,
         0xD0,0xD1,0xD2,0xD3,0xD4,0xD5,0xD6,0xD7,0xD8,0xD9,0xDA,0xDB,0xDC,0xDD,0xDF,
@@ -384,7 +372,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
     exclude_list = [
         0xDE, # Ancient Bone
         0xF6, # Heaven Gate
-        0xF7, 
+        0xF7,
         0xF8,
         0xFE,0xFF,0x100,0x101,0x102,0x103,0x104,0x105,0x106,0x107,0x108,0x109,0x10A,0x10B,0x10C,0x10D,
         0x10E,0x10F,0x110,0x111,0x112,0x113,0x114,0x115,0x116,0x117,0x118,0x119,0x11A,0x11B,0x11C,0x11D,
@@ -425,7 +413,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
         param_shuffle.update({0x10C: []})
         #boss_params.update({0x10C: []})
 
-    # for param in range(0, 0x134, 4): 
+    # for param in range(0, 0x134, 4):
     #     mask = 1 << (param >> 2)
     #     logger.warning(f"{hex(monster_params)} / {hex(mask)} / {hex(param)}")
     #     if monster_params & mask:
@@ -451,7 +439,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
         else:
             for attr_offset, data_list in param_shuffle.items():
                 data_list.append(struct.unpack_from('<I', npc_param_bytes, offset=npc_offset + attr_offset)[0])
-            
+
     for attr_offset, data_list in param_shuffle.items():
         random.shuffle(data_list)
     for attr_offset, data_list in boss_params.items():
@@ -462,7 +450,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
         base_hp = struct.unpack_from('<I', npc_param_bytes, offset=npc_offset+0x120)[0]
         if base_hp == 0:
             continue
-        
+
         for x in range(4): # Modify Drop Rates
             drop_offset = npc_offset + 0xEC + (x*4)
             drop_rate = struct.unpack_from('<I', npc_param_bytes, offset=drop_offset)[0]
@@ -486,7 +474,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
                     struct.pack_into('<I', out_param_bytes, npc_offset + attr_offset, data_list.pop(0))
             except Exception as e:
                 logger.warning(f"Error shuffling monsters {e} index:{hex(npc_index)}\n{traceback.format_exc()}")
-       
+
 
     with open(os.path.join(f"{seed_f.ap_mod_path}/rf3NpcParam.bin"), "wb") as param_file:
         param_file.write(out_param_bytes)
@@ -546,7 +534,7 @@ def patch_map_files(seed_f:SeedFileInfo):
 
 def process_new_save(seed_f:SeedFileInfo):
     from datetime import date
-    
+
     try:
         seed_f.ap_file_info = Path(seed_f.save_file_path).stem
         seed_f.ap_save_dir = Path(seed_f.save_file_path).parent
@@ -555,7 +543,7 @@ def process_new_save(seed_f:SeedFileInfo):
         #new_file_name = f"rf4_s{seed_f.save_slot}.sav"
         #renamed_save_path = os.path.join(seed_f.ap_save_dir, new_file_name)
         #new_file_path = os.path.join(seed_f.save_file_path_raw, new_file_name)
-        
+
         seed_f.ap_save_seed_final_path = os.path.join(seed_f.ap_save_seed_path, seed_f.save_file_name)
         if not Path(seed_f.ap_save_seed_final_path).is_file(): # Make sure not to write over an old save
             shutil.copy(seed_f.save_file_path,seed_f.ap_save_seed_final_path)
@@ -563,13 +551,13 @@ def process_new_save(seed_f:SeedFileInfo):
         #     today = date.today()
         #     os.rename(os.path.join(seed_f.save_file_path_raw, new_file_name), os.path.join(seed_f.save_file_path_raw, f"{new_file_name}_{today.strftime("%Y-%m-%d")}.savbackup"))
         # except Exception as e:
-        #     logger.warning(f"No existing save to backup: {e}")  
+        #     logger.warning(f"No existing save to backup: {e}")
         # shutil.move(renamed_save_path,new_file_path)
         # write_sys_save(seed_f)
     except Exception as e:
-        logger.warning(f"Error processing new save: {e}\n{traceback.format_exc()}")  
-    
-    
+        logger.warning(f"Error processing new save: {e}\n{traceback.format_exc()}")
+
+
 
 def write_sys_save(seed_f:SeedFileInfo):
     try:
@@ -578,23 +566,23 @@ def write_sys_save(seed_f:SeedFileInfo):
         #bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
         slot_idx = int(seed_f.save_slot) - 1
         player_name = seed_f.save_file_name.split("_")[3]
-        
+
         #shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
         save_offset = 0x4F0 + (slot_idx * 0xA4)
         name_offset = save_offset + 0x14
         farm_offset = save_offset + 0x27
         base_save_bytes = bytes([
-        0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80, 
+        0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80,
         0x00, 0x00, 0x00, 0x00,])
         farm_name_bytes = bytes([
-        0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61, 
-        0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61,
+        0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
         player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
         with open(seed_f.sys_file_path, "r+b") as f:
@@ -619,7 +607,7 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(crc.to_bytes(4,'little'))
     except Exception as e:
         os.rename(os.path.join(seed_f.save_file_path_raw, f"rf4_sys.backup"), seed_f.sys_file_path)
-        logger.warning(f"Error writing sys save file: {e}\n{traceback.format_exc()}")  
+        logger.warning(f"Error writing sys save file: {e}\n{traceback.format_exc()}")
     #command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", "rf4_sys.sav"]
 
     #subprocess.call(command_list, cwd=bms_path, shell=True)
@@ -632,7 +620,7 @@ def check_new_save(seed_f:SeedFileInfo):
         #install_path = get_settings().rf4_settings.rf4s_install_path
         #ap_save_path = f"{seed_f.install_path}//Archipelago"
         #old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
-        #seed_f.ap_save_seed_path = 
+        #seed_f.ap_save_seed_path =
         if not os.path.isdir(seed_f.old_run_path):
             os.mkdir(seed_f.old_run_path)
         if not os.path.isdir(seed_f.ap_save_seed_path):
@@ -670,8 +658,8 @@ def check_new_save(seed_f:SeedFileInfo):
         else:
             logger.warning(f"No new save file found in rune4 directory, continueing run")
             return
-                    
-                    
+
+
     except Exception as e:
         logger.critical(f"Error checking for new save: {e}\n{traceback.format_exc()}")
         return False
