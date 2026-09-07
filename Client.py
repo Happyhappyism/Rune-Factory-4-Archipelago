@@ -1031,7 +1031,7 @@ async def game_watcher(ctx: RF4Client):
 
 def launch(*args):
     try:
-        seed_f = check_files()
+        seed_f = start_launch()
 
         #player_name = None
         #if save_file_name:

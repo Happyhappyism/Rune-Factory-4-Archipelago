@@ -56,6 +56,7 @@ class SeedFileInfo:
     element_option: int = None
     player_name_bytes = None
     player_name_from_bytes: str = None
+    process_obj = None
 
     @property
     def name(self):
@@ -104,18 +105,16 @@ def set_seedf_paths(seed_f:SeedFileInfo):
     seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
     seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
 
-def launch_game_suspended(path):
+def launch_game_suspended(seed_f:SeedFileInfo):
+    path = f"{seed_f.install_path}/RF4S.exe"
     CREATE_SUSPENDED = 0x00000004
-    process = subprocess.Popen([path], creationflags=CREATE_SUSPENDED)
-    return process
+    seed_f.process_obj = subprocess.Popen([path], creationflags=CREATE_SUSPENDED)
 
-def check_files():
-    seed_f = SeedFileInfo()
-    set_seedf_paths(seed_f)
+def check_files(seed_f:SeedFileInfo):
+    
     manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
     manifest_json = json.loads(manifest_file)
     logger.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
-    #seed_f.install_path = get_settings().rf4_settings.rf4s_install_path
     # I think searching once and then asking is the better choice
     exe_path = os.path.join(seed_f.install_path, "RF4S.exe")
     if not os.path.isfile(exe_path):
@@ -129,56 +128,48 @@ def check_files():
 
     if not os.path.exists(seed_f.save_file_path_raw):
         logger.error(f"Save file path not found")
-        #save_file_path = Utils.user_path(save_file_path)
-        #while not os.path.exists(f"{save_file_path}//rf4_sys.sav"):
-        #    save_file_path= Utils.user_path(save_file_path)
 
     if not os.path.isdir(f"{seed_f.install_path}//Bundle//mods"):
         os.mkdir(f"{seed_f.install_path}//Bundle//mods")
 
     if not os.path.isdir(seed_f.ap_mod_path):
         os.mkdir(seed_f.ap_mod_path)
-
-    check_new_save(seed_f)
     save_file_path = os.path.join(seed_f.ap_rf4_base, seed_f.save_file_name)
-    # with os.scandir(ap_mod_path) as it:
-    #     if not any(it):
-    patch_map_files(seed_f)
-    if seed_f.new_save:
-        logger.warning(f"save name:{seed_f.seed_name}")
-        #save_name = str(new_save)
-        seed_f.player_model = get_save_value(save_file_path, 0x20740, 2)
-        set_seed_params(seed_f)
-
-        modify_npc_params(seed_f)
-        modify_sound(seed_f)
-        if seed_f.trupin_option:
-            #ap_save_path = f"{install_path}//Archipelago//{new_save}"
-
-            file_split = seed_f.save_file_name.split("rf4_")[0]
-            seed_f.hint_file_path = f"{seed_f.install_path}//Archipelago//{file_split}rf4_hints.json"
-            #logger.warning(f"hint_file_path:{seed_f.hint_file_path}")
-            if os.path.exists(seed_f.hint_file_path):
-                logger.warning(f"hint_file_path found")
-                modify_dialog(seed_f)
-            else:
-                modify_dialog(seed_f)
-        if seed_f.element_option:
-            modify_spells(seed_f)
-        #modify_dialog(install_path, ap_mod_path)
-    #patch_game_and_launch(install_path)
-    try:
-        if not pc_check_process("RF4S.exe"):
-            launch_game_suspended(f"{seed_f.install_path}/RF4S.exe")
-            #pc_process_resume(proc_obj.pid)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
-        return seed_f
+    logger.warning(f"save name:{seed_f.seed_name}")
+    seed_f.player_model = get_save_value(save_file_path, 0x20740, 2)
     seed_f.player_name_bytes = get_save_bytes(save_file_path, 0x1D97A, 0x20)
     seed_f.player_name_from_bytes = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
 
-    return seed_f
+def modify_turpin_dialog(seed_f:SeedFileInfo):
+    file_split = seed_f.save_file_name.split("rf4_")[0]
+    seed_f.hint_file_path = f"{seed_f.install_path}//Archipelago//{file_split}rf4_hints.json"
+    if os.path.exists(seed_f.hint_file_path):
+        logger.warning(f"hint_file_path found")
+        modify_dialog(seed_f)
+    else:
+        modify_dialog(seed_f)
 
+def start_launch():
+    try:
+        seed_f = SeedFileInfo()
+        set_seedf_paths(seed_f)
+        check_files(seed_f)
+        check_new_save(seed_f)
+        patch_map_files(seed_f)
+        if seed_f.new_save:
+            set_seed_params(seed_f)
+            modify_npc_params(seed_f)
+            modify_sound(seed_f)
+            if seed_f.element_option:
+                modify_spells(seed_f)
+            if seed_f.trupin_option:
+                modify_turpin_dialog(seed_f)
+            launch_game_suspended(seed_f)
+        return seed_f
+            #pc_process_resume(proc_obj.pid)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+    
 
 def write_turpin_hints(seed_f:SeedFileInfo):
     from .Locations import location_table, ship_loc_list, chest_loc_list, request_loc_list, friend_loc_list, tame_loc_list, outfit_loc_list
@@ -425,9 +416,6 @@ def modify_npc_params(seed_f:SeedFileInfo):
     #         param_shuffle.update({param: []})
     #         boss_params.update({param: []})
 
-    # Modify Trupin Hat
-    #out_param_bytes[]
-
     for npc_index in range(0x30, 0xFE):
         npc_offset = (npc_index * 0x134) + 0x1C
         base_hp = struct.unpack_from('<I', npc_param_bytes, offset=npc_offset+0x120)[0]
@@ -508,7 +496,6 @@ def get_bundle_bytes(bundle, offset, size=None):
     return file_bytes
 
 def patch_map_files(seed_f:SeedFileInfo):
-    #install_path = f"D:\\SteamLibrary\\steamapps\\common\\Rune Factory 4 Special\\Bundle"
     map_offset = {
         "MAP_DUNG_A01": 0x387DBF0D, # Yokmir Forest Entrance Warp
         "MAP_DUNG_A03": 0x9500654F, # Yokmir Forest Chipsqueek Guide
@@ -523,13 +510,8 @@ def patch_map_files(seed_f:SeedFileInfo):
         # "MAP_FIELD_98": 0x66CB273A, # Maya Bridge, no longer needed
     }
     bundle_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
-    #with open(bundle_path, "rb") as bundle_file:
     for map_name, map_offset in map_offset.items():
         map_bytes = get_bundle_bytes(bundle_path,map_offset)
-        #bundle_file.seek(map_offset+4)
-        #map_filesize = int.from_bytes(bundle_file.read(4),"little")
-        #bundle_file.seek(map_offset)
-        #map_bytes = bundle_file.read(map_filesize)
         map_path = f"{seed_f.ap_mod_path}/{map_name}.rf4m"
         patch_bytes = pkgutil.get_data(__name__, f"data/patches/{map_name}.ips")
         with open(map_path, "wb") as map_file:
@@ -567,11 +549,8 @@ def write_sys_save(seed_f:SeedFileInfo):
     try:
         seed_f.sys_file_path = os.path.join(seed_f.save_file_path_raw,f"rf4_sys.sav")
         shutil.copy(seed_f.sys_file_path, os.path.join(seed_f.save_file_path_raw, f"rf4_sys.backup"))
-        #bms_sys_path = os.path.join(bms_path,"rf4_sys.sav")
         slot_idx = int(seed_f.save_slot) - 1
         player_name = seed_f.save_file_name.split("_")[3]
-
-        #shutil.copy2(os.path.join(save_file_path,"rf4_sys.sav"), bms_sys_path)
         save_offset = 0x4F0 + (slot_idx * 0xA4)
         name_offset = save_offset + 0x14
         farm_offset = save_offset + 0x27
@@ -612,27 +591,13 @@ def write_sys_save(seed_f:SeedFileInfo):
     except Exception as e:
         os.rename(os.path.join(seed_f.save_file_path_raw, f"rf4_sys.backup"), seed_f.sys_file_path)
         logger.warning(f"Error writing sys save file: {e}\n{traceback.format_exc()}")
-    #command_list = [f"{bms_path}\\quickbms.exe", "-o", "rf4save.txt", "rf4_sys.sav"]
-
-    #subprocess.call(command_list, cwd=bms_path, shell=True)
-    #shutil.move(bms_sys_path, os.path.join(save_file_path, "rf4_sys.sav"))
 
 def check_new_save(seed_f:SeedFileInfo):
-    #save_path = get_settings().rf4_settings.save_file
     try:
-        #logger.warning(f"Save file path: {seed_f.save_file_path_raw}")
-        #install_path = get_settings().rf4_settings.rf4s_install_path
-        #ap_save_path = f"{seed_f.install_path}//Archipelago"
-        #old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
-        #seed_f.ap_save_seed_path =
         if not os.path.isdir(seed_f.old_run_path):
             os.mkdir(seed_f.old_run_path)
         if not os.path.isdir(seed_f.ap_save_seed_path):
             os.mkdir(seed_f.ap_save_seed_path)
-        #bms_path = get_settings().rf4_settings.bms_path
-        #if not os.path.exists(bms_path):
-        #    bms_path= Utils.user_path(bms_path)
-
         pobj = Path(seed_f.ap_rf4_base)
         save_list = []
         for file in pobj.glob('*.sav'):
