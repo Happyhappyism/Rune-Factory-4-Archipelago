@@ -302,7 +302,7 @@ class RF4World(World):
 
     
     def get_filler_item_name(self, filler_pool,filler_weight_pool ) -> str:
-        
+        # Create filler items
         junk_item = self.random.choices(filler_pool,filler_weight_pool)[0]
         return junk_item
     
