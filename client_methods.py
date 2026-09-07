@@ -349,6 +349,11 @@ def patch_game(ctx):
 
 def patch_injects(ctx):
     ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
+    logger.warning(f"ctx.extra_routine_ptr: {hex(ctx.extra_routine_ptr)}")
+    MageEngine_GetStoragePath = ctx.processes_base+0x254D90
+    path_str = (ctx.seed_f.ap_save_seed_final_path).replace("\\","/")
+    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
+
     pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x200, airship_mod())
     pc_write_bytes(ctx.pm, ctx.processes_base+0x1F464B, generate_inject(ctx.extra_routine_ptr, 0x200, 2))
 
@@ -373,6 +378,9 @@ def patch_injects(ctx):
 
     pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x280, lucky_charm(ctx.processes_base))
     pc_write_bytes(ctx.pm, ctx.processes_base+0x9676D, generate_inject(ctx.extra_routine_ptr, 0x280, 2, "rcx"))
+
+    pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x7A, save_mod())
+    pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x24F, save_mod_2(ctx.extra_routine_ptr + 0x300))
 
 def set_airship_flags(ctx, airship_base, story_item):
     for data in airship_flags[story_item]:

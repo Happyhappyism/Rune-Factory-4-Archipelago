@@ -15,12 +15,15 @@ def pc_get_proc_base(proc):
     try:
         pm = pymem.Pymem(proc)
         module = pymem.process.module_from_name(pm.process_handle, proc)
-        base_address = module.lpBaseOfDll
+        if module:
+            base_address = module.lpBaseOfDll
+        else:
+            base_address = pm.process_base.lpBaseOfDll 
         pm.close_process()
         return base_address
 
     except Exception as e:
-        print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+        logger.critical(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
 
 def pc_check_process(proc):
@@ -28,8 +31,20 @@ def pc_check_process(proc):
         pm = pymem.Pymem(proc)
         pm.close_process()
         return True
-    except:
+    except Exception as e:
+        logger.critical(f"Process not found {e}")
         return False
+
+def pc_process_resume(proc):
+    try:
+        pm = pymem.Pymem(proc)
+        pid_int = pm.process_id
+        ps_proc = psutil.Process(pid_int)
+        ps_proc.resume()
+    except Exception as e:
+        logger.critical(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+        return None
+
 
 def pc_get_dll_base(process_name, dll):
     pid = None

@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING, Set, Optional, Dict, Any
+from typing import TYPE_CHECKING, Set, Optional, Dict, Any, NamedTuple
 import logging
 from .pc_ap_methods import *
 from settings import get_settings
@@ -42,7 +42,7 @@ loggerExt = logging.getLogger("Rune Factory 4 Client")
 
 pid = "RF4S.exe"
 RECV_INDEX = 0x1FC
-    
+
 class RF4CommandProcessor(ClientCommandProcessor):
     ctx: "RF4Client"
     def _cmd_timespeed(self, *speed:str):
@@ -384,6 +384,8 @@ class RF4Client(CommonContext):
     ship_percent_need = 100
     recv_item_storage = {}
     time_speed = 4096
+
+    seed_f:SeedFileInfo = None
 
     #current_level_storage_key: str = ""
 
@@ -738,9 +740,15 @@ class RF4Client(CommonContext):
 
 async def game_watcher(ctx: RF4Client):
     try:
+        
         while not (ctx.processes_base) and not ctx.exit_event.is_set():
-            loggerExt.warning(f"Can not find process, attempting again")
-            ctx.processes_base = pc_get_proc_base(pid)
+            if pc_check_process(pid):
+                pc_process_resume(pid)
+                ctx.processes_base = pc_get_proc_base(pid)
+                if (ctx.processes_base):
+                    varify_patches(ctx)
+            else:
+                loggerExt.warning(f"Can not find process, attempting again")
             await asyncio.sleep(10)
         loggerExt.warning(f"Setting up first pointers")
         ctx.setup_pointers()
@@ -1017,14 +1025,14 @@ async def game_watcher(ctx: RF4Client):
 
 def launch(*args):
     try:
-        save_player_name = check_files()
-        logger.warning(f"save_player_name: {save_player_name}")
+        seed_f = check_files()
+        
         #player_name = None
         #if save_file_name:
             #save_file_data = save_file_name.split("_")
             #player_name = save_file_data[3]
     except Exception as e:
-        save_player_name = None
+        #seed_f.save_player_name = None
         loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
     async def main(args):
         try:
@@ -1033,10 +1041,11 @@ def launch(*args):
             if gui_enabled:
                 ctx.run_gui()
             ctx.run_cli()
-            if save_player_name:
-                ctx.auth = save_player_name
+            if seed_f.player_name:
+                ctx.auth = seed_f.player_name
             if args.name:
                 ctx.auth = args.name
+            ctx.seed_f = seed_f
             progression_watcher = asyncio.create_task(
                 game_watcher(ctx), name="RF4ProgressionWatcher")
             

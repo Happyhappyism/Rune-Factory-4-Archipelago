@@ -135,6 +135,18 @@ def lucky_charm(p_base):
     working_bytes += b'\xC3'                                    # ret 
     return working_bytes
 
+def save_mod():
+    working_bytes = b'\xE9\xD0\x01\x00\x00'                     # js        jmp     loc_7FF67BA94FDF
+    working_bytes += b'\x90'                                    # Nop
+    return working_bytes
+
+def save_mod_2(alloc_addr):
+    working_bytes = b'\x48\xBA'
+    working_bytes += alloc_addr.to_bytes(8, byteorder= 'little')                # lea     rdx, [rbp+590h+Buffer] ; src
+    for x in range(9):
+        working_bytes += b'\x90' # nop
+    return working_bytes
+
 def generate_inject(alloc_ptr, offset, padding, reg="rax"):
     match reg:
         case "rax":
