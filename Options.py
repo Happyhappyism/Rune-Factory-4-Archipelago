@@ -498,8 +498,8 @@ class RF4Options(PerGameCommonOptions):
     max_runespheres: MaxSpheres
 
     player_character: Gender
-    #birth_month: BirthMonth
-    #birthday: Birthday
+    birth_month: BirthMonth
+    birthday: Birthday
 
     fortress_runespheres: EmpireSpheres
     #runeprena_runespheres: PrenaSpheres

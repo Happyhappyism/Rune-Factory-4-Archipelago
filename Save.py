@@ -11,6 +11,7 @@ import zipfile
 import zlib
 #from . import RF4World
 from worlds.AutoWorld import World
+from .client_methods import reverse_bits
 
 hint_item_list = [
         "Volkanon Axe","Obsidian Bridge","Obsidian Bridge","Chipsqueek Guide","Etherlink",
@@ -22,6 +23,11 @@ class RF4SaveData():
     game = "Rune Factory 4"
     patch_file_ending = ".sav"
 
+
+
+def prepare_save_value(start_bit, bit_width):
+
+    return
 
 
 def write_hint_data(world:World):
@@ -64,6 +70,7 @@ def write_save_data(world:World):
     gender = world.options.player_character.value
     seed_name =  world.multiworld.seed_name
     seed_data = int(seed_name, 16) & 0xFFFF
+    internal_seed = int(seed_name, 16) & 0xFFFFFFFF
     save_data[0x36] |= gender
     game_goal = world.options.game_goal.value
     #require_baths = int(world.options.require_nationize_baths.value) << 2
@@ -91,6 +98,8 @@ def write_save_data(world:World):
     show_enemy_HP = world.options.show_enemy_HP
     tourism = [0, 100,250, 500, 1000, 2500, 2500]
     skill_exp_multi = ((world.options.skill_exp_multiplier.value)  & 3) << 2
+    birthday = reverse_bits(world.options.birthday.value, 2)
+    birth_month = reverse_bits(world.options.birth_month.value, 7)
 
     save_data[0x1E656] = death_link | doctor_option | shopbox_link        # 0
     save_data[0x1E657] = exp_multi | skill_exp_multi                      # 1
@@ -98,6 +107,7 @@ def write_save_data(world:World):
     save_data[0x1E659] = prana_spheres                                   # 3
     save_data[0x1E65A] = game_goal                                          # 4
     save_data[0x1E65B] = drop_boost                                       # 5
+    save_data[0x20698] = internal_seed
     save_data[0x20714] = (tourism[royalty_rank]) & 0xFF
     save_data[0x20715] = ((tourism[royalty_rank]) & 0xFF00) >> 8
     save_data[0x20718] = royalty_rank
@@ -145,6 +155,9 @@ def write_save_data(world:World):
     # Write run seed
     save_data[0x1EAC2] |= (seed_data & 0xFF)
     save_data[0x1EAC3] |= ((seed_data & 0xFF00) >> 8)
+
+    save_data[0x1E8DE] = (birth_month << 5) | ((birthday & 1)<<7)
+    save_data[0x1E8DE] = birthday >> 1
 
     player_name_bytes = bytearray(world.multiworld.player_name[world.player], "utf8")[:0x20]
     for offset in range(len(player_name_bytes)):
