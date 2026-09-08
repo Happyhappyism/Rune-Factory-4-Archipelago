@@ -55,14 +55,9 @@ def write_hint_data(world:World):
         hint_player_name = world.multiworld.get_player_name(hint_location.player)
         hint_loc_name = hint_location.name
         hint_dict[item_name] = [hint_player_name, hint_loc_name]
-        #logger.warning(f"item_name")
     return hint_dict
 
 def write_save_data(world:World):
-    #logger.warning(f"seed name: {world.multiworld.seed_name}")
-    #logger.warning(f"seed: {world.multiworld.seed}")
-    
-    #logger.warning(f"seed: {hex(world.multiworld.seed)}")
 
     save_data_raw = pkgutil.get_data(__name__, f"data/rf4_sbase.sav")
     save_data = bytearray(save_data_raw)
@@ -90,16 +85,10 @@ def write_save_data(world:World):
     BGM_val = world.options.background_music.value
     drop_boost = world.options.drop_rate_increase.value
     appearance = world.options.character_appearance.value
-    #if world.options.start_weapon.value == "random":
-    #    start_weapon = world.random.choice([0x149,0x16A,0x18C,0x1C4,0x1AD,0x1FC,0x21B,0x1D8])
-    #else:
-    #    start_weapon = world.options.start_weapon.value
-    #world.var_storage.start_weapon = world.start_weapon
     start_weapon = world.starting_weapon
     daily_trupin = world.options.daily_trupin
     show_enemy_level = world.options.show_enemy_level
     show_enemy_HP = world.options.show_enemy_HP
-    #sharance_start = world.options.sharance_start
     tourism = [0, 100,250, 500, 1000, 2500, 2500]
     skill_exp_multi = ((world.options.skill_exp_multiplier.value)  & 3) << 2
 
@@ -109,8 +98,6 @@ def write_save_data(world:World):
     save_data[0x1E659] = prana_spheres                                   # 3
     save_data[0x1E65A] = game_goal                                          # 4
     save_data[0x1E65B] = drop_boost                                       # 5
-    #if sharance_start:
-    #    save_data[0x1E94F] |= 0x10
     save_data[0x20714] = (tourism[royalty_rank]) & 0xFF
     save_data[0x20715] = ((tourism[royalty_rank]) & 0xFF00) >> 8
     save_data[0x20718] = royalty_rank
@@ -168,7 +155,7 @@ def write_save_data(world:World):
 
     
     save_crc = zlib.crc32(bytes(save_data[4:0x223a8])) & 0xFFFFFFFF
-    logger.warning(f"save crc: {hex(save_crc)}")
+    logger.info(f"save crc: {hex(save_crc)}")
     for x in range(4):
         crc_byte = (save_crc >> (8 * x)) & 0xFF
         save_data[x] = crc_byte

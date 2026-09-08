@@ -1,3 +1,5 @@
+## ENTIRE FILE UNUSED
+
 import zlib
 import struct
 from typing import Optional, Tuple

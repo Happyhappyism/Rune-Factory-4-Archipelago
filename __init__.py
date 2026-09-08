@@ -111,10 +111,8 @@ class RF4World(World):
         filler_pool = item_filler.copy()
         filler_weight_pool = item_filler_weight.copy()
         if self.options.include_traps:
-            #logger.warning(f"trap_filler: {trap_filler}, trap_filler_weight: {trap_filler_weight}, filler_pool: {filler_pool}")
             filler_pool += trap_filler
             filler_weight_pool += trap_filler_weight
-            #logger.warning(f"filler_pool: {filler_pool}")
 
         for name, item in item_data_table.items():
                 if item.code and item.can_create(self) and (item.working == True):
@@ -297,7 +295,6 @@ class RF4World(World):
                 
                 if location_data.region == region_name and location_data.can_create(self)
             }, RF4Location)
-            #logger.warning(f"connecting {region_data_table[region_name].connecting_regions} region_name: {region_name} ")
             region.add_exits(region_data_table[region_name].connecting_regions)
 
     
@@ -361,7 +358,6 @@ class RF4World(World):
         player_alt_name = out_file_name.split("_",3)
         player_alt_name[3] = player_alt_name[3].split("_")[0]
         out_file_name = "_".join(player_alt_name)
-        #logger.warning(f"player_name = {self.multiworld.player_name[self.player]}, out_file_name: {out_file_name}")
         #if "_" in self.multiworld.player_name[self.player]:
         #   out_file_name =  out_file_name.replace(self.multiworld.player_name[self.player],self.multiworld.player_name[self.player].replace("_","--"))
            #"".join(c for c in name if c not in '<>:"/\\|?*')

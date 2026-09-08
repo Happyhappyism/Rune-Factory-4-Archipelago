@@ -113,8 +113,6 @@ item_data_table = parse_csv("Rune Factory 4 AP - Items")
 item_data_table.update({
     name: RF4ItemData(code = data.apid, type=ItemClassification.filler, num_exist= 0, fillweight= data.fill_weight, item_id= data.id, item_type=data.type, amount=data.fill_amount, group="I", working = True) for name, data in shipment_data_table.items() if data.shipable == True
 })
-#logger.warning(f"item table: {item_data_table}")
-#logger.warning(f"fill_weights= {[data.fillweight for name, data in item_data_table.items() if data.type == ItemClassification.filler and (data.fillweight is not None and data.fillweight != 0)]}")
 item_table = {name: data.code for name, data in item_data_table.items() if (data.code is not None)}
 item_id_to_name = {data.code: name for name, data in item_data_table.items() if (data.code is not None)}
 item_filler = [name for name, data in item_data_table.items() if data.type == ItemClassification.filler and (data.fillweight is not None and data.fillweight != 0)]

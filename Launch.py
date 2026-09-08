@@ -136,7 +136,7 @@ def check_files(seed_f:SeedFileInfo):
         if not os.path.isfile(exe_path):
             #TODO: Ask user for install directory if not found and try again then raise file not found error
             raise FileNotFoundError(f"RF4S.exe not found at {exe_path}")
-        logger.info(f"Executable found at {exe_path}")
+
 
         ap_install_path = f"{seed_f.install_path}//Archipelago"
         if not os.path.isdir(ap_install_path):
@@ -159,7 +159,7 @@ def check_files(seed_f:SeedFileInfo):
                 f.write(sys_file_bytes)
 
         seed_f.save_file_path = os.path.join(seed_f.ap_rf4_base, seed_f.save_file_name)
-        logger.warning(f"save name:{seed_f.seed_name}")
+        logger.info(f"save name:{seed_f.seed_name}")
         seed_f.player_model = get_save_value(seed_f.save_file_path, 0x20740, 2)
         seed_f.player_name_bytes = get_save_bytes(seed_f.save_file_path, 0x1D97A, 0x20)
         seed_f.player_name_from_bytes = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
@@ -171,7 +171,6 @@ def modify_turpin_dialog(seed_f:SeedFileInfo):
         file_split = seed_f.save_file_name.split("rf4_")[0]
         seed_f.hint_file_path = f"{seed_f.install_path}//Archipelago//{file_split}rf4_hints.json"
         if os.path.exists(seed_f.hint_file_path):
-            logger.warning(f"hint_file_path found")
             modify_dialog(seed_f)
         else:
             modify_dialog(seed_f)
@@ -379,7 +378,6 @@ def modify_sound(seed_f:SeedFileInfo):
             for offset, data in shuffled_strm.items():
                 struct.pack_into('12s', out_sound_bytes, offset, data)
 
-        #logger.warning(f"music_list: {music_list}, \n\nwav_list:{wav_list}\n\nsound_bytes: {out_sound_bytes}")
         with open(os.path.join(f"{seed_f.ap_mod_path}/common_audio_data.bdat"), "wb") as param_file:
             param_file.write(out_sound_bytes)
     except Exception as e:
@@ -447,9 +445,7 @@ def modify_npc_params(seed_f:SeedFileInfo):
 
         # for param in range(0, 0x134, 4):
         #     mask = 1 << (param >> 2)
-        #     logger.warning(f"{hex(monster_params)} / {hex(mask)} / {hex(param)}")
         #     if monster_params & mask:
-        #         logger.warning(f"monster param {hex(param)} matched")
         #         param_shuffle.update({param: []})
         #         boss_params.update({param: []})
 
@@ -672,7 +668,6 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.seek(8)
             file_bytes = f.read()
             crc = compute_crc(file_bytes)
-            logger.warning(f"sys crc: {hex(crc)}")
             f.seek(4)
             f.write(crc.to_bytes(4,'little'))
     except Exception as e:

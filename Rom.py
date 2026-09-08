@@ -1,3 +1,6 @@
+
+#### ENTIRE FILE NOT USED
+
 import hashlib
 import math
 import os
@@ -20,6 +23,7 @@ ROM_NAME_ADR = ROM_DATA_FREESPACE + 0x10
 PLAYER_NAME_ADR = ROM_DATA_FREESPACE + 0x30
 OPTION_ADR = ROM_DATA_FREESPACE
 logger = logging.getLogger("Rune Factory 4 Rom")
+
 
 class RF4ProcedurePatch(APProcedurePatch, APTokenMixin):
     game = "Rune Factory 4"

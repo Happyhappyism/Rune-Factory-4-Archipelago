@@ -100,7 +100,7 @@ def request_rule_list(state, player, item_reqs):
             else:
                 request_list.append(state.has(item, player))
     except Exception as e:
-        logger.warning(f"Issue with request rule list {e} items: {item_reqs}")
+        logger.error(f"Issue with request rule list {e} items: {item_reqs}")
     if request_list:
         return request_list
     else:
@@ -132,13 +132,12 @@ def can_get_item(name, state, player):
             if not tier:
                 tier = 0
             item_region = shipment_data_table[name].region
-            #logger.warning(f"{name}")
             return can_reach_tier(state, player, tier) and state.can_reach_region(item_region, player)
         else:
             logger.warning(f"Can't get item {name}")
             return False
     except Exception as e:
-        logger.warning(f"Issue getting item {name}: \n\n{traceback.format_exc()}")
+        logger.error(f"Issue getting item {name}: \n\n{traceback.format_exc()}")
 
 def can_make_recipe(name, state, player):
     try:
@@ -146,14 +145,6 @@ def can_make_recipe(name, state, player):
         level_req = int(level_raw / 5)
         craft_type = recipe_levels[name][1]
         ingredients = recipe_levels[name][2]
-        # try:
-        #     craft_tier_list = []
-        #     craft_type = recipe_data_table[name].subtype
-        #     for ingredient in ingredients:
-        #         craft_tier_list.append(shipment_data_table[ingredient].tier)
-        #     logger.warning(f"{name}: - {craft_type}: {max(craft_tier_list)}")
-        # except Exception as e:
-        #         logger.warning(f"Error generating tier listing for {name}")
         
         match craft_type:
             case "Crafting": # all([state.can_reach_region(item_to_region[ingredient],  player)
@@ -214,11 +205,9 @@ def set_rules(world: "RF4World"):
     player_locations = []
     for location in player_location_vals:
         player_locations.append(location.name)
-    #logger.warning(f"player locations: {player_locations}")
     for loc_name in water_shoe_chests:
         location = world.multiworld.get_location(loc_name, world.player)
         add_rule(location, lambda state: can_make_recipe("Water Shoes", state, world.player))
-    #player = world.player
 
     region_rules = get_region_rules(world.player, world.options)
     for entrance_name, rule in region_rules.items():
@@ -260,42 +249,16 @@ def set_rules(world: "RF4World"):
                 logger.warning(f"location for recipe {recipe} not found")
     
     
-
-    #for name, data in recipe_levels.items():
-    #logger.warning(f"{player_locations}")
     for name in recipe_levels:
         loc_name = recipe_loc_name[name]
         if loc_name not in player_locations:
-            #logger.warning(f"{loc_name} not in list")
             continue
         try:
             location = world.multiworld.get_location(loc_name, world.player)
             add_rule(location, lambda state, name=name: can_make_recipe(name, state, world.player))
         except Exception as e:
-            logger.warning(f"Item: {e} not found\n\n{traceback.format_exc()}")
+            logger.error(f"Item: {e} not found\n\n{traceback.format_exc()}")
             continue
-        #level_raw = data[0]
-        #level_req = int(level_raw / 5)
-
-        #craft_item = None
-        #ingredients = data[2]
-        #if level_req == 0:
-        #    level_req = 1
-        # match data[1]:
-        #     case "Crafting":
-        #         add_rule(location, lambda state, level_req=level_req: state.has("Crafting Level Up",  world.player, level_req))
-        #     case "Cooking":
-        #         add_rule(location, lambda state, level_req=level_req: state.has("Cooking Level Up",  world.player, level_req))
-        #     case "Forging":
-        #         add_rule(location, lambda state, level_req=level_req: state.has("Forging Level Up",  world.player, level_req))
-        #     case "Chemistry":
-        #         add_rule(location, lambda state, level_req=level_req: state.has("Chemistry Level Up",  world.player, level_req))
-        #     case _:
-        #         pass
-
-        # try:
-        #     add_rule(location, lambda state, ingredients=ingredients: all([state.can_reach_region(item_to_region[ingredient],  world.player) for ingredient in ingredients]))
-            
         except Exception as e:
             logger.warning(f"Ingredient: {e} not found for {name}")
 
@@ -412,8 +375,6 @@ def set_rules(world: "RF4World"):
         elif goal_location in friend_data_table:
             goal_loc_name = friend_data_table[goal_location].loc_name
 
-
-        #logger.warning(f"checking logic for {goal_loc_name}")
         world.multiworld.completion_condition[world.player] = (
             lambda state, goal_loc_name=goal_loc_name: state.can_reach_location(goal_loc_name, world.player)
         )

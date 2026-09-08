@@ -346,10 +346,8 @@ def parse_csv(csv_name):
         try:
             row[1]
         except Exception as e:
-            #logger.warning(f"error: {e} - {row}")
             break
         if row_num == 0:
-            #logger.warning(f"Parsing CSV Columns: {row}")
             for col_name in row:
                 if col_name[:2] == 'b"' or col_name[:2] == "b'":
                     col_name = col_name[2:]
@@ -442,7 +440,6 @@ for name, data in outfit_data.items():
 barrier_data_table = parse_mapobj_json("barrier_flags", 0x1C4600, "Barrier")
 box_data_table = parse_mapobj_json("box_flags", 0x1C4700, "Box")
 search_data_table = parse_mapobj_json("search_flags", 0x1C4800, "Search")
-#logger.warning(f"{friend_data_table}")
 
 #Shipments
 location_data_table= {data.name: RF4LocationData(
@@ -535,23 +532,17 @@ search_loc_list = [data.loc_name for name, data in box_data_table.items()]
 
 recipe_tiering = {}
 
-#location_list = {f"{hex(data.address)}": name for name, data in location_data_table.items()}
-#blogger.warning(f"location_list: {location_list}")
 
 for name, data in recipe_data_table.items():
-    #logger.warning(f"{name}")
     recipe_tier_list = []
     for ingredient in data.ingredients:
         recipe_tier_list.append(shipment_data_table[ingredient].tier)
     recipe_tier = max(recipe_tier_list)
-    #recipe_data_table[name].tier = recipe_tier
     if not recipe_tiering.get(data.subtype):
         recipe_tiering[data.subtype] = {}
     if not recipe_tiering.get(data.subtype, {}).get(recipe_tier):
         recipe_tiering[data.subtype][recipe_tier] = []
     recipe_tiering[data.subtype][recipe_tier].append(name)
-    # recipe_tiering[name] = [data.subtype, max(recipe_tier_list)]
-#logger.warning(f"Recipe tiers:\n{recipe_tiering}")
 bugged_locs = [
     "Sechs Territory F1 I2 Chest - Mystery Potion x x3 + Levelizer"
 ]

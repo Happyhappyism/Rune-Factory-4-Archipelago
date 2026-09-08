@@ -41,11 +41,9 @@ def pc_check_process(pm):
         logger.critical(f"Process not found {e}")
         return False
 
-def pc_process_resume(proc):
+def pc_process_resume(pid):
     try:
-        pm = pymem.Pymem(proc)
-        pid_int = pm.process_id
-        ps_proc = psutil.Process(pid_int)
+        ps_proc = psutil.Process(pid)
         ps_proc.resume()
     except Exception as e:
         logger.critical(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -76,26 +74,26 @@ def pc_read(pm, adr):
     try:
         #pm = pymem.Pymem(proc)
         value = pm.read_int(adr)
-        #pm.close_process()
+        
         return value
     except Exception as e:
         logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
 
 def pc_readb(pm, adr):
     try:
-        #pm = pymem.Pymem(proc)
+        
         value = int.from_bytes(pm.read_bytes(adr, 1))
-        #pm.close_process()
+        
         return value
     except Exception as e:
         logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
 
 def pc_read_bit(pm, adr, bit):
     try:
-        #pm = pymem.Pymem(proc)
+        
         value = int.from_bytes((pm.read_bytes(adr,1)))
         mask = 1 << bit
-        #pm.close_process()
+        
         return bool(value & mask)
     except Exception as e:
         logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
@@ -105,31 +103,31 @@ def pc_read_ptr(pm, adr):
         value = pm.read_longlong(adr)
         return value
     except Exception as e:
-        logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
+        logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}\n{traceback.print_exc()}\n{traceback.print_stack()}")
 
 def pc_read_bytes(pm, adr, size):
     try:
-        #pm = pymem.Pymem(proc)
+        
         value = pm.read_bytes(adr,size)
-        #pm.close_process()
+        
         return value
     except Exception as e:
         logger.warning(f"An error occurred: {e}\n{traceback.format_exc()}")
 
 def pc_write(pm, adr, value):
     try:
-        #pm = pymem.Pymem(proc)
+       
         pm.write_int(adr, value)
-        #pm.close_process()
+        
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
     
 def pc_write_bytes(pm, adr, byte_list):
     try:
-        #pm = pymem.Pymem(proc)
+        
         pm.write_bytes(adr, byte_list, len(byte_list))
-        #pm.close_process()
+        
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
@@ -139,7 +137,7 @@ def pc_writeb(pm, adr, value):
     try:
         #pm = pymem.Pymem(proc)
         pm.write_bytes(adr, value.to_bytes(length=1, byteorder='little'), 1)
-        #pm.close_process()
+        
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
@@ -154,7 +152,7 @@ def pc_set_bit(pm, adr, bit, reset=False):
         else:
             new_value = old_value & (0xFF ^ mask)
         pm.write_bytes(adr, new_value.to_bytes(length=1, byteorder='little'), 1)
-        #pm.close_process()
+        
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
@@ -171,7 +169,7 @@ def pc_aob_scan(pm, byte_list):
         #regex_pattern = bytes_pattern.replace(b'?', b'.')
         #pm = pymem.Pymem(proc)
         pat_adr = pymem.pattern.pattern_scan_all(pm.process_handle, byte_list)
-        #pm.close_process()
+        
         return pat_adr
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -183,7 +181,7 @@ def pc_aob_scan_multi(pm, byte_list):
         #regex_pattern = bytes_pattern.replace(b'?', b'.')
         #pm = pymem.Pymem(proc)
         pat_adr = pymem.pattern.pattern_scan_all(pm.process_handle, byte_list, return_multiple = True)
-        #pm.close_process()
+        
         return pat_adr
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -195,7 +193,7 @@ def pc_aob_scan_wild(pm, byte_list):
         #regex_pattern = bytes_pattern.replace(b'?', b'.')
         #pm = pymem.Pymem(proc)
         pat_adr = pymem.pattern.pattern_scan_all(pm.process_handle, byte_list)
-        #pm.close_process()
+        
         return pat_adr
     except Exception as e:
         logger.warning(f"An unexpected error occurred scanning memory: {e}\n{traceback.format_exc()}")
@@ -205,7 +203,7 @@ def pc_alloc_mem(pm, size):
     try:
         #pm = pymem.Pymem(proc)
         adr = pm.allocate(size)
-        #pm.close_process()
+        
         return adr
     except Exception as e:
         logger.warning(f"An unexpected error occurred allocating memory: {e}\n{traceback.format_exc()}")
@@ -224,7 +222,7 @@ def pc_aob_scan_by_module(pm, byte_list, module):
         #regex_pattern = bytes_pattern.replace(b'?', b'.')
         #pm = pymem.Pymem(proc)
         pat_adr = pymem.pattern.pattern_scan_module(pm.process_handle, byte_list, module)
-        #pm.close_process()
+        
         return pat_adr
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")

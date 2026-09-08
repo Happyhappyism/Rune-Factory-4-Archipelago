@@ -9,6 +9,7 @@ game_consts = {
     "total shipments": 1076,
 }
 friendship_ranks = {
+    1:  0x10,
     2:  0x2A,
     3:  0x53,
     4:  0x8C,

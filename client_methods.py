@@ -98,6 +98,31 @@ def give_item(ctx, item_idx):
     except Exception as e:
         loggerExt.critical(f"Error giving item item {e}\nitem_idx:{item_idx}\n{traceback.format_exc()}")
 
+def on_save_load(ctx):
+    ctx.storage_box_ptr = get_inv_ptr("Storage", ctx.pm, ctx.processes_base)
+    ctx.fridge_ptr = get_inv_ptr("Fridge", ctx.pm, ctx.processes_base)
+    ctx.rune_abilites_ptr = get_inv_ptr("Runes", ctx.pm, ctx.processes_base)
+    ctx.shop_box_ptr = get_inv_ptr("Shop", ctx.pm, ctx.processes_base)
+    ctx.time_pointer =  pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm,ctx.processes_base+0xE12868) +0xB0)
+    pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0) & 1
+    if pandora: 
+        pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
+    else:
+        pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
+    
+    iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 2
+    if iris:
+        pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
+        pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
+    
+    king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 1
+    if king_order:
+        pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
+    ctx.equip_effects = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xE15078) + 0x130)
+    if ctx.equip_effects:
+        ctx.acc_eff_ptr =  pc_read_ptr(ctx.pm, ctx.equip_effects + 0x198)
+    ctx.menu_state_ptr = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xDCAA10) + 0x18)
+
 
 def get_inv_ptr(inventory, pm, processes_base):
     match inventory:
@@ -145,7 +170,6 @@ def mask_shipment(byte_slice, start_bit):
     return sale_value
 
 def clear_inv_slot(pm, inv_ptr, inv_slot):
-    loggerExt.warning(f"clearing {hex(inv_ptr)} / {hex(inv_ptr + (inv_slot * 0x30))}")
     clear_bytes = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x00\x00'
     pc_write_bytes(pm, inv_ptr + (inv_slot * 0x30), clear_bytes)
 
@@ -264,7 +288,6 @@ def patch_game(ctx):
     # Instead of a base patch, the client writes all patches directly to memory here
     try:
 
-        #have_king_order = ctx.seed_options[0xA] & 1
         for offset, patch in basic_patches.items():
             mem_offset = ctx.processes_base + offset
             pc_write_bytes(ctx.pm,mem_offset,bytes(patch))
@@ -278,20 +301,6 @@ def patch_game(ctx):
             pc_write_bytes(ctx.pm,ctx.processes_base+0x2044B2,bytes([0x75]))
             pc_write_bytes(ctx.pm,ctx.processes_base+0x2273A2,bytes([0x75]))
         
-        pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0) & 1
-        if pandora: 
-            pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
-        else:
-            pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
-        
-        iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 2
-        if iris:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
-        
-        king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 1
-        if king_order:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
         
         pc_write_bytes(ctx.pm,ctx.processes_base+0x970D4,bytes([0x48,0xC1,0xE3,0x02,0x90,0x90])) # Triple Friend item tame bonus
         # Friendship point multiplier, this replaces a check for doug under specific conditons
@@ -302,16 +311,12 @@ def patch_game(ctx):
             0xEB,0x22, # jmp RF4S.exe+225F70
             0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,
             0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-        #pc_writeb(ctx.pm, ctx.extra_routine_ptr+ 0x40, 20)
-        #if have_king_order:
-        #    pc_writeb(p, process_base + 0x21CE13, 0x00)
     except Exception as e:
         loggerExt.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
 
 
 def patch_injects(ctx):
     ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
-    logger.warning(f"ctx.extra_routine_ptr: {hex(ctx.extra_routine_ptr)}")
     MageEngine_GetStoragePath = ctx.processes_base+0x254D90
     path_str = (ctx.seed_f.ap_save_seed_path).replace("\\","/")
     pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
@@ -353,10 +358,11 @@ def set_airship_flags(ctx, airship_base, story_item):
 def process_items(ctx, item_list, start_index):
     
     try:
-        #loggerExt.warning(f"recv_adr: {hex(ctx.game_flags_ptr + RECV_INDEX)}")
+        if not ctx.game_flags_ptr:
+            logger.warning(f"can't process items yet, save probably not loaded yet")
+            return
         ap_port = pc_read(ctx.pm, ctx.game_flags_ptr + RECV_INDEX)
         recv_index = ap_port & 0xFFFF
-        #loggerExt.warning(f"Processing items: {item_list} from {start_index} with recv_idx: {recv_index}")
         new_idx = start_index
         #if recv_index <= start_index:
         
@@ -365,11 +371,8 @@ def process_items(ctx, item_list, start_index):
             item_id = netItem.item
             ctx.recieved_items.add(item_id_to_name[item_id])
             new_idx += 1
-            #loggerExt.warning(f"item:{item_id_to_name[item_id]} start_idx: {start_index}, new_idx {new_idx}, recv_idx: {recv_index}")
             if recv_index >= new_idx:
-                #loggerExt.warning(f"Skipping {item_id_to_name[item_id]}")
                 continue
-            #loggerExt.warning(f"Getting {item_id_to_name[item_id]}")
             if item_id in story_flag_items:
                 item_data = item_data_table[story_flag_items[item_id]]
 
@@ -386,11 +389,9 @@ def process_items(ctx, item_list, start_index):
                     if ctx.open_airship:
                         set_airship_flags(ctx, airship_base, story_flag_items[item_id])
                     else:
-                        #loggerExt.warning(f"items_recieved:{ctx.recieved_items}\n airship_connections_ladder:{airship_connections_ladder}")
                         for airship_item in airship_flags:
                             if airship_item in ctx.recieved_items:
                                 if airship_connections[airship_item]:
-                                    #loggerExt.warning(f"airship data:\nairship_connections[airship_item]:{airship_connections[airship_item]}\n airship_item:{airship_item}")
                                     if set(airship_connections[airship_item]).issubset(ctx.recieved_items):
                                         set_airship_flags(ctx, airship_base, airship_item)
                                     # elif set(airship_connections_ladder).issubset(ctx.recieved_items):
@@ -426,7 +427,6 @@ def process_items(ctx, item_list, start_index):
                 #try:
                 #game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
                 name = special_items[item_id]
-                #loggerExt.warning(f"{name}")
                 match name:
                     case "Forging Level Up" | "Chemistry Level Up"| "Cooking Level Up"| "Crafting Level Up":
                         skill_level = pc_read(ctx.pm, ctx.skill_base + crafting_level_offsets[name])
@@ -489,7 +489,6 @@ def process_items(ctx, item_list, start_index):
                         sphere_have = pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
                         sphere_have += 1
                         ctx.rune_spheres = sphere_have
-                        #loggerExt.warning(f"sphere_have: {sphere_have}, sphere_need: {ctx.fortress_sphere_need}")
                         pc_writeb(ctx.pm, ctx.game_flags_ptr + 0x1F8, sphere_have)
                         if sphere_have >= ctx.fortress_sphere_need:
                             pc_set_bit(ctx.pm, ctx.ExpGainAd + 0x2D, 3) # Floating Fortress
@@ -511,12 +510,10 @@ def process_items(ctx, item_list, start_index):
                     case "Progressive Weapon":
                         try:
                             ctx.wep_prog += 1
-                            #loggerExt.warning(f"wep_prog: {ctx.wep_prog}")
                             if ctx.progressive_weapon == 1:
                                 wep_type = ctx.start_weapon
                             else:
                                 wep_type = random.choice(wep_cats)
-                            #loggerExt.warning(f"wep_type: {wep_type}")
                             if wep_type.lower() == "random":
                                 wep_type = random.choice(wep_cats)
                             give_progressive_item(ctx, wep_type, 0, 2)
@@ -550,12 +547,6 @@ def process_items(ctx, item_list, start_index):
 
                 inv_bytes = get_inv_bytes(ctx.pm, inv_ptr)
                 free_slot = find_free_inv_slot(inv_bytes, inv_ptr)
-                        
-                #try:
-                #    
-                #except Exception as e:
-                #    loggerExt.critical(f"Error: {e}\n{traceback.format_exc()}")
-                #loggerExt.warning(f"free slot: {free_slot}")
                 if free_slot:
                     item_idx = item_data.item_id
                     item_amount = item_data.amount
@@ -563,15 +554,12 @@ def process_items(ctx, item_list, start_index):
                         item_amount = 1
                     amount_mask = item_amount << 11
                     item_write = item_idx | amount_mask
-                    #loggerExt.warning(f"Getting item, storage base {hex(inv_ptr)}, free-slot: {hex(free_slot)}, item_idx: {hex(item_idx)}, amount: {hex(item_amount)}, amount_mask: {hex(amount_mask)}, item_write: {hex(item_write)}")
                     pc_write(ctx.pm, free_slot, item_write)
                 else: # Free slot not found
                     pass
                 #recv_index += 1
                 #start_index += 1
-            #loggerExt.warning(f"writing outport:{recv_index} -> {new_idx}")
             outport = (ap_port & 0xFFFF0000) | new_idx
-            #loggerExt.warning(f"Finished items: new_idx: {new_idx}, recv_idx: {recv_index}, start_idx: {start_index}")
             pc_write(ctx.pm, ctx.game_flags_ptr + RECV_INDEX, outport)
     except Exception as e:
         loggerExt.critical(f"Error processing items {e}\n{traceback.format_exc()}")
@@ -616,7 +604,6 @@ def check_locations(ctx):
                     prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
                     if prog_level >= prog:
                         sending.append(loc_id)
-                    #logger.warning(f"prog_level: {prog_level}")
                     # for early tutorial requests that don't set specific flags
 
             except Exception as e:
@@ -674,7 +661,6 @@ def check_locations(ctx):
 def check_goals(ctx):
     story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
     game_clear = False
-    #loggerExt.warning(f"story_state: {story_state}, game_goal: {ctx.game_goal}")
     match ctx.game_goal:
         case 1: # Ethelberd
             if story_state == 0xEB:
@@ -698,7 +684,6 @@ def check_goals(ctx):
                 game_clear = True
 
         case 7: #Rune Sphere Hunt
-            loggerExt.warning(f"rune_spheres: {ctx.rune_spheres} - sphere_hunt_spheres: {ctx.sphere_hunt_spheres}")
             if ctx.rune_spheres >= ctx.sphere_hunt_spheres:
                 game_clear = True
 
@@ -710,5 +695,5 @@ def check_goals(ctx):
             if ctx.goal_loc in ctx.local_checked_locations:
                 game_clear = True
     return game_clear
-    #loggerExt.warning(f"local locations: {ctx.local_checked_locations}")
+
     
