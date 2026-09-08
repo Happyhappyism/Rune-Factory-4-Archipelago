@@ -162,32 +162,34 @@ def can_make_recipe(name, state, player):
 
 def get_location_rules(player):
     location_rules = {
-        "Rune Prana F2 B3 Anette's Necklace Recipe Chest":
+        "Rune Prana F2 B3 Chest - Anette's Necklace Recipe":
             lambda state: can_make_recipe("Heavy Boots", state, player),
-        "Rune Prana F2 B3 Greenifier+ x4 Chest":
+        "Rune Prana F2 B3 Chest - Greenifier+ x4":
             lambda state: can_make_recipe("Heavy Boots", state, player),
-        "Accessory Bread":
+        "Selphia Shipment - Accessory Bread":
             lambda state: state.has("Crafting License", state, player),
-        "Accessory Bread+":
-            lambda state: state.has("Crafting License", state, player),
-        "Cooking Bread":
-            lambda state: state.has("EZ Cooking License", state, player) or state.has("Pro Cooking License", state, player), 
-        "Cooking Bread+":
-            lambda state: state.has("EZ Cooking License", state, player) or state.has("Pro Cooking License", state, player),
-        "Farming Bread":
-            lambda state: state.has("Forging License", state, player),
-        "Farming Bread+":
-            lambda state: state.has("Forging License", state, player),
-        "Medicine Bread":
-            lambda state: state.has("Chemistry License", state, player),
-        "Medicine Bread+":
-            lambda state: state.has("Chemistry License", state, player),
-        "Weapon Bread":
-            lambda state: state.has("Forging License", state, player),
-        "Weapon Bread+":
-            lambda state: state.has("Forging License", state, player),
+        "Selphia Shipment - Accessory Bread":
+            lambda state: state.has("Crafting License", player),
+        "Sharance Maze Shipment - Accessory Bread+":
+            lambda state: state.has("Crafting License", player),
+        "Selphia Shipment - Cooking Bread":
+            lambda state: state.has("EZ Cooking License", player) or state.has("Pro Cooking License", player),
+        "Sharance Maze Shipment - Cooking Bread+":
+            lambda state: state.has("EZ Cooking License", player) or state.has("Pro Cooking License", player),
+        "Selphia Shipment - Farming Bread":
+            lambda state: state.has("Forging License", player),
+        "Sharance Maze Shipment - Farming Bread+":
+            lambda state: state.has("Forging License", player),
+        "Selphia Shipment - Medicine Bread":
+            lambda state: state.has("Chemistry License", player),
+        "Sharance Maze Shipment - Medicine Bread+":
+            lambda state: state.has("Chemistry License", player),
+        "Selphia Shipment - Weapon Bread":
+            lambda state: state.has("Forging License", player),
+        "Sharance Maze Shipment - Weapon Bread+":
+            lambda state: state.has("Forging License", player),
     }
-    return location_rules,
+    return location_rules
 
 def set_rules(world: "RF4World"):
     from .Locations import location_data_table, chest_recipes, chest_data_table, spell_list

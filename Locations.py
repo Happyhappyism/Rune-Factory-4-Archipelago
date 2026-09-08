@@ -544,6 +544,6 @@ for name, data in recipe_data_table.items():
         recipe_tiering[data.subtype][recipe_tier] = []
     recipe_tiering[data.subtype][recipe_tier].append(name)
 bugged_locs = [
-    "Sechs Territory F1 I2 Chest - Mystery Potion x x3 + Levelizer"
+    "Sechs Territory F1 I2 Chest - Mystery Potion x3 + Levelizer"
 ]
 
