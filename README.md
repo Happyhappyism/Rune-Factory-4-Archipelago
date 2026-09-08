@@ -77,11 +77,15 @@ https://github.com/arryndoestech/Rune-Factory-4-Linux-Archipelago
 ## Credits
 ### Coding
 - Happyhappyism
+- [Arryndoestech](https://github.com/arryndoestech)
 
 ### Spreadsheet Mapping
 - Caidyrn
 - Tilemon
 - Prelude
+
+### Poptracker Pack
+- [rdpeake](https://github.com/rdpeake/rune4-poptracker)
 
 ### Testing
 - Caidyrn
