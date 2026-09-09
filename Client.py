@@ -431,7 +431,6 @@ class RF4Client(CommonContext):
                 self.setup_pointers()
                 player_data = args['players']
                 self.slot_id = args['slot']
-                loggerExt.info(f"slot data: {args['slot_data']}")
                 for player in player_data:
                     self.player_to_slot[(player.name).lower()] = player.slot
                 if(args['slot_data']['DeathLink']):
@@ -676,7 +675,7 @@ def seed_check(ctx: RF4Client):
             else:
                 if ctx.seed_check_result == False:
                     on_save_load(ctx)
-                logger.info(f"Seed check passed")
+                    logger.info(f"Seed check passed")
                 return True
         except TypeError as t:
             loggerExt.error(f"Error checking seed {t}\n{traceback.format_exc()}")
@@ -737,7 +736,7 @@ async def game_watcher(ctx: RF4Client):
                     ctx.syncing = False
 
                 if ctx.recv_item_storage:
-                    loggerExt.warning(f"found item storage {ctx.recv_item_storage}")
+                    #loggerExt.warning(f"found item storage {ctx.recv_item_storage}")
                     for start_index, item_list in ctx.recv_item_storage.items():
                         process_items(ctx,item_list,start_index)
                     ctx.recv_item_storage.clear()

@@ -54,14 +54,14 @@ class Gender(Choice):
     option_frey = 1
     default = 0
 
-class BirthMonth(Removed):
+class BirthMonth(Choice):
     option_spring = 0
     option_summer = 1
     option_autumn = 2
     option_winter = 3
     default = 0
 
-class Birthday(Removed):
+class Birthday(Range):
     range_start = 1
     range_end = 30
     default = 10

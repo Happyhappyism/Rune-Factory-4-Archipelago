@@ -113,7 +113,7 @@ def set_seed_params(seed_f:SeedFileInfo):
 
 def set_seedf_paths(seed_f:SeedFileInfo):
     try:
-        seed_f.install_path = get_settings().rf4_settings.rf4s_install_path
+        seed_f.install_path = get_install_path()
         seed_f.ap_mod_path = f"{seed_f.install_path}//Bundle//mods//archipelago"
         seed_f.ap_rf4_base = f"{seed_f.install_path}//Archipelago"
         seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
@@ -126,16 +126,36 @@ def launch_game_suspended(seed_f:SeedFileInfo):
     CREATE_SUSPENDED = 0x00000004
     seed_f.process_obj = subprocess.Popen([path], creationflags=CREATE_SUSPENDED)
 
+def get_install_path():
+    common_install_paths = [
+        "C:/Program Files (x86)/Steam/steamapps/common/Rune Factory 4 Special",
+        "C:/Program Files/Steam/steamapps/common/Rune Factory 4 Special"
+        "C:/SteamLibrary/steamapps/common/Rune Factory 4 Special",
+        "D:/Program Files (x86)/Steam/steamapps/common/Rune Factory 4 Special",
+        "D:/SteamLibrary/steamapps/common/Rune Factory 4 Special",
+        "E:/SteamLibrary/steamapps/common/Rune Factory 4 Special",
+        "Z:/home/deck/.steam/steam/steamapps/common/Rune Factory 4 Special",
+        "Z:/home/deck/steam/steam/steamapps/common/Rune Factory 4 Special"
+    ]
+    for check_path in common_install_paths:
+        if os.path.exists(check_path):
+            exe_path = os.path.join(check_path, "RF4S.exe")
+            if os.path.isfile(exe_path):
+                #TODO: Ask user for install directory if not found and try again then raise file not found error
+                return check_path
+
+    install_path = get_settings().rf4_settings.rf4s_install_path
+    if os.path.exists(install_path):
+        return install_path
+
 def check_files(seed_f:SeedFileInfo):
     try:
         manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
         manifest_json = json.loads(manifest_file)
         logger.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
         # I think searching once and then asking is the better choice
-        exe_path = os.path.join(seed_f.install_path, "RF4S.exe")
-        if not os.path.isfile(exe_path):
-            #TODO: Ask user for install directory if not found and try again then raise file not found error
-            raise FileNotFoundError(f"RF4S.exe not found at {exe_path}")
+        #
+        
 
 
         ap_install_path = f"{seed_f.install_path}//Archipelago"
@@ -186,6 +206,7 @@ def start_launch(seed_f:SeedFileInfo):
         set_seed_params(seed_f)
         if seed_f.new_save:
             patch_map_files(seed_f)
+            additional_file_patching(seed_f)
             modify_npc_params(seed_f)
             modify_sound(seed_f)
             if seed_f.element_option:
@@ -559,6 +580,32 @@ def patch_map_files(seed_f:SeedFileInfo):
     except Exception as e:
         logger.error(f"Error: {e}\n{traceback.format_exc()}")
 
+def apply_file_patch(seed_f:SeedFileInfo,file_name,bundle="bundleMain.mbundle"):
+    try:
+        bundle_path = f"{seed_f.install_path}/Bundle/{bundle}"
+        file_offset = bundle_manifest[file_name][0]
+        file_size = bundle_manifest[file_name][1]
+        file_bytes = get_bundle_bytes(bundle_path,file_offset, file_size)
+        file_out_path = f"{seed_f.ap_mod_path}/{file_name}"
+        file_stem = file_name.split(".")[0]
+        patch_bytes = pkgutil.get_data(__name__, f"data/patches/{file_stem}.ips")
+        with open(file_out_path, "wb") as patched_file:
+            patched_file.write(patch(file_bytes,parse_ips_file(patch_bytes)))
+    except Exception as e:
+        logger.error(f"Error patching file {file_name}: {e}\n{traceback.format_exc()}")
+
+def additional_file_patching(seed_f:SeedFileInfo):
+    try:
+        files_to_patch = [
+            "title_header_load_eng.texture"
+        ]
+        for file in files_to_patch:
+            apply_file_patch(seed_f,file)
+    except Exception as e:
+        logger.error(f"Error patching file other files: {e}\n{traceback.format_exc()}")
+
+
+
 def get_sav_list(path):
     try:
         pobj = Path(path)
@@ -636,13 +683,13 @@ def write_sys_save(seed_f:SeedFileInfo):
         player_name = seed_f.save_file_name.split("_")[3]
         save_offset = 0x4F0 + (slot_idx * 0xA4)
         name_offset = save_offset + 0x14
-        farm_offset = save_offset + 0x27
+        farm_offset = save_offset + 0x40
+        seed_name_offset = save_offset + 0x27
         base_save_bytes = bytes([
         0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80,
         0x00, 0x00, 0x00, 0x00,])
         farm_name_bytes = bytes([
-        0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00,
+        0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61,
@@ -650,6 +697,7 @@ def write_sys_save(seed_f:SeedFileInfo):
         0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
+        seed_name_bytes = seed_f.seed_name.encode()
         player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
         with open(seed_f.ap_sys_save_path, "r+b") as f:
             f.seek(8)
@@ -662,6 +710,8 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(base_save_bytes)
             f.seek(name_offset)
             f.write(player_string)
+            f.seek(seed_name_offset)
+            f.write(seed_name_bytes)
             f.seek(farm_offset)
             f.write(farm_name_bytes)
 
@@ -706,7 +756,7 @@ def create_run_seed_dir(seed_f:SeedFileInfo):
                 os.mkdir(seed_path)
             shutil.copytree(seed_f.ap_mod_path, seed_path, dirs_exist_ok=True)
     except Exception as e:
-        logger.error(f"Error backing up seed mod {e}")
+        logger.error(f"Error moving seed mod {e}")
 
 def closing_functions(seed_f:SeedFileInfo):
     try:

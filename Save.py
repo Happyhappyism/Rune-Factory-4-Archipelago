@@ -107,7 +107,8 @@ def write_save_data(world:World):
     save_data[0x1E659] = prana_spheres                                   # 3
     save_data[0x1E65A] = game_goal                                          # 4
     save_data[0x1E65B] = drop_boost                                       # 5
-    save_data[0x20698] = internal_seed
+    for x in range(4):
+        save_data[0x20698+x] = (internal_seed >> (8 * x)) & 0xFF
     save_data[0x20714] = (tourism[royalty_rank]) & 0xFF
     save_data[0x20715] = ((tourism[royalty_rank]) & 0xFF00) >> 8
     save_data[0x20718] = royalty_rank

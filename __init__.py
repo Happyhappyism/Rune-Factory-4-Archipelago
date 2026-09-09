@@ -40,11 +40,11 @@ components.append(Component("Rune Factory 4 Client", "RF4Client", func=launch_cl
 icon_paths["Rune Factory 4"] = "ap:worlds.rune4/data/icon.png"
 
 class RF4Settings(settings.Group):
-    class RomFile(settings.UserFilePath):
-        """File name of the Steam Rune Factory 4 Special Executable"""
-        copy_to = "RF4S.exe"
-        description = "Rune Factory 4 Executable"
-        md5s = MD5Hash
+    # class RomFile(settings.UserFilePath):
+    #     """File name of the Steam Rune Factory 4 Special Executable"""
+    #     copy_to = "RF4S.exe"
+    #     description = "Rune Factory 4 Executable"
+    #     md5s = MD5Hash
 
     class BaseRF4Directory(settings.UserFolderPath):
         """Path to the Rune Factory 4 Special install directory"""
@@ -62,7 +62,7 @@ class RF4Settings(settings.Group):
         description = " Rune Factory 4 Saves Folder"
 
 
-    exe_file: RomFile = RomFile(RomFile.copy_to)
+    #exe_file: RomFile = RomFile(RomFile.copy_to)
     #bms_path: BMSPath = BMSPath(BMSPath.copy_to)
     #save_file_path: SavePath = SavePath(SavePath.copy_to)
     rf4s_install_path: BaseRF4Directory = BaseRF4Directory(BaseRF4Directory.copy_to)

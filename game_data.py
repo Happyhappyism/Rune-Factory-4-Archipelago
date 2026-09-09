@@ -1,9 +1,10 @@
 bundle_manifest = {
+    # File name: [offset, size]
     "rf3mc.eng": [0x7099D94, 0x4E3C48],
     "rf3ParamMagic.bin": [0xE0E51FBB, 0x10204],
     "rf3NpcParam.bin": [0xE19301F5, 0x1D7CC],
     "common_audio_data.bdat": [0x10BF13F94,0x6EE0],
-    
+    "title_header_load_eng.texture": [0xD0C1DCD3,0x10640],
 }
 game_consts = {
     "total shipments": 1076,
