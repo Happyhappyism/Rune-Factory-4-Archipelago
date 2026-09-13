@@ -14,7 +14,7 @@ It should look something like the picture below.
 - Generate your game.
 - In the output zip from generation, there will be a save marked with your chosen player name. Place that save into the Archipelago folder we made in your install directory. If you have Trupin hints enabled, also place your hints.json file in the same Rune Factory 4 Special\Archipelago folder as well.
 - Run the RF4S Client from the AP launcher. This will prompt you for the paths to your install folder.
-- Once given the right paths, the client will automatically generate your save, back up the save it replaces, and open RF4S. From there, you need only connect to your server and play the game.
+- Once given the right paths, the client will automatically generate your save, and open RF4S. From there, you need only connect to your server and play the game.
 
 ## Additional Setup for Linux Users
 https://github.com/arryndoestech/Rune-Factory-4-Linux-Archipelago
