@@ -197,6 +197,32 @@ furniture_name_to_id = {
     "Shipping Box":	0x17E,
     "Telecommunicator":	0x17F,
 }
+
+region_tiers = {
+    "Yokmir Forest":0,
+    "Water Ruins":1,
+    "Obsidian Mansion":2,
+    "Leon Karnak":9,
+    "Floating Empire":8,
+    "Sharance Maze":11,
+    "Yokmir Cave":3,
+    "Delirium Lava Ruins":3,
+    "Forest Of Beginnings":0,
+    "Idra Cave":5,
+    "Maya Road":6,
+    "Sechs Territory":7,
+    "Rune Prana":10,
+    "Rune Prana F7":11,
+    "Cluck Cluck Nest":1,
+    "Revival Cave":3,
+    "Demon's Den":5,
+    "Selphia Plains":0,
+    "Selphia Plains - East":0,
+    "Selphia Plains - West":2,
+    "Sercerezo Hill":5,
+    "Autumn Road":3,
+    "Silver Lake":4
+}
 # bgm_vals = {
     
 #     "RF1": 4,
@@ -224,7 +250,7 @@ dung_code_to_region = {
     "N": "Rune Prana F7",
     "O": "Cluck Cluck Nest",
     "P": "Revival Cave",
-    "Q": "Demon's Den"
+    "Q": "Demon's Den",
 }
 
 field_num_to_region = {

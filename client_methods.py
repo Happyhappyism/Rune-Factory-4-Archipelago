@@ -4,7 +4,7 @@ from .game_data import *
 from .Locations import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
 box_flag_data, search_flag_data
 from .Items import item_data_table, wep_cats, story_flag_items, order_flag_items,special_items, perm_items, physical_items, item_id_to_name, trap_items, progressive_items
-from .game_routines import *
+from .game_patches import *
 from .Locations import recipe_tiering
 import logging
 import traceback
@@ -13,10 +13,12 @@ import struct
 import random
 import math
 
-loggerExt = logging.getLogger("Rune Factory 4 Client Lib")
-
 pid = "RF4S.exe"
 RECV_INDEX = 0x1FC
+
+loggerClient = logging.getLogger("Rune Factory 4 Client")
+loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
+loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
 def find_free_inv_slot(inv_bytes,inv_ptr):
     try:
@@ -29,7 +31,7 @@ def find_free_inv_slot(inv_bytes,inv_ptr):
                 return None
         return (inv_ptr) + offset
     except Exception as e:
-        loggerExt.warning(f"Error finding free slot {e}\n{traceback.format_exc()}")
+        loggerClient.warning(f"Error finding free slot {e}\n{traceback.format_exc()}")
 
 
 def get_inv_bytes(pm, inv_ptr):
@@ -39,7 +41,7 @@ def get_inv_bytes(pm, inv_ptr):
         inv_bytes = pc_read_bytes(pm, inv_ptr, read_size)
         return inv_bytes
     except Exception as e:
-        loggerExt.warning(f"Error getting inventory bytes {e}\n{traceback.format_exc()}")
+        loggerClient.warning(f"Error getting inventory bytes {e}\n{traceback.format_exc()}")
 
 def give_furniture(pm, processes_base, furniture,mapid,xpos,ypos):
     furniture_offset = processes_base + 0xE95D60
@@ -81,7 +83,7 @@ def give_progressive_item(ctx, item_type, progress_offset, tier_base):
         pc_writeb(ctx.pm, ctx.processes_base + 0xE90296 + progress_offset, progress_counter)
     except Exception as e:
         give_item(ctx, item_data_table["Rune Crystal"].item_id)
-        loggerExt.critical(f"Error recieving progressive item {e}\nitem_type:{item_type}, progress_counter:{progress_counter}, tier_base:{tier_base}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error recieving progressive item {e}\nitem_type:{item_type}, progress_counter:{progress_counter}, tier_base:{tier_base}\n{traceback.format_exc()}")
 
 def give_item(ctx, item_idx):
     try:
@@ -94,15 +96,16 @@ def give_item(ctx, item_idx):
             item_write = item_idx | amount_mask
             pc_write(ctx.pm, free_slot, item_write)
         else: # Free slot not found
-            loggerExt.warning(f"Could not get item: {item_idx}")
+            loggerClient.warning(f"Could not get item: {item_idx}")
     except Exception as e:
-        loggerExt.critical(f"Error giving item item {e}\nitem_idx:{item_idx}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error giving item item {e}\nitem_idx:{item_idx}\n{traceback.format_exc()}")
 
 def on_save_load(ctx):
     ctx.storage_box_ptr = get_inv_ptr("Storage", ctx.pm, ctx.processes_base)
     ctx.fridge_ptr = get_inv_ptr("Fridge", ctx.pm, ctx.processes_base)
     ctx.rune_abilites_ptr = get_inv_ptr("Runes", ctx.pm, ctx.processes_base)
     ctx.shop_box_ptr = get_inv_ptr("Shop", ctx.pm, ctx.processes_base)
+    ctx.ExpGainAd = ctx.processes_base + 0xE9AC14
     ctx.time_pointer =  pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm,ctx.processes_base+0xE12868) +0xB0)
     pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0) & 1
     if pandora: 
@@ -122,7 +125,8 @@ def on_save_load(ctx):
     if ctx.equip_effects:
         ctx.acc_eff_ptr =  pc_read_ptr(ctx.pm, ctx.equip_effects + 0x198)
     ctx.menu_state_ptr = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xDCAA10) + 0x18)
-
+    ctx.rune_spheres =  pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
+    loggerClient.info(f"Rune Spheres Collected: {ctx.rune_spheres}")
 
 def get_inv_ptr(inventory, pm, processes_base):
     match inventory:
@@ -239,7 +243,7 @@ def check_friendship_level(pm, friend_base):
             friend_dict[character] = [friend_level, chara_friend_ptr]
         return friend_dict
     except Exception as e:
-        loggerExt.critical(f"Error checking friendship levels {e}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error checking friendship levels {e}\n{traceback.format_exc()}")
 
 
 def expand_barns(barn_int):
@@ -265,89 +269,9 @@ def expand_barns(barn_int):
     rebuild |= barn_lvl_restore << ((3 *(count) )+2)
     return rebuild
 
-def varify_patches(ctx):
-    if ctx.doctor_option:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x20D97F)
-        if byte_val != 0x90:
-            patch_game(ctx)
-    elif ctx.skill_exp_multi:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB3E73)
-        if byte_val != 0x48:
-            patch_game(ctx)
-    elif ctx.exp_multi:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB2874)
-        if  byte_val != 0x48:
-            patch_game(ctx)
-    byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x1F464B)
-    if byte_val == 0xC1:
-        if ctx.extra_routine_ptr:
-            pc_free_mem(ctx.pm,ctx.extra_routine_ptr)
-        patch_injects(ctx)
-
-def patch_game(ctx):
-    # Instead of a base patch, the client writes all patches directly to memory here
-    try:
-
-        for offset, patch in basic_patches.items():
-            mem_offset = ctx.processes_base + offset
-            pc_write_bytes(ctx.pm,mem_offset,bytes(patch))
-        if ctx.doctor_option:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x20D97F,bytes([0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.skill_exp_multi:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xB3E73,bytes([0x48, 0xC1, 0xE7, ctx.skill_exp_multi, 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.exp_multi:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xB2874,bytes([0x48, 0xC1, 0xE7, ctx.exp_multi,       0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.gay_dating:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x2044B2,bytes([0x75]))
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x2273A2,bytes([0x75]))
-        
-        
-        pc_write_bytes(ctx.pm,ctx.processes_base+0x970D4,bytes([0x48,0xC1,0xE3,0x02,0x90,0x90])) # Triple Friend item tame bonus
-        # Friendship point multiplier, this replaces a check for doug under specific conditons
-        pc_write_bytes(ctx.pm,ctx.processes_base+0x225F44,bytes([
-            0x49,0x8B,0xCF, # mov rcx,r15 {r15: fp_add, eax: new_fp}
-            0xC1,0xE1,ctx.fp_multi, # shl ecx,02
-            0x01,0xCF, # add edi,ecx
-            0xEB,0x22, # jmp RF4S.exe+225F70
-            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,
-            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-    except Exception as e:
-        loggerExt.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
 
 
-def patch_injects(ctx):
-    ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
-    MageEngine_GetStoragePath = ctx.processes_base+0x254D90
-    path_str = (ctx.seed_f.ap_save_seed_path).replace("\\","/")
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
 
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x200, airship_mod())
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x1F464B, generate_inject(ctx.extra_routine_ptr, 0x200, 2))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x240, airship_mod_2())
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x21C656, generate_inject(ctx.extra_routine_ptr, 0x240, 5))
-
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x0, generate_fish(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x180CC0, generate_inject(ctx.extra_routine_ptr, 0, 4))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x40, aquaticus_rain(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x185830, generate_inject(ctx.extra_routine_ptr, 0x40, 1))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x80, ventis_wind(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x1711F4, generate_inject(ctx.extra_routine_ptr, 0x80, 20, "r14"))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0xC0, fiersome_sun(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x185C26, generate_inject(ctx.extra_routine_ptr, 0xC0, 1, "rdx"))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x140, pandora_mandate(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x1E3841, generate_inject(ctx.extra_routine_ptr, 0x140, 3, "rcx"))
-
-    pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x280, lucky_charm(ctx.processes_base))
-    pc_write_bytes(ctx.pm, ctx.processes_base+0x9676D, generate_inject(ctx.extra_routine_ptr, 0x280, 2, "rcx"))
-
-    pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x7A, save_mod())
-    pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x24F, save_mod_2(ctx.extra_routine_ptr + 0x300))
 
 def set_airship_flags(ctx, airship_base, story_item):
     for data in airship_flags[story_item]:
@@ -359,7 +283,8 @@ def process_items(ctx, item_list, start_index):
     
     try:
         if not ctx.game_flags_ptr:
-            logger.warning(f"can't process items yet, save probably not loaded yet")
+            return
+        if not ctx.seed_check_result:
             return
         ap_port = pc_read(ctx.pm, ctx.game_flags_ptr + RECV_INDEX)
         recv_index = ap_port & 0xFFFF
@@ -429,6 +354,7 @@ def process_items(ctx, item_list, start_index):
                 name = special_items[item_id]
                 match name:
                     case "Forging Level Up" | "Chemistry Level Up"| "Cooking Level Up"| "Crafting Level Up":
+                        #TODO  crafting levels don't get awarded if you're offline when they're sent
                         skill_level = pc_read(ctx.pm, ctx.skill_base + crafting_level_offsets[name])
                         pc_write(ctx.pm, ctx.skill_base + crafting_level_offsets[name], skill_level + 5)
                     
@@ -494,6 +420,7 @@ def process_items(ctx, item_list, start_index):
                             pc_set_bit(ctx.pm, ctx.ExpGainAd + 0x2D, 3) # Floating Fortress
                         if sphere_have >= ctx.prana_sphere_need:
                             pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x21E, 4, reset=True)
+                        loggerClient.info(f"Rune Spheres Collected: {ctx.rune_spheres}")
             
             elif item_id in trap_items:
                 name = trap_items[item_id]
@@ -518,7 +445,7 @@ def process_items(ctx, item_list, start_index):
                                 wep_type = random.choice(wep_cats)
                             give_progressive_item(ctx, wep_type, 0, 2)
                         except Exception as e:
-                            loggerExt.critical(f"Error processing progressive weapon {e}\n{traceback.format_exc()}")
+                            loggerDebug.critical(f"Error processing progressive weapon {e}\n{traceback.format_exc()}")
                     case "Progressive Armor":
                         ctx.armor_prog += 1
                         give_progressive_item(ctx, "Armor", 1, 2)
@@ -562,7 +489,7 @@ def process_items(ctx, item_list, start_index):
             outport = (ap_port & 0xFFFF0000) | new_idx
             pc_write(ctx.pm, ctx.game_flags_ptr + RECV_INDEX, outport)
     except Exception as e:
-        loggerExt.critical(f"Error processing items {e}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error processing items {e}\n{traceback.format_exc()}")
 
 def check_locations(ctx):
     sending = []
@@ -586,7 +513,7 @@ def check_locations(ctx):
                 if ctx.game_flags[offset] & mask:
                     sending.append(loc_id)
             except Exception as e:
-                loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
+                loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
     # Check Request Locations
     #prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
@@ -607,7 +534,7 @@ def check_locations(ctx):
                     # for early tutorial requests that don't set specific flags
 
             except Exception as e:
-                loggerExt.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
+                loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
     # Check Friendsanity Locations
     if ctx.friendsanity == 1:
@@ -636,7 +563,7 @@ def check_locations(ctx):
                 if ctx.game_flags[offset] & mask:
                     sending.append(loc_id)
             except Exception as e:
-                loggerExt.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
+                loggerDebug.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
     # Check Barriersanity Locations
     if ctx.barriersanity:

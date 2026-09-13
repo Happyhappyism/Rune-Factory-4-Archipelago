@@ -25,7 +25,9 @@ import tkinter as tk
 from tkinter import filedialog
 import zlib
 
-logger = logging.getLogger("Rune Factory 4 Launcher")
+loggerClient = logging.getLogger("Rune Factory 4 Client")
+loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
+loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
 class SeedFileInfo:
     install_path: str = None
@@ -53,10 +55,12 @@ class SeedFileInfo:
     drop_increase: int = None
     monster_options: int = None
     sound_options: int = None
-    trupin_option: int = None
-    element_option: int = None
+    trupin_option: bool = None
+    element_option: bool = None
     player_name_bytes = None
-    player_name_from_bytes: str = None
+    #player_name_from_bytes: str = None
+    save_create_date = None
+    goal_str: str = None
     process_obj = None
 
     @property
@@ -77,7 +81,21 @@ def get_save_value(save_file_path, offset, byte_count=1):
             int_value = int.from_bytes(value,"little")
         return int_value
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
+
+def get_value_from_save(seed_f:SeedFileInfo, offset, size=1, file_path = None):
+    try:
+        if not file_path:
+            read_file = seed_f.save_file_path
+        else:
+            read_file = file_path
+        with open(read_file, "rb") as sf:
+            sf.seek(offset)
+            valbytes = sf.read(size)
+        value = int.from_bytes(valbytes, "little")
+        return value
+    except Exception as e:
+            loggerDebug.error(f"Error reading from save: {e}\n{traceback.format_exc()}")
 
 def get_save_bytes(save_file_path, offset, byte_count=1):
     try:
@@ -86,7 +104,7 @@ def get_save_bytes(save_file_path, offset, byte_count=1):
             byte_list = f.read(byte_count)
         return byte_list
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def compute_crc(file_bytes, start=None, end=None):
     try:
@@ -96,18 +114,25 @@ def compute_crc(file_bytes, start=None, end=None):
             crc = zlib.crc32(bytes(file_bytes[0:len(file_bytes)])) & 0xFFFFFFFF
         return crc
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def set_seed_params(seed_f:SeedFileInfo):
     try:
-        seed_f.ap_file_info = Path(seed_f.save_file_path).stem
-        seed_f.save_params = seed_f.ap_file_info.split('_')
-        seed_f.player_name = seed_f.save_params[3]
-        seed_f.drop_increase = int(seed_f.save_params[5])
-        seed_f.monster_options = int(seed_f.save_params[6])
-        seed_f.sound_options = int(seed_f.save_params[7]) & 0x3
-        seed_f.trupin_option = int(seed_f.save_params[7]) & 0x4
-        seed_f.element_option = int(seed_f.save_params[7]) & 0x8
+        #seed_f.ap_file_info = Path(seed_f.save_file_path).stem
+        #seed_f.save_params = seed_f.ap_file_info.split('_')
+        #seed_f.player_name = seed_f.save_params[3]
+        #seed_f.drop_increase = int(seed_f.save_params[5])
+        
+        #seed_f.monster_options = int(seed_f.save_params[6])
+        #seed_f.sound_options = int(seed_f.save_params[7]) & 0x3
+        #seed_f.trupin_option = int(seed_f.save_params[7]) & 0x4
+        #seed_f.element_option = int(seed_f.save_params[7]) & 0x8
+        seed_f.drop_increase = get_value_from_save(seed_f, 0x1E65B)
+        seed_f.monster_options = get_value_from_save(seed_f, 0x1E65C)
+        extra_options = get_value_from_save(seed_f, 0x1E65)
+        seed_f.sound_options = extra_options & 0x3
+        seed_f.trupin_option = bool(extra_options & 0x4)
+        seed_f.element_option = bool(extra_options & 0x8)
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
@@ -119,7 +144,7 @@ def set_seedf_paths(seed_f:SeedFileInfo):
         seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
         seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def launch_game_suspended(seed_f:SeedFileInfo):
     path = f"{seed_f.install_path}/RF4S.exe"
@@ -152,7 +177,7 @@ def check_files(seed_f:SeedFileInfo):
     try:
         manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
         manifest_json = json.loads(manifest_file)
-        logger.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
+        loggerDebug.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
         # I think searching once and then asking is the better choice
         #
         
@@ -163,7 +188,7 @@ def check_files(seed_f:SeedFileInfo):
             os.mkdir(ap_install_path)
 
         if not os.path.exists(seed_f.save_file_path_raw):
-            logger.error(f"Save file path not found")
+            loggerDebug.error(f"Save file path not found")
 
         if not os.path.isdir(f"{seed_f.install_path}//Bundle//mods"):
             os.mkdir(f"{seed_f.install_path}//Bundle//mods")
@@ -171,18 +196,22 @@ def check_files(seed_f:SeedFileInfo):
         if not os.path.isdir(seed_f.ap_mod_path):
             os.mkdir(seed_f.ap_mod_path)
 
+        if not os.path.isdir(seed_f.ap_save_seed_path):
+            os.mkdir(seed_f.ap_save_seed_path)
+
         # Write sys save file if it doesn't exist
         seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"rf4_sys.sav")
-        if not os.path.exists(seed_f.ap_sys_save_path):
+        #if not os.path.exists(seed_f.ap_sys_save_path):
+        if not os.path.isfile(seed_f.ap_sys_save_path):
             sys_file_bytes = pkgutil.get_data(__name__, f"data/rf4_sys.sav")
             with open(seed_f.ap_sys_save_path, "wb") as f:
                 f.write(sys_file_bytes)
 
         seed_f.save_file_path = os.path.join(seed_f.ap_rf4_base, seed_f.save_file_name)
-        logger.info(f"save name:{seed_f.seed_name}")
+        loggerDebug.info(f"save name:{seed_f.seed_name}")
         seed_f.player_model = get_save_value(seed_f.save_file_path, 0x20740, 2)
         seed_f.player_name_bytes = get_save_bytes(seed_f.save_file_path, 0x1D97A, 0x20)
-        seed_f.player_name_from_bytes = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
+        seed_f.player_name = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
     except Exception as e:
             print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
@@ -195,7 +224,7 @@ def modify_turpin_dialog(seed_f:SeedFileInfo):
         else:
             modify_dialog(seed_f)
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def start_launch(seed_f:SeedFileInfo):
     try:
@@ -213,11 +242,12 @@ def start_launch(seed_f:SeedFileInfo):
                 modify_spells(seed_f)
             if seed_f.trupin_option:
                 modify_turpin_dialog(seed_f)
+        get_save_file_extra_info(seed_f)
         launch_game_suspended(seed_f)
         
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
-    logger.info(f"seed_f: {vars(seed_f)}")
+    loggerDebug.info(f"seed_f: {vars(seed_f)}")
     
 
 def write_turpin_hints(seed_f:SeedFileInfo):
@@ -293,13 +323,13 @@ def write_turpin_hints(seed_f:SeedFileInfo):
                         turpin_bytes = bytes(mod_turpin_bytes)
                         #struct.pack_into('B', turpin_bytes, offset, 0xA)
                 except Exception as e:
-                    logger.warning(f"offset: {hex(offset)}, turpin_size:{turpin_size}\nturpin_bytes:{turpin_bytes}\n{e}")
+                    loggerDebug.warning(f"offset: {hex(offset)}, turpin_size:{turpin_size}\nturpin_bytes:{turpin_bytes}\n{e}")
             turpin_dialog[dialog_end + dialog_offset] = [index, turpin_bytes, turpin_size - 1]
             dialog_offset += turpin_size
             turpin_count += 1
         return turpin_dialog, turpin_count
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 
 def modify_dialog(seed_f:SeedFileInfo):
@@ -326,7 +356,7 @@ def modify_dialog(seed_f:SeedFileInfo):
         with open(os.path.join(f"{seed_f.ap_mod_path}/rf3mc.eng"), "wb") as param_file:
             param_file.write(out_dialog_bytes)
     except Exception as e:
-        logger.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
 
 def modify_spells(seed_f:SeedFileInfo):
     try:
@@ -358,7 +388,7 @@ def modify_spells(seed_f:SeedFileInfo):
         with open(os.path.join(f"{seed_f.ap_mod_path}/rf3ParamMagic.bin"), "wb") as param_file:
             param_file.write(out_magic_bytes)
     except Exception as e:
-            logger.error(f"Error: {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 
 def modify_sound(seed_f:SeedFileInfo):
@@ -402,7 +432,7 @@ def modify_sound(seed_f:SeedFileInfo):
         with open(os.path.join(f"{seed_f.ap_mod_path}/common_audio_data.bdat"), "wb") as param_file:
             param_file.write(out_sound_bytes)
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def modify_npc_params(seed_f:SeedFileInfo):
     try:
@@ -513,19 +543,19 @@ def modify_npc_params(seed_f:SeedFileInfo):
                     for attr_offset, data_list in boss_params.items():
                         struct.pack_into('<I', out_param_bytes, npc_offset + attr_offset, data_list.pop(0))
                 except Exception as e:
-                    logger.warning(f"Error shuffling monsters {e} index:{hex(npc_index)}\n{traceback.format_exc()}")
+                    loggerDebug.warning(f"Error shuffling monsters {e} index:{hex(npc_index)}\n{traceback.format_exc()}")
             else:
                 try:
                     for attr_offset, data_list in param_shuffle.items():
                         struct.pack_into('<I', out_param_bytes, npc_offset + attr_offset, data_list.pop(0))
                 except Exception as e:
-                    logger.warning(f"Error shuffling monsters {e} index:{hex(npc_index)}\n{traceback.format_exc()}")
+                    loggerDebug.warning(f"Error shuffling monsters {e} index:{hex(npc_index)}\n{traceback.format_exc()}")
 
 
         with open(os.path.join(f"{seed_f.ap_mod_path}/rf3NpcParam.bin"), "wb") as param_file:
             param_file.write(out_param_bytes)
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 
 
@@ -552,7 +582,7 @@ def get_bundle_bytes(bundle, offset, size=None):
             file_bytes = bundle_file.read(file_size)
         return file_bytes
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def patch_map_files(seed_f:SeedFileInfo):
     try:
@@ -578,7 +608,7 @@ def patch_map_files(seed_f:SeedFileInfo):
                 map_file.write(patch(map_bytes,parse_ips_file(patch_bytes)))
             pass
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def apply_file_patch(seed_f:SeedFileInfo,file_name,bundle="bundleMain.mbundle"):
     try:
@@ -592,7 +622,7 @@ def apply_file_patch(seed_f:SeedFileInfo,file_name,bundle="bundleMain.mbundle"):
         with open(file_out_path, "wb") as patched_file:
             patched_file.write(patch(file_bytes,parse_ips_file(patch_bytes)))
     except Exception as e:
-        logger.error(f"Error patching file {file_name}: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error patching file {file_name}: {e}\n{traceback.format_exc()}")
 
 def additional_file_patching(seed_f:SeedFileInfo):
     try:
@@ -602,7 +632,7 @@ def additional_file_patching(seed_f:SeedFileInfo):
         for file in files_to_patch:
             apply_file_patch(seed_f,file)
     except Exception as e:
-        logger.error(f"Error patching file other files: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error patching file other files: {e}\n{traceback.format_exc()}")
 
 
 
@@ -614,7 +644,7 @@ def get_sav_list(path):
             save_list.append(file)
         return save_list
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def prompt_delete_save(seed_f:SeedFileInfo):
     try:
@@ -624,7 +654,7 @@ def prompt_delete_save(seed_f:SeedFileInfo):
         root.destroy()
         return int(Path(delete_slot).stem[-2:])
     except Exception as e:
-        logger.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def find_save_slot(seed_f:SeedFileInfo):
     try:
@@ -637,7 +667,7 @@ def find_save_slot(seed_f:SeedFileInfo):
                 return slot + 1
         return prompt_delete_save(seed_f)
     except Exception as e:
-            logger.error(f"Error processing new save: {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error processing new save: {e}\n{traceback.format_exc()}")
 
 def process_new_save(seed_f:SeedFileInfo):
     try:
@@ -648,7 +678,7 @@ def process_new_save(seed_f:SeedFileInfo):
         create_run_seed_dir(seed_f)
         write_sys_save(seed_f)
     except Exception as e:
-        logger.error(f"Error processing new save: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error processing new save: {e}\n{traceback.format_exc()}")
 
 def prompt_for_save(basedir):
     try:
@@ -656,9 +686,51 @@ def prompt_for_save(basedir):
         root.withdraw()
         working_save_path = filedialog.askopenfilename(title="Select AP generated .sav file",initialdir=basedir, filetypes=[("RF4 Save", "*.sav")])
         root.destroy()
-        return Path(working_save_path).name
+        file_name = Path(working_save_path).name
+        ap_file_path = os.path.join(basedir, file_name)
+        if not os.path.isfile(ap_file_path):
+            shutil.copy(working_save_path,ap_file_path)
+        #return Path(working_save_path).name
+        return file_name
     except Exception as e:
-        logger.error(f"Error pormpting save: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error pormpting save: {e}\n{traceback.format_exc()}")
+
+def get_save_file_extra_info(seed_f:SeedFileInfo):
+    from datetime import datetime
+    import platform
+    try:
+        save_path = Path(seed_f.save_file_path)
+        stat = save_path.stat()
+            
+        timestamp = stat.st_birthtime
+        seed_f.save_create_date = datetime.fromtimestamp(timestamp)
+        game_goal_int = get_value_from_save(seed_f, 0x1E65A)
+        match game_goal_int:
+            case 0:
+                goal_str = "Custom"
+            case 1:
+                goal_str = "Ethelberd"
+            case 2:
+                goal_str = "Rune Prana"
+            case 3:
+                goal_str = "Shipment Percentage"
+            case 4:
+                goal_str = "Nationized Baths"
+            case 5:
+                goal_str = "Eliza"
+            case 6:
+                goal_str = "Mariage"
+            case 7:
+                goal_str = "Rune Hunt"
+            case 8:
+                goal_str = "Homeowner"
+        seed_f.goal_str = goal_str
+    except Exception as e:
+        loggerDebug.error(f"Error getting file stats: {e}\n{traceback.format_exc()}")
+        seed_f.save_create_date = ""
+    return
+
+
 
 def get_save_file(seed_f:SeedFileInfo):
     try:
@@ -673,32 +745,30 @@ def get_save_file(seed_f:SeedFileInfo):
             seed_f.save_file_name = prompt_for_save(seed_f.ap_rf4_base)
         seed_f.seed_name = seed_f.save_file_name.split("_")[1]
     except Exception as e:
-            logger.error(f"Error getting save file: {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error getting save file: {e}\n{traceback.format_exc()}")
 
 def write_sys_save(seed_f:SeedFileInfo):
     try:
         #seed_f.sys_file_path = os.path.join(seed_f.save_file_path_raw,f"rf4_sys.sav")
         shutil.copy(seed_f.ap_sys_save_path, os.path.join(seed_f.ap_save_seed_path, f"rf4_sys.backup"))
         slot_idx = int(seed_f.save_slot) - 1
-        player_name = seed_f.save_file_name.split("_")[3]
+        #player_name = seed_f.save_file_name.split("_")[3]
         save_offset = 0x4F0 + (slot_idx * 0xA4)
         name_offset = save_offset + 0x14
-        farm_offset = save_offset + 0x40
-        seed_name_offset = save_offset + 0x27
+        farm_offset = save_offset + 0x27
+        seed_name_offset = save_offset + 0x8B # Replace Norad farm name
         base_save_bytes = bytes([
         0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80,
         0x00, 0x00, 0x00, 0x00,])
         farm_name_bytes = bytes([
-        0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x68, 0x61, 0x72, 0x61,
-        0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x53, 0x65, 0x6C, 0x70, 0x68, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x4B, 0x61, 0x72, 0x64, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x41, 0x6C, 0x76, 0x61, 0x72, 0x6E, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x53, 0x68, 0x61, 0x72, 0x61, 0x6E, 0x63, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+        0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
         seed_name_bytes = seed_f.seed_name.encode()
-        player_string = ((player_name[0:12]).encode("utf-8")) + b'\x00'
+        player_string = ((seed_f.player_name[0:12]).encode("utf-8")) + b'\x00'
         with open(seed_f.ap_sys_save_path, "r+b") as f:
             f.seek(8)
             used_slots = int.from_bytes((f.read(4)),"little")
@@ -710,11 +780,10 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(base_save_bytes)
             f.seek(name_offset)
             f.write(player_string)
-            f.seek(seed_name_offset)
-            f.write(seed_name_bytes)
             f.seek(farm_offset)
             f.write(farm_name_bytes)
-
+            f.seek(seed_name_offset)
+            f.write(seed_name_bytes)
             f.seek(8)
             file_bytes = f.read()
             crc = compute_crc(file_bytes)
@@ -722,7 +791,7 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(crc.to_bytes(4,'little'))
     except Exception as e:
         os.rename(os.path.join(seed_f.ap_save_seed_path, f"rf4_sys.backup"), seed_f.ap_sys_save_path)
-        logger.error(f"Error writing sys save file: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error writing sys save file: {e}\n{traceback.format_exc()}")
 
 def check_new_save(seed_f:SeedFileInfo):
     try:
@@ -743,7 +812,7 @@ def check_new_save(seed_f:SeedFileInfo):
 
 
     except Exception as e:
-        logger.error(f"Error checking for new save: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error checking for new save: {e}\n{traceback.format_exc()}")
         return False
 
 def create_run_seed_dir(seed_f:SeedFileInfo):
@@ -756,7 +825,7 @@ def create_run_seed_dir(seed_f:SeedFileInfo):
                 os.mkdir(seed_path)
             shutil.copytree(seed_f.ap_mod_path, seed_path, dirs_exist_ok=True)
     except Exception as e:
-        logger.error(f"Error moving seed mod {e}")
+        loggerDebug.error(f"Error moving seed mod {e}")
 
 def closing_functions(seed_f:SeedFileInfo):
     try:
@@ -764,4 +833,4 @@ def closing_functions(seed_f:SeedFileInfo):
             create_run_seed_dir(seed_f)
             shutil.rmtree(seed_f.ap_mod_path)
     except Exception as e:
-        logger.error(f"Error backing up seed mod {e}")
+        loggerDebug.error(f"Error backing up seed mod {e}")

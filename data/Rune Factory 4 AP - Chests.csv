@@ -13,7 +13,7 @@ Blue Ribbon,A,1C406A,Water Ruins,D6,213,20,Water Ruins D6 Chest,Water Ruins D6 C
 Aquamarine + Bronze,B,1C406B,Water Ruins,C2,213,80,Water Ruins C2 Chest,Water Ruins C2 Chest - Aquamarine + Bronze,1,,,531,Water Ruins
 Rod,C,1C406C,Water Ruins,C7,214,1,Water Ruins C7 Chest,Water Ruins C7 Chest - Rod,1,,,532,Water Ruins
 Water Laser Lv.1,D,1C406D,Water Ruins,C1,214,2,Water Ruins C1 Chest,Water Ruins C1 Chest - Water Laser Lv.1,1,,,532,Water Ruins
-Battle Axe,E,1C406E,Water Ruins,A3,214,4,Water Ruins A3 Chest,Water Ruins A3 Chest - Battle Axe,1,,,532,Water Ruins
+Battle Axe,E,1C406E,Water Ruins,A1,214,4,Water Ruins A3 Chest,Water Ruins A1 Chest - Battle Axe,1,,,532,Water Ruins
 Recovery Potion x4,F,1C406F,Water Ruins,C4,214,8,Water Ruins C4 Chest,Water Ruins C4 Chest - Recovery Potion x4,1,,,532,Water Ruins
 Reaper Slash Lv.1,10,1C4070,Selphia Plains,C1,214,20,Selphia Plains C1 Chest,Selphia Plains C1 Chest - Reaper Slash Lv.1,1,,,532,Selphia Plains
 Vest,11,1C4071,Selphia Plains - West,F8,214,40,Selphia Plains - West F8 Chest,Selphia Plains - West F8 Chest - Vest,2,,,532,Selphia Plains - West
@@ -30,7 +30,7 @@ Cure Lv.1,1B,1C407B,Obsidian Mansion,B8,216,10,Obsidian Mansion B8 Chest,Obsidia
 Recovery Potion x2 + Para-Gone + Cotton Cloth,1C,1C407C,Yokmir Cave F2,C2,216,20,Yokmir Cave F2 C2 Chest,Yokmir Cave F2 C2 Chest - Recovery Potion x2 + Para-Gone + Cotton Cloth,3,,,534,Yokmir Cave F2
 Sonic Wind Lv.1,1D,1C407D,Yokmir Cave F2,D4,216,40,Yokmir Cave F2 D4 Chest,Yokmir Cave F2 D4 Chest - Sonic Wind Lv.1,3,,,534,Yokmir Cave F2
 Onigiri + Salmon Onigiri,1E,1C407E,Yokmir Cave F2,A1,216,80,Yokmir Cave F2 A1 Chest,Yokmir Cave F2 A1 Chest - Onigiri + Salmon Onigiri,3,,,534,Yokmir Cave F2
-Bronze Bracelet + Staff,1F,1C407F,Yokmir Cave F3,F2,217,2,Yokmir Cave F3 F2 Chest,Yokmir Cave F3 F2 Chest - Bronze Bracelet + Staff,3,,,535,Yokmir Cave F3
+Bronze Bracelet + Staff,1F,1C407F,Yokmir Cave F3,E2,217,2,Yokmir Cave F3 F2 Chest,Yokmir Cave F3 E2 Chest - Bronze Bracelet + Staff,3,,,535,Yokmir Cave F3
 Bronze x3 + Silver,20,1C4080,Yokmir Cave F3,D4,217,8,Yokmir Cave F3 D4 Chest,Yokmir Cave F3 D4 Chest - Bronze x3 + Silver,11,,Have Margaret Forte Kiel Doug Dolce or Leon in your party and inspect the rock on the left side of E2 to gain access to the switch that gives access to this chest.*,535,Yokmir Cave F3
 Yam Seeds x4,21,1C4081,Yokmir Cave F3,B1,217,80,Yokmir Cave F3 B1 Chest,Yokmir Cave F3 B1 Chest - Yam Seeds x4,3,,Kill all enemies,535,Yokmir Cave F3
 Dash Slash Lv.1,22,1C4082,Yokmir Cave F3,A1,218,1,Yokmir Cave F3 A1 Chest,Yokmir Cave F3 A1 Chest - Dash Slash Lv.1,3,,,536,Yokmir Cave F3
@@ -86,7 +86,7 @@ Rail Strike Lv.1,53,1C40B3,Maya Underground (2),B1,226,8,Maya Underground (2) B1
 Gloves,54,1C40B4,Maya Underground (2),B1,226,10,Maya Underground (2) B1 Chest,Maya Underground (2) B1 Chest - Gloves,6,,,550,Maya Underground (2)
 Mystery Potion x 4,55,1C40B5,Maya Road F2,A4,227,8,Maya Road F2 A4 Chest,Maya Road F2 A4 Chest - Mystery Potion x 4,6,,,551,Maya Road F2
 Axel Disaster Lv.1,56,1C40B6,Maya Road F2,C1,227,10,Maya Road F2 C1 Chest,Maya Road F2 C1 Chest - Axel Disaster Lv.1,6,,,551,Maya Road F2
-Mystery Potion x3 + Levelizer,57,1C40B7,Sechs Territory F1,I2,227,20,Sechs Territory F1 I2 Chest,Sechs Territory F1 I2 Chest - Mystery Potion x3 + Levelizer,11,,,551,Sechs Territory F1
+Mystery Potion x3 + Levelizer,57,1C40B7,Sechs Territory F1,I2,227,20,Sechs Territory F1 I2 Chest,Sechs Territory F1 I2 Chest - Mystery Potion x3 + Levelizer,11,,Not present in AP,551,Sechs Territory F1
 Master Cure Lv.1,58,1C40B8,Sechs Territory F1,G3,229,1,Sechs Territory F1 G3 Chest,Sechs Territory F1 G3 Chest - Master Cure Lv.1,7,,Requires same switch as the two above.,553,Sechs Territory F1
 Water Crystal x4 + Big Crystal,59,1C40B9,Sechs Territory F1,D5,229,2,Sechs Territory F1 D5 Chest,Sechs Territory F1 D5 Chest - Water Crystal x4 + Big Crystal,7,,Walk through trees on right side of D4,553,Sechs Territory F1
 8000G,5A,1C40BA,Sechs Territory F1,C4,229,8,Sechs Territory F1 C4 Chest,Sechs Territory F1 C4 Chest - 8000G,7,,,553,Sechs Territory F1
@@ -155,10 +155,10 @@ Crown Recipe,98,1C40F8,Rune Prana F7,B6,247,20,Rune Prana F7 B6 Chest,Rune Prana
 Magic Broom Recipe + Hand of God Recipe,99,1C40F9,Rune Prana F7,B6,247,40,Rune Prana F7 B6 Chest,Rune Prana F7 B6 Chest - Magic Broom Recipe + Hand of God Recipe,10,Magic Broom + Hand of God,Requires Gold Prince Potato,583,Rune Prana F7
 Royal Garter Recipe,9A,1C40FA,Rune Prana F7,A1,248,8,Rune Prana F7 A1 Chest,Rune Prana F7 A1 Chest - Royal Garter Recipe,10,Royal Garter,Requires Tyrant Turnip,584,Rune Prana F7
 Executioner Recipe + Rune Edge Recipe,9B,1C40FB,Rune Prana F7,A1,248,10,Rune Prana F7 A1 Chest,Rune Prana F7 A1 Chest - Executioner Recipe + Rune Edge Recipe,10,Executioner + Rune Edge,Requires Golden Tyrant Turnip,584,Rune Prana F7
-Small Shield,9C,1C40FC,Yokmir Forest,D1,24a,8,Yokmir Forest D1 Chest,Yokmir Forest D1 Chest - Small Shield,10,,,586,Yokmir Forest
+Small Shield,9C,1C40FC,Yokmir Forest,D1,24a,8,Yokmir Forest D1 Chest,Yokmir Forest D1 Chest - Small Shield,0,,,586,Yokmir Forest
 800G,9D,1C40FD,Selphia Plains,E6,24a,20,Selphia Plains E6 Chest,Selphia Plains E6 Chest - 800G,1,,,586,Selphia Plains
 Upper Cut Lv.1,9E,1C40FE,Selphia Plains,G3,24a,40,Selphia Plains G3 Chest,Selphia Plains G3 Chest - Upper Cut Lv.1,1,,,586,Selphia Plains
-Para-Gone + Roundoff,9F,1C40FF,Water Ruins,A3,24a,80,Water Ruins A3 Chest,Water Ruins A3 Chest - Para-Gone + Roundoff,1,,,586,Water Ruins
+Para-Gone + Roundoff,9F,1C40FF,Water Ruins,A1,24a,80,Water Ruins A3 Chest,Water Ruins A1 Chest - Para-Gone + Roundoff,1,,,586,Water Ruins
 2500G,A0,1C4100,Obsidian Mansion,B3,24b,2,Obsidian Mansion B3 Chest,Obsidian Mansion B3 Chest - 2500G,2,,,587,Obsidian Mansion
 1800 G,A1,1C4101,Obsidian Mansion,A3,24b,4,Obsidian Mansion A3 Chest,Obsidian Mansion A3 Chest - 1800 G,2,,,587,Obsidian Mansion
 3630G,A2,1C4102,Yokmir Cave F1,A,24b,8,Yokmir Cave F1 A Chest,Yokmir Cave F1 A Chest - 3630G,3,,,587,Yokmir Cave F1
@@ -180,3 +180,5 @@ Intelligencer,B1,1C4111,Autumn Road,G1,24e,10,Autumn Road G1 Chest,Autumn Road G
 Dragonic Stone x2,B2,1C4112,Rune Prana F7,E1,24e,20,Rune Prana F7 E1 Chest,Rune Prana F7 E1 Chest - Dragonic Stone x2,10,,,590,Rune Prana F7
 Medipoison,B3,1C4113,Sercerezo Hill,B2,24e,40,Sercerezo Hill B2 Chest,Sercerezo Hill B2 Chest - Medipoison,5,,Fridays Only,590,Sercerezo Hill
 Millionstrike Lv.1,B4,1C4114,Idra Cave B1,C6,24e,80,Idra Cave B1 C6 Chest,Idra Cave B1 C6 Chest - Millionstrike Lv.1,5,,Must be entered from F4 B2 which is entered by walking through the Right wall of F3,590,Idra Cave B1
+Burning Sword,B5,1C4115,Maya Underground,A7-5,224,4,Maya Underground (2) A7-5 Chest,Maya Underground A7-5 Chest - Burning Sword,6,,"Reached by taking the stairs down from A7, then heading south, east, and south through the wall.",,Maya Underground (2)
+Stew Recipe,B6,1C4116,Rune Prana F5,A2,242,1,Rune Prana F5 A2 Chest,Rune Prana F5 A2 Chest - Stew Recipe,11,Stew,"Reached by heading north from B3, through the top edge of the screen.",,Rune Prana F5

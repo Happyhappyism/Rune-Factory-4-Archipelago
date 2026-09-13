@@ -91,6 +91,17 @@ def write_save_data(world:World):
     prana_spheres = world.options.runeprana_runespheres.value
     BGM_val = world.options.background_music.value
     drop_boost = world.options.drop_rate_increase.value
+
+    monster_options = world.options.shuffle_monster_models.value
+    monster_options |= (world.options.shuffle_monster_moveset.value << 1)
+    monster_options |= (world.options.shuffle_monster_AI.value << 2)
+
+    extra_options = world.options.shuffle_music.value
+    extra_options |= (world.options.shuffle_sound_effects.value << 1)
+    extra_options |= (world.options.trupin_hint.value << 2)
+    extra_options |= (world.options.shuffle_elements.value << 3)
+    
+
     appearance = world.options.character_appearance.value
     start_weapon = world.starting_weapon
     daily_trupin = world.options.daily_trupin
@@ -98,15 +109,17 @@ def write_save_data(world:World):
     show_enemy_HP = world.options.show_enemy_HP
     tourism = [0, 100,250, 500, 1000, 2500, 2500]
     skill_exp_multi = ((world.options.skill_exp_multiplier.value)  & 3) << 2
-    birthday = reverse_bits(world.options.birthday.value, 2)
-    birth_month = reverse_bits(world.options.birth_month.value, 7)
+    birthday = reverse_bits(world.options.birthday.value, 7)
+    birth_month = reverse_bits(world.options.birth_month.value, 2)
 
     save_data[0x1E656] = death_link | doctor_option | shopbox_link        # 0
     save_data[0x1E657] = exp_multi | skill_exp_multi                      # 1
     save_data[0x1E658] = fort_spheres                                    # 2
     save_data[0x1E659] = prana_spheres                                   # 3
     save_data[0x1E65A] = game_goal                                          # 4
-    save_data[0x1E65B] = drop_boost                                       # 5
+    save_data[0x1E65B] = drop_boost
+    save_data[0x1E65C] = monster_options
+    save_data[0x1E65D] = extra_options                                       # 5
     for x in range(4):
         save_data[0x20698+x] = (internal_seed >> (8 * x)) & 0xFF
     save_data[0x20714] = (tourism[royalty_rank]) & 0xFF

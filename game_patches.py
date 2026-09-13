@@ -1,5 +1,99 @@
 # Many of the follow codes were made by 
 # @minhnhatx and @ajip from https://fearlessrevolution.com/viewtopic.php?t=18439
+from .pc_ap_methods import *
+from .game_data import basic_patches
+
+loggerDebug = logging.getLogger("Rune Factory 4 Debug")
+
+def varify_patches(ctx):
+    if ctx.doctor_option:
+        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x20D97F)
+        if byte_val != 0x90:
+            patch_game(ctx)
+    elif ctx.skill_exp_multi:
+        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB3E73)
+        if byte_val != 0x48:
+            patch_game(ctx)
+    elif ctx.exp_multi:
+        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB2874)
+        if  byte_val != 0x48:
+            patch_game(ctx)
+    byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x1F464B)
+    if byte_val == 0xC1:
+        if ctx.extra_routine_ptr:
+            pc_free_mem(ctx.pm,ctx.extra_routine_ptr)
+        patch_injects(ctx)
+
+
+def patch_game(ctx):
+    # Instead of a base patch, the client writes all patches directly to memory here
+    try:
+
+        for offset, patch in basic_patches.items():
+            mem_offset = ctx.processes_base + offset
+            pc_write_bytes(ctx.pm,mem_offset,bytes(patch))
+        if ctx.doctor_option:
+            pc_write_bytes(ctx.pm,ctx.processes_base+0x20D97F,bytes([0x90,0x90,0x90,0x90,0x90,0x90]))
+        if ctx.skill_exp_multi:
+            pc_write_bytes(ctx.pm,ctx.processes_base+0xB3E73,bytes([0x48, 0xC1, 0xE7, ctx.skill_exp_multi, 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
+        if ctx.exp_multi:
+            pc_write_bytes(ctx.pm,ctx.processes_base+0xB2874,bytes([0x48, 0xC1, 0xE7, ctx.exp_multi,       0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
+        if ctx.gay_dating:
+            pc_write_bytes(ctx.pm,ctx.processes_base+0x2044B2,bytes([0x75]))
+            pc_write_bytes(ctx.pm,ctx.processes_base+0x2273A2,bytes([0x75]))
+        
+        
+        pc_write_bytes(ctx.pm,ctx.processes_base+0x970D4,bytes([0x48,0xC1,0xE3,0x02,0x90,0x90])) # Triple Friend item tame bonus
+        # Friendship point multiplier, this replaces a check for doug under specific conditons
+        pc_write_bytes(ctx.pm,ctx.processes_base+0x225F44,bytes([
+            0x49,0x8B,0xCF, # mov rcx,r15 {r15: fp_add, eax: new_fp}
+            0xC1,0xE1,ctx.fp_multi, # shl ecx,02
+            0x01,0xCF, # add edi,ecx
+            0xEB,0x22, # jmp RF4S.exe+225F70
+            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,
+            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
+    except Exception as e:
+        loggerDebug.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
+
+
+def patch_injects(ctx):
+    try:
+        ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
+        MageEngine_GetStoragePath = ctx.processes_base+0x254D90
+        path_str = (ctx.seed_f.ap_save_seed_path).replace("\\","/")
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x200, airship_mod())
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x1F464B, generate_inject(ctx.extra_routine_ptr, 0x200, 2))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x240, airship_mod_2())
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x21C656, generate_inject(ctx.extra_routine_ptr, 0x240, 5))
+
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x0, generate_fish(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x180CC0, generate_inject(ctx.extra_routine_ptr, 0, 4))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x40, aquaticus_rain(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x185830, generate_inject(ctx.extra_routine_ptr, 0x40, 1))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x80, ventis_wind(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x1711F4, generate_inject(ctx.extra_routine_ptr, 0x80, 20, "r14"))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0xC0, fiersome_sun(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x185C26, generate_inject(ctx.extra_routine_ptr, 0xC0, 1, "rdx"))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x140, pandora_mandate(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x1E3841, generate_inject(ctx.extra_routine_ptr, 0x140, 3, "rcx"))
+
+        pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x280, lucky_charm(ctx.processes_base))
+        pc_write_bytes(ctx.pm, ctx.processes_base+0x9676D, generate_inject(ctx.extra_routine_ptr, 0x280, 2, "rcx"))
+
+        pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x7A, save_mod())
+        pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x24F, save_mod_2(ctx.extra_routine_ptr + 0x300))
+
+        menu_slot_row_patches(ctx)
+    except Exception as e:
+        loggerDebug.critical(f"Error  Injects: {e}\n{traceback.format_exc()}")
 
 def airship_mod():
     #flag_adr = p_base + 0xE9AC40
@@ -147,27 +241,39 @@ def save_mod_2(alloc_addr):
         working_bytes += b'\x90' # nop
     return working_bytes
 
+def menu_slot_row_patches(ctx):
+    alloc_addr = ctx.extra_routine_ptr
+    simple_patches = {
+        0x158960: b'\x42\x0f\xB6\x84\x02\x7B\x05\x00\x00', # move text check to norad farm
+    }
+    for process_offset, patch_bytes in simple_patches.items():
+        pc_write_bytes(ctx.pm, ctx.processes_base + process_offset, patch_bytes)
+    pass
+
 def generate_inject(alloc_ptr, offset, padding, reg="rax"):
-    match reg:
-        case "rax":
-            reg_byte = b'\x48\xB8'
-            call_bytes = b'\xFF\xD0'
-        case "rcx":
-            reg_byte = b'\x48\xB9'
-            call_bytes = b'\xFF\xD1'
-        case "rdx":
-            reg_byte = b'\x48\xBA'
-            call_bytes = b'\xFF\xD2'
-        case "r14":
-            reg_byte = b'\x49\xBE'
-            call_bytes = b'\x41\xFF\xD6'
-        case _:
-            reg_byte = b'\x48\xB8'
-            call_bytes = b'\xFF\xD0'
-    alloc_addr = alloc_ptr + offset
-    working_bytes = reg_byte # mov allocation ptr to register
-    working_bytes += alloc_addr.to_bytes(8, byteorder= 'little')
-    working_bytes += call_bytes #call reg
-    for x in range(padding):
-        working_bytes += b'\x90' # nop
-    return working_bytes
+    try:
+        match reg:
+            case "rax":
+                reg_byte = b'\x48\xB8'
+                call_bytes = b'\xFF\xD0'
+            case "rcx":
+                reg_byte = b'\x48\xB9'
+                call_bytes = b'\xFF\xD1'
+            case "rdx":
+                reg_byte = b'\x48\xBA'
+                call_bytes = b'\xFF\xD2'
+            case "r14":
+                reg_byte = b'\x49\xBE'
+                call_bytes = b'\x41\xFF\xD6'
+            case _:
+                reg_byte = b'\x48\xB8'
+                call_bytes = b'\xFF\xD0'
+        alloc_addr = alloc_ptr + offset
+        working_bytes = reg_byte # mov allocation ptr to register
+        working_bytes += alloc_addr.to_bytes(8, byteorder= 'little')
+        working_bytes += call_bytes #call reg
+        for x in range(padding):
+            working_bytes += b'\x90' # nop
+        return working_bytes
+    except Exception as e:
+        loggerDebug.critical(f"Error Generating Inject: {e}\n{traceback.format_exc()}")

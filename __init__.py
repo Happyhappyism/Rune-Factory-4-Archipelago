@@ -168,11 +168,13 @@ class RF4World(World):
 
     def create_regions(self) -> None:
         import copy
-        from .Locations import shipment_data_table
+        from .Locations import shipment_data_table, chest_data_table
+        from .game_data import region_tiers
         for region_name in region_data_table.keys():
             region = Region(region_name, self.player, self.multiworld)
             self.multiworld.regions.append(region)
 
+        max_tier = self.options.max_ship_tier
         # Handle option sanities
         duplicate_data_table = copy.deepcopy(location_data_table)
         for name, data in shipment_data_table.items():
@@ -236,7 +238,7 @@ class RF4World(World):
                     del duplicate_data_table[name]
                     continue
             if data.tier:
-                if data.tier >= self.options.max_ship_tier:
+                if data.tier > max_tier:
                     del duplicate_data_table[name]
                     continue
         if not self.options.requestsanity:
@@ -249,6 +251,10 @@ class RF4World(World):
         if not self.options.chestsanity:
             for name in chest_loc_list:
                 del duplicate_data_table[name]
+        else:
+            for name, data in chest_data_table.items():
+                if data.tier > max_tier:
+                    del duplicate_data_table[data.loc_name]
 
         max_friend = self.options.max_friendship.value
         friendsanity_type = self.options.friendsanity.value
@@ -263,7 +269,7 @@ class RF4World(World):
             if name in duplicate_data_table:
                 if not self.options.tamesanity:
                     del duplicate_data_table[name]
-                elif data.tier > self.options.max_ship_tier:
+                elif data.tier > max_tier:
                     del duplicate_data_table[name]
 
         for name, data in outfit_data_table.items():
@@ -273,14 +279,28 @@ class RF4World(World):
         for name, data in barrier_data_table.items():
             if not self.options.barriersanity:
                 del duplicate_data_table[name]
+            elif data.region in region_tiers:
+                if  region_tiers[data.region] > max_tier:
+                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
+                    del duplicate_data_table[name]
                         
         for name, data in box_data_table.items():
             if not self.options.boxsanity:
                 del duplicate_data_table[name]
+            elif data.region in region_tiers:
+                if region_tiers[data.region] > max_tier :
+                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
+                    del duplicate_data_table[name]
 
         for name, data in search_data_table.items():
             if not self.options.searchsanity:
                 del duplicate_data_table[name]
+            elif data.region in region_tiers:
+                if  region_tiers[data.region] > max_tier:
+                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
+                    del duplicate_data_table[name]
+
+        
         
 
         for name in bugged_locs:
@@ -318,6 +338,21 @@ class RF4World(World):
             "ShopboxLink": self.options.shopbox_link.value,
             "Goal": self.options.game_goal.value,
             "GoalLoc": goal_loc,
+            "ShipSanities": {
+                "CropSanity": self.options.cropsanity.value,
+                "GoldcropSanity": self.options.goldcropsanity.value,
+                "LargeCropSanity": self.options.largecropsanity.value,
+                "DropSanity": self.options.dropsanity.value,
+                "SpellSanity": self.options.spellsanity.value,
+                "MineralSanity": self.options.mineralsanity.value,
+                "GrocerySanity": self.options.grocerysanity.value,
+                "ForageSanity": self.options.foragesanity.value,
+                "Fishsanity": self.options.fishsanity.value,
+                "ForgeSanity": self.options.forgesanity.value,
+                "CraftSanity": self.options.craftsanity.value,
+                "DishSanity": self.options.dishsanity.value,
+                "ChemicSanity": self.options.chemicsanity.value,
+            },
             "Shipping_Percent": self.options.shipment_percentage_requirement.value,
             "ChestSanity": self.options.chestsanity.value,
             "Friendsanity": self.options.friendsanity.value,
@@ -379,8 +414,8 @@ class RF4World(World):
         save_slot_val = self.options.save_slot.value
         drop_rate = self.options.drop_rate_increase.value
         monster_model = int(self.options.shuffle_monster_models)
-        monster_moveset = int(self.options.shuffle_monster_AI) << 1
-        monster_ai = int(self.options.shuffle_monster_AI) << 2
+        monster_moveset = int(self.options.shuffle_monster_moveset.value) << 1
+        monster_ai = int(self.options.shuffle_monster_AI.value) << 2
         monster_options = monster_model | monster_moveset | monster_ai
         music_shuffle = int(self.options.shuffle_music)
         sfx_shuffle = int(self.options.shuffle_sound_effects) << 1

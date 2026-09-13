@@ -5,7 +5,8 @@ from .pc_ap_methods import *
 from settings import get_settings
 from .game_data import *
 from .client_methods import *
-from .game_routines import *
+from .game_patches import *
+from .rf4_ap_data import *
 #from .game_patches import *
 #from .Items import inventory_slots
 from .Locations import  \
@@ -38,7 +39,9 @@ from NetUtils import NetworkItem, ClientStatus
 from CommonClient import gui_enabled, logger, get_base_parser,  ClientCommandProcessor,\
     CommonContext, server_loop
 
-loggerExt = logging.getLogger("Rune Factory 4 Client")
+loggerClient = logging.getLogger("Rune Factory 4 Client")
+loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
+loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
 pid = "RF4S.exe"
 RECV_INDEX = 0x1FC
@@ -88,8 +91,8 @@ class RF4CommandProcessor(ClientCommandProcessor):
         self.output(f"Resyncing Memory")
         got_items = self.ctx.items_received
         process_items(self.ctx, got_items, 0)
-        for item in got_items:
-            item_id = item.item
+        #for item in got_items:
+        #    item_id = item.item
 
 
     def _cmd_deathlink(self):
@@ -116,7 +119,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
             else:
                 self.output(f"Missing Player name")
         except Exception as e:
-            loggerExt.error(f"Error sending item {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error sending item {e}\n{traceback.format_exc()}")
 
     def _cmd_debug(self, *info_type:str):
         """Prints some debug information. Options are
@@ -157,7 +160,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
             else:
                 self.output("no argument detected")
         except Exception as e:
-            loggerExt.error(f"Error Printing debug {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error Printing debug {e}\n{traceback.format_exc()}")
 
 
 
@@ -289,7 +292,7 @@ class RF4CommandProcessor(ClientCommandProcessor):
                 self.output(f"No item name given")
 
         except Exception as e:
-            loggerExt.error(f"Error getting info {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error getting info {e}\n{traceback.format_exc()}")
 
 
 
@@ -336,6 +339,7 @@ class RF4Client(CommonContext):
     monster_base = None
     time_pointer = None
     monster_ptr = None
+    shipsanities:dict = {}
     equip_effects = None
     seed_check_result: bool = False
     acc_eff_ptr = None
@@ -347,10 +351,16 @@ class RF4Client(CommonContext):
     character_appearance = None
     menu_state_ptr = None
 
+    last_patch_check = time.time()
+    last_loc_check = time.time()
+    last_goal_check = time.time()
+    last_seed_check = time.time()
+
     doctor_option = False
     skill_exp_multi = 0
     exp_multi = 0
     fp_multi = 0
+    old_spheres: int = 0
 
     extra_routine_ptr = None
     sphere_hunt_spheres = 100
@@ -426,48 +436,96 @@ class RF4Client(CommonContext):
             if cmd in {"RoomInfo"}:
                 self.seed_name = args['seed_name']
                 self.seed = (int(self.seed_name, 16) & 0xFFFF)
-                loggerExt.info(f"seed: {hex(self.seed)}, seed_name: {self.seed_name}")
+                #loggerClient.info(f"seed: {hex(self.seed)}, seed_name: {self.seed_name}")
             if cmd in {"Connected"}:
                 self.setup_pointers()
                 player_data = args['players']
                 self.slot_id = args['slot']
                 for player in player_data:
                     self.player_to_slot[(player.name).lower()] = player.slot
-                if(args['slot_data']['DeathLink']):
-                    self.death_link = True
-                    #self.update_death_link(self.death_link)
-                if(args['slot_data']['ShopboxLink']):
-                    self.shopbox_link = True
+
+                # for older version compatability define new slot data default options
+                for slot_key, slot_default in slot_data_defaults.items():
+                    if slot_key not in args['slot_data']:
+                        args['slot_data'][slot_key] = slot_default
+
                 if(args['slot_data']['Goal']):
                     self.game_goal = args['slot_data']['Goal']
+                match self.game_goal:
+                    case 0:
+                        goal_str = "Custom"
+                    case 1:
+                        goal_str = "Ethelberd"
+                    case 2:
+                        goal_str = "Rune Prana"
+                    case 3:
+                        goal_str = "Shipment Percentage"
+                    case 4:
+                        goal_str = "Nationized Baths"
+                    case 5:
+                        goal_str = "Eliza"
+                    case 6:
+                        goal_str = "Mariage"
+                    case 7:
+                        goal_str = "Rune Hunt"
+                    case 8:
+                        goal_str = "Homeowner"
+                
+                if(args['slot_data']['DeathLink']):
+                    self.death_link = True
+                        #self.update_death_link(self.death_link)
+                if(args['slot_data']['ShopboxLink']):
+                    self.shopbox_link = True
+                
                 if(args['slot_data']['GoalLoc']):
                     self.goal_loc = args['slot_data']['GoalLoc']
+
                 if(args['slot_data']['Shipping_Percent']):
                     self.ship_percent_need = args['slot_data']['Shipping_Percent']
+
+                if(args['slot_data']['ShipSanities']):
+                    self.shipsanities = args['slot_data']['ShipSanities']
+                    shipsanitystr = f""
+                    for name, data in args['slot_data']['ShipSanities'].items():
+                        if data:
+                            shipsanitystr += f"{name}, "
                 if(args['slot_data']['ChestSanity']):
                     self.chestsanity = args['slot_data']['ChestSanity']
+
                 if(args['slot_data']['Friendsanity']):
                     self.friendsanity = args['slot_data']['Friendsanity']
+
                 if(args['slot_data']['Tamesanity']):
                     self.tamesanity = args['slot_data']['Tamesanity']
+
                 if(args['slot_data']['OutfitSanity']):
                     self.outfitsanity = args['slot_data']['OutfitSanity']
 
                 if(args['slot_data']['RequestSanity']):
                     self.requestsanity = args['slot_data']['RequestSanity']
+
                 if(args['slot_data']['BoxSanity']):
                     self.boxsanity = args['slot_data']['BoxSanity']
+
                 if(args['slot_data']['BarrierSanity']):
                     self.barriersanity = args['slot_data']['BarrierSanity']
+
                 if(args['slot_data']['SearchSanity']):
                     self.searchsanity = args['slot_data']['SearchSanity']
+                loggerSeed.info(f"")
 
                 if(args['slot_data']['fortress_runespheres']):
                     self.fortress_sphere_need = args['slot_data']['fortress_runespheres']
+                loggerSeed.info(f"")
+
                 if(args['slot_data']['runeprana_runespheres']):
                     self.prana_sphere_need = args['slot_data']['runeprana_runespheres']
+                loggerSeed.info(f"")
+
                 if(args['slot_data']['sphere_hunt_spheres']):
                     self.sphere_hunt_spheres = args['slot_data']['sphere_hunt_spheres']
+                
+
                 if(args['slot_data']['no_jones_fee']):
                     self.doctor_option = args['slot_data']['no_jones_fee']
                 if(args['slot_data']['exp_multiplier']):
@@ -515,23 +573,38 @@ class RF4Client(CommonContext):
                     self.progressive_accessory = args['slot_data']['progressive_accessory']
                 if(args['slot_data']['character_appearance']):
                     self.character_appearance = args['slot_data']['character_appearance']
-
+                loggerSeed.info( \
+                f"""Seed: {self.seed_name}\n 
+                Save Created: {self.seed_f.save_create_date}
+                Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}
+                Shipsanities: [{shipsanitystr}]
+                Fortress Spheres Needed: {self.fortress_sphere_need},  Rune Prana Spheres Needed: {self.prana_sphere_need}
+                ChestSanity: {bool(self.chestsanity)},  Friendsanity: {bool(self.friendsanity)}  Tamesanity: {bool(self.tamesanity)}
+                OutfitSanity: {bool(self.outfitsanity)},  RequestSanity: {bool(self.requestsanity)}
+                BoxSanity: {bool(self.boxsanity)},  BarrierSanity: {bool(self.barriersanity)},  SearchSanity: {bool(self.searchsanity)}
+                """)
+                if self.game_goal == 0:
+                    loggerSeed.info(f"GoalLoc: {self.goal_loc}")
+                elif self.game_goal == 3:
+                    loggerSeed.info(f"Shipping_Percent: {self.ship_percent_need}%")
+                elif self.game_goal == 7:
+                    loggerSeed.info(f"Goal Spheres Needed: {self.sphere_hunt_spheres}")
 
             if cmd in {"Bounced"}:
                 try:
                     if 'tags' in args and 'slots' in args:
                         tags = args['tags']
                         player_slot = args['slots'][0]
-                        loggerExt.info(f"recieved bounce packet, tags:{tags}, slot: {player_slot}/{self.slot}")
+                        #loggerDebug.info(f"recieved bounce packet, tags:{tags}, slot: {player_slot}/{self.slot}")
                         if "ShopboxLink" in tags and self.slot == player_slot:
-                            loggerExt.info(f"Bounced package: {args}")
+                            #loggerDebug.info(f"Bounced package: {args}")
                             item_base64 = args['data']
                             item_bytes = base64.b64decode(item_base64)
                             shopbox_bytes = get_inv_bytes(self.pm, self.shop_box_ptr)
                             free_slot = find_free_inv_slot(shopbox_bytes, self.shop_box_ptr)
                             pc_write_bytes(self.pm,free_slot,item_bytes)
                 except Exception as e:
-                    loggerExt.error(f"Error recieving bounce packet {e}\n{traceback.format_exc()}")
+                    loggerDebug.error(f"Error recieving bounce packet {e}\n{traceback.format_exc()}")
 
             if cmd in {"PrintJSON"}:
                 pass
@@ -544,25 +617,27 @@ class RF4Client(CommonContext):
                         self.recv_item_storage[start_index] = item_list
                     elif self.game_flags_ptr:
                         self.recv_item_storage[start_index] = item_list
+                    elif not self.seed_check_result:
+                        self.recv_item_storage[start_index] = item_list
                     else:
                         process_items(self, item_list, start_index)
 
 
                 except TypeError as e:
-                    loggerExt.error(f"Error recieving items {e}\n{traceback.format_exc()}")
+                    loggerDebug.error(f"Error recieving items {e}\n{traceback.format_exc()}")
                     self.recv_item_storage[start_index] = item_list
                     try:
                         self.processes_base = pc_get_proc_base(self.pm)
                         if self.processes_base:
                             self.setup_pointers()
                     except Exception as e:
-                        loggerExt.critical(f"Could not find RF4S process {e}\n{traceback.format_exc()}")
+                        loggerDebug.critical(f"Could not find RF4S process {e}\n{traceback.format_exc()}")
                 except Exception as e:
                     self.recv_item_storage[start_index] = item_list
-                    loggerExt.warning(f"Error recieving item {e}\n{traceback.format_exc()}")
+                    loggerDebug.warning(f"Error recieving item {e}\n{traceback.format_exc()}")
         except Exception as e:
 
-            loggerExt.critical(f"Error processing server package {e}\n{traceback.format_exc()}")
+            loggerDebug.critical(f"Error processing server package {e}\n{traceback.format_exc()}")
 
     def run_gui(self):
         from kvui import GameManager
@@ -572,13 +647,23 @@ class RF4Client(CommonContext):
             logging_pairs = [
                 ("Client", "Archipelago"),
                 ("Rune Factory 4 Client", "RF4 Client"),
-                ("Rune Factory 4 Launcher", "RF4 Launcher"),
-                ("Rune Factory 4 Client Lib", "RF4 Lib"),
-                ("pc_ap_methods", "RF4 Memory"),
+                ("Rune Factory 4 Seed Info", "RF4 Seed Info"),
+                ("Rune Factory 4 Debug", "RF4 Debug")
+                #("pc_ap_methods", "RF4 Memory"),
             ]
             base_title = "Archipelago Rune Factory 4 Client"
+            def build(self):
+                root = super().build()
+                client_tab = None
+                for tab in self.tabs.children:
+                    if getattr(tab, "text", None) == "Archipelago":
+                        client_tab = tab
+                        break
+                client_tab.on_release()
+                return root
         self.ui = LOLManager(self)
         self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
+        
 
     # async def send_deathlink(self) -> None:
     #     self.sending_death_link = True
@@ -594,9 +679,8 @@ class RF4Client(CommonContext):
 
     def setup_pointers(self):
         try:
-            loggerExt.info(f"Setting up pointers")
             self.processes_base = pc_get_proc_base(self.pm)
-            if self.processes_base:
+            if self.processes_base and self.seed_check_result:
                 # reads all game pointers from game memory, if the process base is not found will instead
                 
                 self.rf4d = self.processes_base + 0xE704A0
@@ -619,6 +703,11 @@ class RF4Client(CommonContext):
                 if self.game_flags_ptr:
                     self.rune_spheres = pc_readb(self.pm, self.game_flags_ptr + 0x1F8)
                 self.playerfile_ptr = pc_read_ptr(self.pm, self.processes_base + 0xE15078)
+                self.time_pointer =  pc_read_ptr(self.pm, pc_read_ptr(self.pm,self.processes_base+0xE12868) +0xB0)
+                self.storage_box_ptr = get_inv_ptr("Storage", self.pm, self.processes_base)
+                self.fridge_ptr = get_inv_ptr("Fridge", self.pm, self.processes_base)
+                self.rune_abilites_ptr = get_inv_ptr("Runes", self.pm, self.processes_base)
+                self.shop_box_ptr = get_inv_ptr("Shop", self.pm, self.processes_base)
                 if self.extra_routine_ptr:
                     pc_free_mem(self.pm,self.extra_routine_ptr)
                 patch_injects(self)
@@ -634,28 +723,33 @@ class RF4Client(CommonContext):
 
                 if self.character_appearance:
                     pc_write(self.pm, self.processes_base + 0xE9AC38, self.character_appearance)
+                    #if self.character_appearance > 0x100:
+                    #    pc_writeb(self.pm, self.processes_base + 0xE9AC39, 1)
+                else:
+                    pc_write(self.pm, self.processes_base + 0xE9AC38, 0)
             else:
-                loggerExt.warning(f"Process base not found ctx.processes_base:{self.processes_base}")
+                pass
+                #loggerDebug.warning(f"Pointers failed to setup:{self.processes_base} - {self.seed_check_result}")
         except Exception as e:
-            loggerExt.critical(f"Error setting up pointers game probably not loaded/n {e}\n{traceback.format_exc()}")
+            loggerDebug.critical(f"Error setting up pointers game probably not loaded/n {e}\n{traceback.format_exc()}")
 
 
     def log_pointers(self):
         try:
             # Logging pointers in game memory used by the client for debugging purposes
-            loggerExt.info(f"processes_base = {hex(self.processes_base)}")
-            loggerExt.info(f"shipment = {hex(self.shipment_base)}")
-            loggerExt.info(f"rf4d = {hex(self.rf4d)}")
-            loggerExt.info(f"expgain = {hex(self.ExpGainAd)}")
-            loggerExt.info(f"moneyPtr = {hex(self.moneyPtr)}")
-            loggerExt.info(f"playerObj = {hex(self.playerObj)}")
-            loggerExt.info(f"game_flags = {hex(self.game_flags_ptr)}")
-            loggerExt.info(f"npc_table_base = {hex(self.npc_table_base)}")
-            loggerExt.info(f"monster_base = {hex(self.monster_base)}")
-            loggerExt.info(f"storage_base = {hex(self.storage_box_ptr)}")
-            loggerExt.info(f"time_pointer = {hex(self.time_pointer)}")
+            loggerDebug.info(f"processes_base = {hex(self.processes_base)}")
+            loggerDebug.info(f"shipment = {hex(self.shipment_base)}")
+            loggerDebug.info(f"rf4d = {hex(self.rf4d)}")
+            loggerDebug.info(f"expgain = {hex(self.ExpGainAd)}")
+            loggerDebug.info(f"moneyPtr = {hex(self.moneyPtr)}")
+            loggerDebug.info(f"playerObj = {hex(self.playerObj)}")
+            loggerDebug.info(f"game_flags = {hex(self.game_flags_ptr)}")
+            loggerDebug.info(f"npc_table_base = {hex(self.npc_table_base)}")
+            loggerDebug.info(f"monster_base = {hex(self.monster_base)}")
+            loggerDebug.info(f"storage_base = {hex(self.storage_box_ptr)}")
+            loggerDebug.info(f"time_pointer = {hex(self.time_pointer)}")
         except Exception as e:
-            loggerExt.error(f"Something wrong with logging the pointers {e}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Something wrong with logging the pointers {e}\n{traceback.format_exc()}")
 
 def seed_check(ctx: RF4Client):
     ctx.game_flag_ptr_base = pc_read_ptr(ctx.pm, ctx.processes_base + 0xE9E4B0)
@@ -674,15 +768,18 @@ def seed_check(ctx: RF4Client):
                 return False
             else:
                 if ctx.seed_check_result == False:
+                    ctx.seed_check_result = True
+                    ctx.setup_pointers()
                     on_save_load(ctx)
                     logger.info(f"Seed check passed")
+                
                 return True
         except TypeError as t:
-            loggerExt.error(f"Error checking seed {t}\n{traceback.format_exc()}")
+            loggerDebug.error(f"Error checking seed {t}\n{traceback.format_exc()}")
             ctx.setup_pointers()
             return False
     else:
-        loggerExt.error(f"Game flag pointer not found")
+        loggerDebug.error(f"Game flag pointer not found")
         ctx.setup_pointers()
         return False
 
@@ -690,6 +787,26 @@ def attach_process_memory(ctx:RF4Client):
     process_id = ctx.seed_f.process_obj.pid
     ctx.pm = pymem.Pymem()
     ctx.pm.open_process_from_id(process_id)
+
+def check_deathlink(ctx:RF4Client):
+    player_hp = pc_read(ctx.pm, ctx.combat_ptr)
+    player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
+    menu_state = pc_readb(ctx.pm, ctx.processes_base + 0xE128F0)
+    if player_status_eff & 0x40 and player_hp > 0:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif menu_state:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif ctx.map_id in death_map_excludes:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif player_hp <= 0 and ctx.last_death_link + 12 < time.time():
+        return True
+    else:
+        ctx.sending_death_link = False
+    return False
+
 
 async def game_watcher(ctx: RF4Client):
     try:
@@ -703,15 +820,17 @@ async def game_watcher(ctx: RF4Client):
                 ctx.setup_pointers()
                 varify_patches(ctx)
             else:
-                loggerExt.warning(f"Can not find process, attempting again")
+                loggerDebug.warning(f"Can not find process, attempting again")
             await asyncio.sleep(10)
         
         
-
+        # Main Loop
+        client_ticks = 0
         while not ctx.exit_event.is_set():
             try:
+                client_ticks += 1
                 if ctx.seed is None:
-                    # This might be the cause of the client not connecting properly
+                    # Wait for the client to connect
                     await asyncio.sleep(10)
                     continue
                 # Make sure save file matches run seed
@@ -719,8 +838,11 @@ async def game_watcher(ctx: RF4Client):
                 if not ctx.seed_check_result:
                     await asyncio.sleep(2)
                     continue
+                cur_time = time.time()
 
-                varify_patches(ctx)
+                if cur_time - ctx.last_patch_check >= 300:
+                    ctx.last_patch_check = time.time()
+                    varify_patches(ctx)
 
                 if ctx.death_link and "DeathLink" not in ctx.tags:
                     await ctx.update_death_link(ctx.death_link)
@@ -736,30 +858,18 @@ async def game_watcher(ctx: RF4Client):
                     ctx.syncing = False
 
                 if ctx.recv_item_storage:
-                    #loggerExt.warning(f"found item storage {ctx.recv_item_storage}")
+                    #loggerDebug.warning(f"found item storage {ctx.recv_item_storage}")
                     for start_index, item_list in ctx.recv_item_storage.items():
                         process_items(ctx,item_list,start_index)
                     ctx.recv_item_storage.clear()
 
-                player_hp = pc_read(ctx.pm, ctx.combat_ptr)
-                player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
-                menu_state = pc_readb(ctx.pm, ctx.processes_base + 0xE128F0)
+                
+                
                 ctx.map_id = pc_read(ctx.pm, ctx.processes_base + 0x9EC578) & 0xFFFF
                 if ctx.death_link:
                     # Check if player is dead
-                    if player_status_eff & 0x40 and player_hp > 0:
-                        ctx.sending_death_link = False
-                        ctx.last_death_link = time.time()
-                    elif menu_state:
-                        ctx.sending_death_link = False
-                        ctx.last_death_link = time.time()
-                    elif ctx.map_id in death_map_excludes:
-                        ctx.sending_death_link = False
-                        ctx.last_death_link = time.time()
-                    elif player_hp <= 0 and ctx.last_death_link + 6 < time.time():
+                    if check_deathlink(ctx):
                         await ctx.send_death(ctx.player_names[ctx.slot]+" died.")
-                    else:
-                        ctx.sending_death_link = False
 
                 # Handle outbound shopbox link
                 if ctx.sending_item:
@@ -780,15 +890,22 @@ async def game_watcher(ctx: RF4Client):
                     ])
                 ctx.prev_map = ctx.map_id
                 ctx.game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
-                sending = check_locations(ctx)
-                # Send new Locations
-                if sending != ctx.local_checked_locations:
-                    ctx.local_checked_locations = sending
-                    message = [{"cmd": 'LocationChecks', "locations": sending}]
-                    await ctx.send_msgs(message)
 
+                
+                if cur_time - ctx.last_loc_check >= 5:
+                    sending = check_locations(ctx)
+                    # Send new Locations
+                    ctx.last_loc_check = time.time()
+                    if sending != ctx.local_checked_locations:
+                        ctx.local_checked_locations = sending
+                        message = [{"cmd": 'LocationChecks', "locations": sending}]
+                        await ctx.send_msgs(message)
+
+                game_clear = False
                 # Check Goal completetion
-                game_clear = check_goals(ctx)
+                if cur_time - ctx.last_goal_check >= 30:
+                    ctx.last_goal_check = time.time()
+                    game_clear = check_goals(ctx)
 
                 if not ctx.finished_game and game_clear:
                     await ctx.send_msgs([{"cmd": "StatusUpdate", "status": ClientStatus.CLIENT_GOAL}])
@@ -797,20 +914,20 @@ async def game_watcher(ctx: RF4Client):
                 try:
                     ctx.processes_base = pc_get_proc_base(ctx.pm)
                     if ctx.processes_base:
-                        loggerExt.error(f"Error {e}\n {traceback.format_exc()}")
+                        loggerDebug.error(f"Error {e}\n {traceback.format_exc()}")
                         ctx.setup_pointers()
                 except Exception as e:
-                    loggerExt.critical(f"Could not find RF4S process{e}\n{traceback.format_exc()}")
+                    loggerDebug.critical(f"Could not find RF4S process{e}\n{traceback.format_exc()}")
             except Exception as e:
-                loggerExt.critical(f"Error in game loop: {e}\n{traceback.format_exc()}")
+                loggerDebug.critical(f"Error in game loop: {e}\n{traceback.format_exc()}")
 
             try:
                 await asyncio.sleep(1)
             except Exception as e:
-                loggerExt.critical(f"Error in async sleep: {e}\n{traceback.format_exc()}")
+                loggerDebug.critical(f"Error in async sleep: {e}\n{traceback.format_exc()}")
 
     except Exception as e:
-        loggerExt.critical(f"Error {e}\n{traceback.format_exc()}")
+        loggerDebug.critical(f"Error {e}\n{traceback.format_exc()}")
 
 
 def launch(*args):
@@ -819,7 +936,7 @@ def launch(*args):
         start_launch(seed_f) # -> Launch.py
         
     except Exception as e:
-        loggerExt.error(f"Error: {e}\n{traceback.format_exc()}")
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
         return
 
     async def main(args):
@@ -841,11 +958,11 @@ def launch(*args):
             ctx.server_address = None
 
             await progression_watcher
-            logger.warning(f"exiting script")
+            loggerClient.warning(f"exiting script")
             closing_functions(ctx.seed_f)
             await ctx.shutdown()
         except Exception as e:
-            loggerExt.critical(f"Error Starting up client task {e}\n{traceback.format_exc()}")
+            loggerDebug.critical(f"Error Starting up client task {e}\n{traceback.format_exc()}")
     import colorama
     parser = get_base_parser(description="Rune Factory 4 Client text interface")
     parser.add_argument('--name', default=None, help="Slot Name to connect as.")
