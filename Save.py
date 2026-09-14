@@ -170,7 +170,7 @@ def write_save_data(world:World):
     save_data[0x1EAC2] |= (seed_data & 0xFF)
     save_data[0x1EAC3] |= ((seed_data & 0xFF00) >> 8)
 
-    save_data[0x1E8DE] = (birth_month << 5) | ((birthday & 1)<<7)
+    save_data[0x1E8DE] = ((birth_month << 5)- 1) | (((birthday & 1)<<7) - 1)
     save_data[0x1E8DE] = birthday >> 1
 
     player_name_bytes = bytearray(world.multiworld.player_name[world.player], "utf8")[:0x20]
