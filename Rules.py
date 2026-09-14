@@ -208,9 +208,13 @@ def set_rules(world: "RF4World"):
     for location in player_location_vals:
         player_locations.append(location.name)
     for loc_name in water_shoe_chests:
-        location = world.multiworld.get_location(loc_name, world.player)
-        add_rule(location, lambda state: can_make_recipe("Water Shoes", state, world.player))
-
+        try:
+            if world.options.max_ship_tier > 7:
+                location = world.multiworld.get_location(loc_name, world.player)
+                add_rule(location, lambda state: can_make_recipe("Water Shoes", state, world.player))
+        except Exception as e:
+            logger.error(f"Location:{location} missing for water shoe rule")
+            
     region_rules = get_region_rules(world.player, world.options)
     for entrance_name, rule in region_rules.items():
         entrance = world.multiworld.get_entrance(entrance_name, world.player)

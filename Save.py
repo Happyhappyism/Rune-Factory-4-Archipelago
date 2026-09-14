@@ -109,9 +109,12 @@ def write_save_data(world:World):
     show_enemy_HP = world.options.show_enemy_HP
     tourism = [0, 100,250, 500, 1000, 2500, 2500]
     skill_exp_multi = ((world.options.skill_exp_multiplier.value)  & 3) << 2
-    birthday = reverse_bits(world.options.birthday.value, 7)
-    birth_month = reverse_bits(world.options.birth_month.value, 2)
-
+    birthday = reverse_bits((world.options.birthday.value), 5) #0b10000
+    birth_month = reverse_bits(world.options.birth_month.value, 2) # 0b00
+    birth_bits = (birth_month << 5) | (birthday << 7)
+    logger.warning(f"birthday:{birthday:b}, birth_month: {birth_month:b}, birth_bits: {birth_bits:b}") 
+    # 0b0000bbbb bmm00000
+    # mm 
     save_data[0x1E656] = death_link | doctor_option | shopbox_link        # 0
     save_data[0x1E657] = exp_multi | skill_exp_multi                      # 1
     save_data[0x1E658] = fort_spheres                                    # 2
@@ -170,8 +173,8 @@ def write_save_data(world:World):
     save_data[0x1EAC2] |= (seed_data & 0xFF)
     save_data[0x1EAC3] |= ((seed_data & 0xFF00) >> 8)
 
-    save_data[0x1E8DE] = ((birth_month << 5)- 1) | (((birthday & 1)<<7) - 1)
-    save_data[0x1E8DE] = birthday >> 1
+    save_data[0x1E8DE] = birth_bits & 0xFF
+    save_data[0x1E8DF] = (birth_bits & 0xFF00) >> 8
 
     player_name_bytes = bytearray(world.multiworld.player_name[world.player], "utf8")[:0x20]
     for offset in range(len(player_name_bytes)):

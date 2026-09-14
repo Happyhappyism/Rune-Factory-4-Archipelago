@@ -174,7 +174,7 @@ class RF4World(World):
             region = Region(region_name, self.player, self.multiworld)
             self.multiworld.regions.append(region)
 
-        max_tier = self.options.max_ship_tier
+        max_tier = self.options.max_ship_tier.value
         # Handle option sanities
         duplicate_data_table = copy.deepcopy(location_data_table)
         for name, data in shipment_data_table.items():
