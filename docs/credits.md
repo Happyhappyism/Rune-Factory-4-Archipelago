@@ -1,6 +1,7 @@
 # Credits
 ## Coding
 - Happyhappyism
+- Arryndoestech
 
 ## Spreadsheet Mapping
 - Caidyrn
@@ -12,3 +13,6 @@
 - Noa
 - Maki
 - Prelude
+
+## Poptracker
+- rdpeake
