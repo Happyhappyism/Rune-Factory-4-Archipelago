@@ -18,6 +18,8 @@ import pkgutil
 import json
 import traceback
 import subprocess
+import zipfile
+import winreg
 
 from io import BytesIO
 from pathlib import Path
@@ -30,23 +32,23 @@ loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
 loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
 class SeedFileInfo:
-    install_path: str = None
-    ap_rf4_base: str = None
-    old_run_path: str = None
-    ap_mod_path: str = None
+    install_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special'
+    ap_rf4_base: str = None # 'install_path//Archipelago'
+    old_run_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special//Archipelago//Seeds'
+    ap_mod_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special//Bundle//mods//archipelago'
     ap_save_seed_path: str = None
-    seed_name: str = None
+    seed_name: str = None # '23056638599226981367'
     seed_path: str = None
     save_file_path_raw: str = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
     save_file_path: str = None
     new_save: bool = False
-    save_file_name: str = None
+    save_file_name: str = None # 'AP_[seed]_P1_[playername]_rf4.sav'
     ap_save_file: str = None
     ap_save_seed_final_path: str = None
     ap_file_info: str = None
     ap_save_dir: str = None
     save_slot: str = None
-    ap_sys_save_path: str = None
+    ap_sys_save_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special/Archipelago/Saves\\rf4_sys.sav'
     sys_file_path: str = None
     hint_file_path: str = None
     save_params: list = None
@@ -59,9 +61,11 @@ class SeedFileInfo:
     element_option: bool = None
     player_name_bytes = None
     #player_name_from_bytes: str = None
-    save_create_date = None
+    save_create_date: str = None
+    game_goal: int = None
     goal_str: str = None
     process_obj = None
+    aprf4s_file_path = None # 'C:\\ProgramData\\Archipelago\\output\\AP_23056638599226981367_P1_It_rf4.aprf4s'
 
     @property
     def name(self):
@@ -118,18 +122,9 @@ def compute_crc(file_bytes, start=None, end=None):
 
 def set_seed_params(seed_f:SeedFileInfo):
     try:
-        #seed_f.ap_file_info = Path(seed_f.save_file_path).stem
-        #seed_f.save_params = seed_f.ap_file_info.split('_')
-        #seed_f.player_name = seed_f.save_params[3]
-        #seed_f.drop_increase = int(seed_f.save_params[5])
-        
-        #seed_f.monster_options = int(seed_f.save_params[6])
-        #seed_f.sound_options = int(seed_f.save_params[7]) & 0x3
-        #seed_f.trupin_option = int(seed_f.save_params[7]) & 0x4
-        #seed_f.element_option = int(seed_f.save_params[7]) & 0x8
         seed_f.drop_increase = get_value_from_save(seed_f, 0x1E65B)
         seed_f.monster_options = get_value_from_save(seed_f, 0x1E65C)
-        extra_options = get_value_from_save(seed_f, 0x1E65)
+        extra_options = get_value_from_save(seed_f, 0x1E65D)
         seed_f.sound_options = extra_options & 0x3
         seed_f.trupin_option = bool(extra_options & 0x4)
         seed_f.element_option = bool(extra_options & 0x8)
@@ -143,8 +138,31 @@ def set_seedf_paths(seed_f:SeedFileInfo):
         seed_f.ap_rf4_base = f"{seed_f.install_path}//Archipelago"
         seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
         seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
+        
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
+
+def create_missing_paths(seed_f:SeedFileInfo):
+    ap_install_path = f"{seed_f.install_path}//Archipelago"
+    if not os.path.isdir(ap_install_path):
+        os.mkdir(ap_install_path)
+    if not os.path.isdir(f"{seed_f.install_path}//Bundle//mods"):
+        os.mkdir(f"{seed_f.install_path}//Bundle//mods")
+    if not os.path.isdir(seed_f.ap_mod_path):
+        os.mkdir(seed_f.ap_mod_path)
+    if not os.path.isdir(seed_f.ap_save_seed_path):
+        os.mkdir(seed_f.ap_save_seed_path)
+    if not os.path.isdir(seed_f.old_run_path):
+        os.mkdir(seed_f.old_run_path)
+    seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"rf4_sys.sav")
+    if not os.path.isfile(seed_f.ap_sys_save_path):
+        sys_file_bytes = pkgutil.get_data(__name__, f"data/rf4_sys.sav")
+        with open(seed_f.ap_sys_save_path, "wb") as f:
+            f.write(sys_file_bytes)
+    #plist_path = seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"Settings.plist")
+    #if not os.path.isfile(plist_path):
+    #    plist_org = os.path.join(f"{os.getenv('APPDATA')}\\Rune Factory 4 Special","Settings.plist")
+    #    shutil.copy(plist_org,plist_path)
 
 def launch_game_suspended(seed_f:SeedFileInfo):
     path = f"{seed_f.install_path}/RF4S.exe"
@@ -173,47 +191,34 @@ def get_install_path():
     if os.path.exists(install_path):
         return install_path
 
+def get_file_date(file_path):
+    from datetime import datetime
+    try:
+        file_path = Path(file_path)
+        file_stat = file_path.stat()
+        creation_time = file_stat.st_birthtime
+        read_date = datetime.fromtimestamp(creation_time).strftime('%m/%d')
+        return read_date
+    except Exception as e:
+        loggerDebug(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+
 def check_files(seed_f:SeedFileInfo):
     try:
         manifest_file = pkgutil.get_data(__name__, f"archipelago.json").decode("utf-8")
         manifest_json = json.loads(manifest_file)
         loggerDebug.info(f"Launching Rune Factory 4 Apworld v{manifest_json["world_version"]}")
-        # I think searching once and then asking is the better choice
-        #
-        
-
-
-        ap_install_path = f"{seed_f.install_path}//Archipelago"
-        if not os.path.isdir(ap_install_path):
-            os.mkdir(ap_install_path)
-
-        if not os.path.exists(seed_f.save_file_path_raw):
-            loggerDebug.error(f"Save file path not found")
-
-        if not os.path.isdir(f"{seed_f.install_path}//Bundle//mods"):
-            os.mkdir(f"{seed_f.install_path}//Bundle//mods")
-
-        if not os.path.isdir(seed_f.ap_mod_path):
-            os.mkdir(seed_f.ap_mod_path)
-
-        if not os.path.isdir(seed_f.ap_save_seed_path):
-            os.mkdir(seed_f.ap_save_seed_path)
-
-        # Write sys save file if it doesn't exist
-        seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"rf4_sys.sav")
-        #if not os.path.exists(seed_f.ap_sys_save_path):
-        if not os.path.isfile(seed_f.ap_sys_save_path):
-            sys_file_bytes = pkgutil.get_data(__name__, f"data/rf4_sys.sav")
-            with open(seed_f.ap_sys_save_path, "wb") as f:
-                f.write(sys_file_bytes)
-
-        seed_f.save_file_path = os.path.join(seed_f.ap_rf4_base, seed_f.save_file_name)
+        if not seed_f.save_file_path:
+            seed_f.save_file_path = os.path.join(seed_f.ap_rf4_base, seed_f.save_file_name)
         loggerDebug.info(f"save name:{seed_f.seed_name}")
         seed_f.player_model = get_save_value(seed_f.save_file_path, 0x20740, 2)
-        seed_f.player_name_bytes = get_save_bytes(seed_f.save_file_path, 0x1D97A, 0x20)
-        seed_f.player_name = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
+        
+        seed_f.game_goal = get_save_value(seed_f.save_file_path, 0x1E65A)
+        seed_f.save_create_date = get_file_date(seed_f.save_file_path)
+        if not seed_f.player_name:
+            seed_f.player_name_bytes = get_save_bytes(seed_f.save_file_path, 0x1D97A, 0x12)
+            seed_f.player_name = bytes([byte for byte in seed_f.player_name_bytes if byte != 0]).decode("utf-8")
     except Exception as e:
-            print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+        loggerDebug(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
 def modify_turpin_dialog(seed_f:SeedFileInfo):
     try:
@@ -226,28 +231,7 @@ def modify_turpin_dialog(seed_f:SeedFileInfo):
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
-def start_launch(seed_f:SeedFileInfo):
-    try:
-        set_seedf_paths(seed_f)
-        get_save_file(seed_f)
-        check_files(seed_f)
-        check_new_save(seed_f)
-        set_seed_params(seed_f)
-        if seed_f.new_save:
-            patch_map_files(seed_f)
-            additional_file_patching(seed_f)
-            modify_npc_params(seed_f)
-            modify_sound(seed_f)
-            if seed_f.element_option:
-                modify_spells(seed_f)
-            if seed_f.trupin_option:
-                modify_turpin_dialog(seed_f)
-        get_save_file_extra_info(seed_f)
-        launch_game_suspended(seed_f)
-        
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
-    loggerDebug.info(f"seed_f: {vars(seed_f)}")
+
     
 
 def write_turpin_hints(seed_f:SeedFileInfo):
@@ -675,77 +659,212 @@ def process_new_save(seed_f:SeedFileInfo):
         slot_str = f"{seed_f.save_slot:02}"
         seed_f.ap_save_seed_final_path = os.path.join(seed_f.ap_save_seed_path, f"rf4_s{slot_str}.sav")
         shutil.copy(seed_f.save_file_path,seed_f.ap_save_seed_final_path)
-        create_run_seed_dir(seed_f)
-        write_sys_save(seed_f)
+        
     except Exception as e:
         loggerDebug.error(f"Error processing new save: {e}\n{traceback.format_exc()}")
 
-def prompt_for_save(basedir):
+def prompt_for_save(seed_f:SeedFileInfo):
     try:
+        basedir = seed_f.ap_rf4_base
         root = tk.Tk()
         root.withdraw()
-        working_save_path = filedialog.askopenfilename(title="Select AP generated .sav file",initialdir=basedir, filetypes=[("RF4 Save", "*.sav")])
+        file_path = filedialog.askopenfilename(title="Select AP generated .aprf4s or .sav file",initialdir=basedir, filetypes=[("RF4 AP file", "*.aprf4s")]) # ,("RF4 Sav File", "*.sav")
+        path_file = Path(file_path)
         root.destroy()
-        file_name = Path(working_save_path).name
-        ap_file_path = os.path.join(basedir, file_name)
-        if not os.path.isfile(ap_file_path):
-            shutil.copy(working_save_path,ap_file_path)
+        # file_name = Path(working_save_path).name
+        # ap_file_path = os.path.join(basedir, file_name)
+        # if not os.path.isfile(ap_file_path):
+        #     shutil.copy(working_save_path,ap_file_path)
         #return Path(working_save_path).name
-        return file_name
+        if path_file.suffix == ".aprf4s":
+            seed_f.aprf4s_file_path = file_path
+            process_aprf4s(seed_f)
+        elif path_file.suffix == ".sav":
+            seed_f.save_file_name = path_file.stem
+            seed_f.save_file_path = file_path
+            seed_f.seed_name = seed_f.save_file_name.split("_")[1]
+
     except Exception as e:
         loggerDebug.error(f"Error pormpting save: {e}\n{traceback.format_exc()}")
 
 def get_save_file_extra_info(seed_f:SeedFileInfo):
-    from datetime import datetime
-    import platform
     try:
-        save_path = Path(seed_f.save_file_path)
-        stat = save_path.stat()
-            
-        timestamp = stat.st_birthtime
-        seed_f.save_create_date = datetime.fromtimestamp(timestamp)
-        game_goal_int = get_value_from_save(seed_f, 0x1E65A)
-        match game_goal_int:
-            case 0:
-                goal_str = "Custom"
-            case 1:
-                goal_str = "Ethelberd"
-            case 2:
-                goal_str = "Rune Prana"
-            case 3:
-                goal_str = "Shipment Percentage"
-            case 4:
-                goal_str = "Nationized Baths"
-            case 5:
-                goal_str = "Eliza"
-            case 6:
-                goal_str = "Mariage"
-            case 7:
-                goal_str = "Rune Hunt"
-            case 8:
-                goal_str = "Homeowner"
-        seed_f.goal_str = goal_str
+        return
     except Exception as e:
         loggerDebug.error(f"Error getting file stats: {e}\n{traceback.format_exc()}")
         seed_f.save_create_date = ""
     return
 
+def process_aprf4s(seed_f:SeedFileInfo):
+    try:
+        if seed_f.aprf4s_file_path:
+            if not os.path.isdir(seed_f.ap_save_seed_path):
+                os.mkdir(seed_f.ap_save_seed_path)
+            with zipfile.ZipFile(seed_f.aprf4s_file_path, 'r') as archive:
+                for file in archive.filelist:
+                    if ".sav" in file.filename:
+                        sav_file_name = file.filename
+                archive.extractall(seed_f.ap_rf4_base)
+            if sav_file_name:
+                seed_f.save_file_name = sav_file_name
+                seed_f.seed_name = seed_f.save_file_name.split("_")[1]
+            else:
+                prompt_for_save(seed_f)
+        else:
+            loggerDebug.warning(f"Error finding .aprf4s")
+            prompt_for_save(seed_f)
+    except Exception as e:
+        loggerDebug.error(f"Error processing aprf4s: {e}\n{traceback.format_exc()}")
 
+def get_goal_str(goal_int):
+    match goal_int:
+        case 0:
+            goal_str = "Custom"
+        case 1:
+            goal_str = "Ethelberd"
+        case 2:
+            goal_str = "Rune Prana"
+        case 3:
+            goal_str = "Shipment Percentage"
+        case 4:
+            goal_str = "Nationized Baths"
+        case 5:
+            goal_str = "Eliza"
+        case 6:
+            goal_str = "Mariage"
+        case 7:
+            goal_str = "Rune Hunt"
+        case 8:
+            goal_str = "Homeowner"
+        case _:
+            loggerDebug.warning(f"Goal not found {goal_int}")
+            goal_str = "Ethelberd"
+    return goal_str
+
+def build_seed_combo(seed_f:SeedFileInfo):
+    try:
+        seed_list = []
+        display_list = []
+        name_list = []
+        with open(seed_f.ap_sys_save_path, "rb") as sys_f:
+            sys_f.seek(8)
+            active_saves_bytes = sys_f.read(4)
+            active_saves = int.from_bytes(active_saves_bytes, byteorder="little")
+            saves_base = 0x4F0
+            save_size = 0xA4
+            name_offset = 0x14
+            date_offset = 0x80
+            seed_offset = 0x8B
+            goal_offset = 0xA0
+            for slot in range(20):
+                if active_saves & (1 << slot):
+                    slot_base = saves_base + (slot * save_size)
+                    sys_f.seek(slot_base + name_offset)
+                    player_bytes = sys_f.read(0x13)
+                    player_name = bytes([byte for byte in player_bytes if byte != 0]).decode("utf-8")
+                    name_list.append(player_name)
+                    loggerDebug.info(f"player: {player_name}")
+
+                    sys_f.seek(slot_base + seed_offset)
+                    seed_bytes = sys_f.read(0x14)
+                    seed_str = bytes([byte for byte in seed_bytes if byte != 0]).decode("utf-8")
+                    seed_list.append(seed_str)
+
+                    sys_f.seek(goal_offset)
+                    goal_byte = sys_f.read(1)
+                    goal_int = int.from_bytes(goal_byte, byteorder="little")
+                    goal_str = get_goal_str(goal_int)
+
+                    sys_f.seek(date_offset)
+                    date_byte = sys_f.read(5)
+                    date_str = date_byte.decode("utf-8")
+
+
+
+                    display_str = f"{slot+ 1}: {seed_str} {date_str} {goal_str} {player_name}"
+                    display_list.append(display_str)
+
+                else:
+                    name_list.append("")
+                    seed_list.append("")
+                    display_list.append("")
+        return name_list, seed_list, display_list
+
+    except Exception as e:
+        loggerDebug.error(f"Error building seed list: {e}\n{traceback.format_exc()}")
+        return name_list, seed_list, display_list
+    
+def prompt_for_seed(seed_f:SeedFileInfo):
+    import traceback
+    def pick_seed():
+        try:
+            selection = listbox.curselection()
+            if selection:
+                sel_idx = selection[0]
+                print(sel_idx)
+                sel_seed = listbox.get(sel_idx)
+                if sel_seed != "":
+                    seed_f.player_name = name_list[sel_idx]
+                    seed_f.seed_name = seed_list[sel_idx]
+                    save_name = f"rf4_s{(sel_idx +1):02d}.sav"
+                    seed_f.save_file_name = save_name
+                    seed_f.save_file_path = os.path.join(seed_f.ap_save_seed_path, save_name)
+                    root.destroy()
+                    return
+                else:
+                    loggerDebug.warning(f"selected {sel_seed}")
+            else:
+                loggerDebug.warning(f"Nothing selected")
+        except Exception as e:
+                loggerDebug.warning(f"Error pormpting seed: {e}\n{traceback.format_exc()}")
+
+    def new_seed():
+        try:
+            prompt_for_save(seed_f)
+            root.destroy()
+            return
+        except Exception as e:
+            loggerDebug.warning(f"Error pormpting seed: {e}\n{traceback.format_exc()}")
+        
+    try:
+        name_list, seed_list, display_list = build_seed_combo(seed_f)
+        if seed_list:
+            root = tk.Tk()
+            root.title("Select a Seed")
+            root.geometry("300x425")
+            root['bg'] = "#2E8B57"
+            listbox = tk.Listbox(root, selectmode=tk.SINGLE, height=20, width=60, bg="#BAE8CE")
+            listbox.pack(pady=10)
+            for save in display_list:
+                listbox.insert(tk.END, save)
+            button_frame = tk.Frame(root, bg="#3B886F")
+            button_frame.pack(pady=5)
+            btn_select = tk.Button(button_frame, text="Select Seed", command=pick_seed,height=4,width= 16, bg="#4A9179")
+            btn_new = tk.Button(button_frame, text="New Seed", command=new_seed,height=4, width= 16, bg="#4A9179")
+            
+            btn_select.pack(side=tk.LEFT, padx=5)
+            btn_new.pack(side=tk.LEFT, padx=5)
+            root.mainloop()
+    except Exception as e:
+        print(f"Error pormpting seed: {e}\n{traceback.format_exc()}")
 
 def get_save_file(seed_f:SeedFileInfo):
     try:
-        save_list = get_sav_list(seed_f.ap_rf4_base)
-        if save_list:
-            if len(save_list) == 1:
-                seed_f.save_file_name = save_list[0].name
-            else:
-                seed_f.ap_rf4_base
-                seed_f.save_file_name = prompt_for_save(seed_f.ap_rf4_base)
+        if seed_f.aprf4s_file_path:
+            process_aprf4s(seed_f)
         else:
-            seed_f.save_file_name = prompt_for_save(seed_f.ap_rf4_base)
-        seed_f.seed_name = seed_f.save_file_name.split("_")[1]
+            #seed_f.save_file_name = prompt_for_save(seed_f)
+            prompt_for_seed(seed_f)
+        
     except Exception as e:
             loggerDebug.error(f"Error getting save file: {e}\n{traceback.format_exc()}")
+
+def adjust_plist(seed_f:SeedFileInfo):
+    try:
+        pass
+    except Exception as e:
+        loggerDebug.error(f"Error modifying plist file: {e}\n{traceback.format_exc()}")
+    
 
 def write_sys_save(seed_f:SeedFileInfo):
     try:
@@ -757,6 +876,8 @@ def write_sys_save(seed_f:SeedFileInfo):
         name_offset = save_offset + 0x14
         farm_offset = save_offset + 0x27
         seed_name_offset = save_offset + 0x8B # Replace Norad farm name
+        goal_offset = save_offset + 0xA0
+        date_offset = save_offset + 0x80
         base_save_bytes = bytes([
         0x00, 0x06, 0x02, 0x00, 0x01, 0x00, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40, 0x80,
         0x00, 0x00, 0x00, 0x00,])
@@ -768,6 +889,7 @@ def write_sys_save(seed_f:SeedFileInfo):
         0x4E, 0x6F, 0x72, 0x61, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
         seed_name_bytes = seed_f.seed_name.encode()
+        date_bytes = seed_f.save_create_date.encode()
         player_string = ((seed_f.player_name[0:12]).encode("utf-8")) + b'\x00'
         with open(seed_f.ap_sys_save_path, "r+b") as f:
             f.seek(8)
@@ -784,6 +906,10 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(farm_name_bytes)
             f.seek(seed_name_offset)
             f.write(seed_name_bytes)
+            f.seek(goal_offset)
+            f.write(int.to_bytes(seed_f.game_goal))
+            f.seek(date_offset)
+            f.write(date_bytes)
             f.seek(8)
             file_bytes = f.read()
             crc = compute_crc(file_bytes)
@@ -795,25 +921,54 @@ def write_sys_save(seed_f:SeedFileInfo):
 
 def check_new_save(seed_f:SeedFileInfo):
     try:
-        if not os.path.isdir(seed_f.old_run_path):
-            os.mkdir(seed_f.old_run_path)
-        if not os.path.isdir(seed_f.ap_save_seed_path):
-            os.mkdir(seed_f.ap_save_seed_path)
         seed_list = os.listdir(seed_f.old_run_path)
         if seed_f.seed_name in seed_list:
+            # check if run has been started before and if it has then, copy old mod files back into the bundle folder
             seed_f.new_save = False
             seed_f.seed_path = os.path.join(seed_f.old_run_path,seed_f.seed_name)
             shutil.copytree(seed_f.seed_path, seed_f.ap_mod_path, dirs_exist_ok=True)
             return
         else:
             seed_f.new_save = True
-            process_new_save(seed_f)
+            
             return
 
 
     except Exception as e:
         loggerDebug.error(f"Error checking for new save: {e}\n{traceback.format_exc()}")
         return False
+
+def set_aprf4s_reg():
+    try:
+        import winreg
+
+        # .aprf4s -> APRF4SFile
+        with winreg.CreateKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Classes\.aprf4s"
+        ) as key:
+            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "APRF4SFile")
+
+        # Define the file type
+        with winreg.CreateKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Classes\APRF4SFile"
+        ) as key:
+            winreg.SetValueEx(key, "", 0, winreg.REG_SZ, "APRF4S File")
+
+        with winreg.CreateKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Classes\APRF4SFile\shell\open\command"
+        ) as key:
+            winreg.SetValueEx(
+                key,
+                "",
+                0,
+                winreg.REG_SZ,
+                r'"C:\ProgramData\Archipelago\ArchipelagoLauncher.exe" "%1"'
+            )
+    except Exception as e:
+        loggerDebug.critical(f"Error setting registry key {e}\n{traceback.format_exc()}")
 
 def create_run_seed_dir(seed_f:SeedFileInfo):
     try:
@@ -834,3 +989,31 @@ def closing_functions(seed_f:SeedFileInfo):
             shutil.rmtree(seed_f.ap_mod_path)
     except Exception as e:
         loggerDebug.error(f"Error backing up seed mod {e}")
+
+def start_launch(seed_f:SeedFileInfo):
+    try:
+        set_seedf_paths(seed_f)
+        create_missing_paths(seed_f)
+        #if seed_f.aprf4s_file_path:
+        get_save_file(seed_f)
+        check_files(seed_f)
+        check_new_save(seed_f)
+        set_seed_params(seed_f)
+        if seed_f.new_save:
+            process_new_save(seed_f)
+            create_run_seed_dir(seed_f)
+            write_sys_save(seed_f)
+            patch_map_files(seed_f)
+            additional_file_patching(seed_f)
+            modify_npc_params(seed_f)
+            modify_sound(seed_f)
+            if seed_f.element_option:
+                modify_spells(seed_f)
+            if seed_f.trupin_option:
+                modify_turpin_dialog(seed_f)
+            #get_save_file_extra_info(seed_f)
+        launch_game_suspended(seed_f)
+        set_aprf4s_reg()
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+    loggerDebug.info(f"seed_f: {vars(seed_f)}")

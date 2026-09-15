@@ -66,7 +66,7 @@ class Birthday(Range):
     range_end = 30
     default = 10
 
-class SaveSlot(Range):
+class SaveSlot(Removed):
     """Determines what save slot the archipelago save will replace, 
     make sure a save file already exists in that slot or it will not load when you boot the game.
     any existing save in that slot will be backed up by the Rune Factory 4 client.
@@ -441,7 +441,7 @@ rf4_options_group = [
         MaxFriend
     ]),
     OptionGroup("Save Options", [
-        SaveSlot,
+        #SaveSlot,
         Gender,
         BirthMonth,
         Birthday,
@@ -545,7 +545,7 @@ class RF4Options(PerGameCommonOptions):
     show_enemy_HP: ShowEneHP
     out_of_logic_airship: OpenAirship
 
-    save_slot: SaveSlot
+    #save_slot: SaveSlot
     drop_rate_increase: DropRate
     death_link: DeathLink
     shopbox_link: ShopboxLink

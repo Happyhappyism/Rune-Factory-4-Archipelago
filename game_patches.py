@@ -60,7 +60,7 @@ def patch_injects(ctx):
     try:
         ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
         MageEngine_GetStoragePath = ctx.processes_base+0x254D90
-        path_str = (ctx.seed_f.ap_save_seed_path).replace("\\","/")
+        path_str = (ctx.ap_save_seed_path).replace("\\","/")
         pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
 
         pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x200, airship_mod())

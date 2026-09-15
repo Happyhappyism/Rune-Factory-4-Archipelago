@@ -350,6 +350,7 @@ class RF4Client(CommonContext):
     player_name = None
     character_appearance = None
     menu_state_ptr = None
+    
 
     last_patch_check = time.time()
     last_loc_check = time.time()
@@ -396,6 +397,9 @@ class RF4Client(CommonContext):
     time_speed = 4096
     ship_count: int = 0
 
+    ap_save_seed_path = None
+    process_obj = None
+
     seed_f:SeedFileInfo = None
 
 
@@ -419,6 +423,8 @@ class RF4Client(CommonContext):
         await self.send_connect()
 
     async def connection_closed(self):
+        self.seed = None
+        self.slot = None
         await super(RF4Client, self).connection_closed()
 
     @property
@@ -575,7 +581,6 @@ class RF4Client(CommonContext):
                     self.character_appearance = args['slot_data']['character_appearance']
                 loggerSeed.info( \
                 f"""Seed: {self.seed_name}\n 
-                Save Created: {self.seed_f.save_create_date}
                 Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}
                 Shipsanities: [{shipsanitystr}]
                 Fortress Spheres Needed: {self.fortress_sphere_need},  Rune Prana Spheres Needed: {self.prana_sphere_need}
@@ -754,26 +759,39 @@ class RF4Client(CommonContext):
 def seed_check(ctx: RF4Client):
     ctx.game_flag_ptr_base = pc_read_ptr(ctx.pm, ctx.processes_base + 0xE9E4B0)
     if not ctx.game_flag_ptr_base:
+        # make sure save data can be read
         return False
     ctx.game_flags_ptr = pc_read_ptr(ctx.pm, ctx.game_flag_ptr_base + 8)
     if ctx.game_flags_ptr:
         try:
             seed_check = pc_read(ctx.pm, ctx.game_flags_ptr+ RECV_INDEX + 2) & 0xFFFF
-            if (seed_check != ctx.seed) or (seed_check == 0) or (ctx.seed is None):
-                if seed_check != 0:
-                    logger.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(ctx.seed)}, Found: {hex(seed_check)}")
-                ctx.processes_base = pc_get_proc_base(ctx.pm)
-                if ctx.processes_base:
-                    ctx.setup_pointers()
-                return False
-            else:
-                if ctx.seed_check_result == False:
-                    ctx.seed_check_result = True
-                    ctx.setup_pointers()
-                    on_save_load(ctx)
-                    logger.info(f"Seed check passed")
-                
+            if seed_check != 0:
+                if not ctx.auth:
+                    # Get player name from save file
+                    player_name_bytes = pc_read_bytes(ctx.pm, ctx.processes_base + 0xE90272, 0x20)
+                    ctx.player_name = ctx.player_name = bytes([byte for byte in player_name_bytes if byte != 0]).decode("utf-8")
+                    ctx.auth = ctx.player_name
+                if (seed_check != ctx.seed):
+                    # client File seed does not match the server seed
+                    loggerClient.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(ctx.seed)}, Found: {hex(seed_check)}")
+                    ctx.processes_base = pc_get_proc_base(ctx.pm)
+                    if ctx.processes_base:
+                        ctx.setup_pointers()
+                    return False
+                elif (ctx.seed is None):
+                    # Client isn't connected to the server
+                    return False
+                else:
+                    # Client and Server seeds match
+                    if ctx.seed_check_result == False:
+                        # First seed check success
+                        ctx.seed_check_result = True
+                        ctx.setup_pointers()
+                        on_save_load(ctx)
+                        logger.info(f"Seed check passed")
                 return True
+            else:
+                return False
         except TypeError as t:
             loggerDebug.error(f"Error checking seed {t}\n{traceback.format_exc()}")
             ctx.setup_pointers()
@@ -930,9 +948,17 @@ async def game_watcher(ctx: RF4Client):
         loggerDebug.critical(f"Error {e}\n{traceback.format_exc()}")
 
 
+
 def launch(*args):
+    
     try:
         seed_f = SeedFileInfo()
+        if args:
+            for arg in args:
+                logger.info(f"arg: {arg}")
+                if ".aprf4s" in arg:
+                    seed_f.aprf4s_file_path = arg
+                    logger.info(f"seed_f-pre: {seed_f}")
         start_launch(seed_f) # -> Launch.py
         
     except Exception as e:
@@ -946,10 +972,11 @@ def launch(*args):
             if gui_enabled:
                 ctx.run_gui()
             ctx.run_cli()
-            if seed_f.player_name:
-                ctx.auth = seed_f.player_name
             if args.name:
                 ctx.auth = args.name
+            if seed_f.player_name and (not ctx.auth):
+                ctx.auth = seed_f.player_name
+            ctx.ap_save_seed_path = seed_f.ap_save_seed_path
             ctx.seed_f = seed_f
             progression_watcher = asyncio.create_task(
                 game_watcher(ctx), name="RF4ProgressionWatcher")
@@ -959,7 +986,7 @@ def launch(*args):
 
             await progression_watcher
             loggerClient.warning(f"exiting script")
-            closing_functions(ctx.seed_f)
+            closing_functions(seed_f)
             await ctx.shutdown()
         except Exception as e:
             loggerDebug.critical(f"Error Starting up client task {e}\n{traceback.format_exc()}")
