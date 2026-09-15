@@ -31,6 +31,14 @@ loggerClient = logging.getLogger("Rune Factory 4 Client")
 loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
 loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
+class SysSavFile(NamedTuple):
+    seed: str = ""
+    player_name: str = ""
+    display_list: str = ""
+    goal_str: str = ""
+    date: str  = ""
+    slot: int = None
+
 class SeedFileInfo:
     install_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special'
     ap_rf4_base: str = None # 'install_path//Archipelago'
@@ -743,9 +751,7 @@ def get_goal_str(goal_int):
 
 def build_seed_combo(seed_f:SeedFileInfo):
     try:
-        seed_list = []
-        display_list = []
-        name_list = []
+        save_list = []
         with open(seed_f.ap_sys_save_path, "rb") as sys_f:
             sys_f.seek(8)
             active_saves_bytes = sys_f.read(4)
@@ -762,40 +768,45 @@ def build_seed_combo(seed_f:SeedFileInfo):
                     sys_f.seek(slot_base + name_offset)
                     player_bytes = sys_f.read(0x13)
                     player_name = bytes([byte for byte in player_bytes if byte != 0]).decode("utf-8")
-                    name_list.append(player_name)
-                    loggerDebug.info(f"player: {player_name}")
+                    #name_list.append(player_name)
 
                     sys_f.seek(slot_base + seed_offset)
                     seed_bytes = sys_f.read(0x14)
                     seed_str = bytes([byte for byte in seed_bytes if byte != 0]).decode("utf-8")
-                    seed_list.append(seed_str)
+                    #seed_list.append(seed_str)
 
-                    sys_f.seek(goal_offset)
+                    sys_f.seek(slot_base + goal_offset)
                     goal_byte = sys_f.read(1)
                     goal_int = int.from_bytes(goal_byte, byteorder="little")
                     goal_str = get_goal_str(goal_int)
-
+                    
                     sys_f.seek(date_offset)
                     date_byte = sys_f.read(5)
                     date_str = date_byte.decode("utf-8")
 
-
-
                     display_str = f"{slot+ 1}: {seed_str} {date_str} {goal_str} {player_name}"
-                    display_list.append(display_str)
-
+                    save_list.append(SysSavFile(seed=seed_str, player_name=player_name, goal_str=goal_str, slot=slot, date=date_str, display_list=display_str))
                 else:
-                    name_list.append("")
-                    seed_list.append("")
-                    display_list.append("")
-        return name_list, seed_list, display_list
+                    save_list.append(SysSavFile(slot=slot))
+        return save_list
 
     except Exception as e:
         loggerDebug.error(f"Error building seed list: {e}\n{traceback.format_exc()}")
-        return name_list, seed_list, display_list
+        return save_list
     
 def prompt_for_seed(seed_f:SeedFileInfo):
     import traceback
+    def on_user_close():
+        if save_list:
+            for save in reversed(save_list):
+                if save.seed != "":
+                    seed_f.player_name = save.player_name
+                    seed_f.seed_name = save.seed
+                    sel_idx = save_list.index(save)
+                    save_name = f"rf4_s{(sel_idx +1):02d}.sav"
+                    seed_f.save_file_name = save_name
+                    seed_f.save_file_path = os.path.join(seed_f.ap_save_seed_path, save_name)
+                    #root.destroy()
     def pick_seed():
         try:
             selection = listbox.curselection()
@@ -804,8 +815,8 @@ def prompt_for_seed(seed_f:SeedFileInfo):
                 print(sel_idx)
                 sel_seed = listbox.get(sel_idx)
                 if sel_seed != "":
-                    seed_f.player_name = name_list[sel_idx]
-                    seed_f.seed_name = seed_list[sel_idx]
+                    seed_f.player_name = save_list[sel_idx].player_name
+                    seed_f.seed_name = save_list[sel_idx].seed
                     save_name = f"rf4_s{(sel_idx +1):02d}.sav"
                     seed_f.save_file_name = save_name
                     seed_f.save_file_path = os.path.join(seed_f.ap_save_seed_path, save_name)
@@ -827,16 +838,17 @@ def prompt_for_seed(seed_f:SeedFileInfo):
             loggerDebug.warning(f"Error pormpting seed: {e}\n{traceback.format_exc()}")
         
     try:
-        name_list, seed_list, display_list = build_seed_combo(seed_f)
-        if seed_list:
+        save_list = build_seed_combo(seed_f)
+        if save_list:
             root = tk.Tk()
             root.title("Select a Seed")
             root.geometry("300x425")
+            root.protocol("WM_DELETE_WINDOW", on_user_close)
             root['bg'] = "#2E8B57"
-            listbox = tk.Listbox(root, selectmode=tk.SINGLE, height=20, width=60, bg="#BAE8CE")
+            listbox = tk.Listbox(root, selectmode=tk.SINGLE, height=20, width=56, bg="#BAE8CE")
             listbox.pack(pady=10)
-            for save in display_list:
-                listbox.insert(tk.END, save)
+            for save in save_list:
+                listbox.insert(tk.END, save.display_list)
             button_frame = tk.Frame(root, bg="#3B886F")
             button_frame.pack(pady=5)
             btn_select = tk.Button(button_frame, text="Select Seed", command=pick_seed,height=4,width= 16, bg="#4A9179")
