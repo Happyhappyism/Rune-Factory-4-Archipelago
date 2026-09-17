@@ -82,7 +82,8 @@ class MutliRequest(DefaultOnToggle):
 
 class MaxItemTier(Range):
     """Determines the max tier of an item to be included as a shipment
-    Item tiers can be viewed on the spreadsheet found at https://shorturl.at/lfVCo"""
+    Item tiers can be viewed on the spreadsheet found at 
+    https://docs.google.com/spreadsheets/d/1YU6grqkNfm-fRCV1gIQCDBU466W79-UGnRhtYPxam4Q/edit?gid=2037917468#gid=2037917468"""
     range_start = 5
     range_end = 11
     default = 9

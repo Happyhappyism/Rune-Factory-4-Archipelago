@@ -5,6 +5,7 @@ bundle_manifest = {
     "rf3NpcParam.bin": [0xE19301F5, 0x1D7CC],
     "common_audio_data.bdat": [0x10BF13F94,0x6EE0],
     "title_header_load_eng.texture": [0xD0C1DCD3,0x10640],
+    "rf3TxtLoad.eng": [0x5843E375,0x4A3],
 }
 game_consts = {
     "total shipments": 1076,

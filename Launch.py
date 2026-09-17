@@ -68,6 +68,8 @@ class SeedFileInfo:
     trupin_option: bool = None
     element_option: bool = None
     player_name_bytes = None
+    file_gender: int = None
+    bundle_main_path = None
     #player_name_from_bytes: str = None
     save_create_date: str = None
     game_goal: int = None
@@ -136,6 +138,7 @@ def set_seed_params(seed_f:SeedFileInfo):
         seed_f.sound_options = extra_options & 0x3
         seed_f.trupin_option = bool(extra_options & 0x4)
         seed_f.element_option = bool(extra_options & 0x8)
+        seed_f.file_gender = get_value_from_save(seed_f, 0x36) & 1
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
@@ -146,7 +149,7 @@ def set_seedf_paths(seed_f:SeedFileInfo):
         seed_f.ap_rf4_base = f"{seed_f.install_path}//Archipelago"
         seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
         seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
-        
+        seed_f.bundle_main_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
@@ -626,7 +629,39 @@ def additional_file_patching(seed_f:SeedFileInfo):
     except Exception as e:
         loggerDebug.error(f"Error patching file other files: {e}\n{traceback.format_exc()}")
 
+def get_text_entry_data(byte_list, entry_id):
+    try:
+        entry_total = int.from_bytes(byte_list[4:8])
+        if entry_id > entry_total:
+            return 0, 0
+        entry_base = (8 * entry_id) + 8
+        offset_ptr = entry_base + 4
+        entry_size = int.from_bytes(byte_list[entry_base:entry_base+4],"little")
+        entry_offset = int.from_bytes(byte_list[offset_ptr:offset_ptr+4],"little")
+        return entry_size, entry_offset
+    except Exception as e:
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
+def pack_text_entry(byte_list:bytes, entry_id:int, new_text:str):
+    try:
+        entry_size, entry_offset = get_text_entry_data(byte_list, entry_id)
+        text_encode = new_text.encode("utf-8")
+        struct.pack_into(f'{entry_size}s', byte_list, entry_offset, text_encode)
+        return byte_list
+    except Exception as e:
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
+
+def modify_system_text(seed_f:SeedFileInfo):
+    try:
+        txtLoad_offsets = bundle_manifest["rf3TxtLoad.eng"]
+        txtLoad_bytes = get_bundle_bytes(seed_f.bundle_main_path, txtLoad_offsets[0],txtLoad_offsets[1])
+        out_txtLoad_bytes = bytearray(txtLoad_bytes)
+        out_txtLoad_bytes = pack_text_entry(out_txtLoad_bytes, 13, "Seed")
+        file_out_path = f"{seed_f.ap_mod_path}/{"rf3TxtLoad.eng"}"
+        with open(file_out_path, "wb") as patched_file:
+            patched_file.write(out_txtLoad_bytes)
+    except Exception as e:
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def get_sav_list(path):
     try:
@@ -842,17 +877,18 @@ def prompt_for_seed(seed_f:SeedFileInfo):
         if save_list:
             root = tk.Tk()
             root.title("Select a Seed")
-            root.geometry("300x425")
+            root.geometry("350x425")
             root.protocol("WM_DELETE_WINDOW", on_user_close)
-            root['bg'] = "#2E8B57"
-            listbox = tk.Listbox(root, selectmode=tk.SINGLE, height=20, width=56, bg="#BAE8CE")
+            root['bg'] = "#32c88d"
+            listbox = tk.Listbox(root, selectmode=tk.SINGLE, height=20, width=50, bg="#b5f9e1")
+            listbox.bind("<Double-Button-1>",pick_seed)
             listbox.pack(pady=10)
             for save in save_list:
                 listbox.insert(tk.END, save.display_list)
-            button_frame = tk.Frame(root, bg="#3B886F")
+            button_frame = tk.Frame(root, bg="#32c88d")
             button_frame.pack(pady=5)
-            btn_select = tk.Button(button_frame, text="Select Seed", command=pick_seed,height=4,width= 16, bg="#4A9179")
-            btn_new = tk.Button(button_frame, text="New Seed", command=new_seed,height=4, width= 16, bg="#4A9179")
+            btn_select = tk.Button(button_frame, text="Select Seed", command=pick_seed,height=4,width= 16, bg="#14ebb2")
+            btn_new = tk.Button(button_frame, text="New Seed", command=new_seed,height=4, width= 16, bg="#14ebb2")
             
             btn_select.pack(side=tk.LEFT, padx=5)
             btn_new.pack(side=tk.LEFT, padx=5)
@@ -885,6 +921,7 @@ def write_sys_save(seed_f:SeedFileInfo):
         slot_idx = int(seed_f.save_slot) - 1
         #player_name = seed_f.save_file_name.split("_")[3]
         save_offset = 0x4F0 + (slot_idx * 0xA4)
+        gender_offset = save_offset + 0x10
         name_offset = save_offset + 0x14
         farm_offset = save_offset + 0x27
         seed_name_offset = save_offset + 0x8B # Replace Norad farm name
@@ -922,6 +959,8 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.write(int.to_bytes(seed_f.game_goal))
             f.seek(date_offset)
             f.write(date_bytes)
+            f.seek(gender_offset)
+            f.write(int.to_bytes(seed_f.file_gender))
             f.seek(8)
             file_bytes = f.read()
             crc = compute_crc(file_bytes)
@@ -1023,6 +1062,7 @@ def start_launch(seed_f:SeedFileInfo):
                 modify_spells(seed_f)
             if seed_f.trupin_option:
                 modify_turpin_dialog(seed_f)
+            modify_system_text(seed_f)
             #get_save_file_extra_info(seed_f)
         launch_game_suspended(seed_f)
         set_aprf4s_reg()
