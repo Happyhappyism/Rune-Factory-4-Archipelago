@@ -250,6 +250,8 @@ def menu_slot_row_patches(ctx):
         pc_write_bytes(ctx.pm, ctx.processes_base + process_offset, patch_bytes)
     pass
 
+
+
 def generate_inject(alloc_ptr, offset, padding, reg="rax"):
     try:
         match reg:
