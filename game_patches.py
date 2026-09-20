@@ -1,65 +1,309 @@
-# Many of the follow codes were made by 
+# Many of the follow codes were made by
 # @minhnhatx and @ajip from https://fearlessrevolution.com/viewtopic.php?t=18439
 from .pc_ap_methods import *
-from .game_data import basic_patches
 
 loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
-def varify_patches(ctx):
-    if ctx.doctor_option:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x20D97F)
-        if byte_val != 0x90:
-            patch_game(ctx)
-    elif ctx.skill_exp_multi:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB3E73)
-        if byte_val != 0x48:
-            patch_game(ctx)
-    elif ctx.exp_multi:
-        byte_val = pc_readb(ctx.pm, ctx.processes_base + 0xB2874)
-        if  byte_val != 0x48:
-            patch_game(ctx)
-    byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x1F464B)
-    if byte_val == 0xC1:
+# A single continous memory modification
+class Patch:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        offset: int,
+        instructions: bytes
+    ):
+        self.name = name
+        self.description = description
+        self.offset = offset
+        self.instructions = instructions
+        self.original_bytes: bytes | None = None
+
+    @property
+    def size(self) -> int:
+        return len(self.instructions)
+
+    def verify(self, ctx) -> bool:
+        address = ctx.processes_base + self.offset
+        current = pc_read_bytes(ctx.pm, address, self.size)
+
+        return current == self.instructions
+
+    def apply(self, ctx):
+        address = ctx.processes_base + self.offset
+        current = pc_read_bytes(ctx.pm, address, self.size)
+
+        if current == self.instructions:
+            # Log that the patch is already applied correctly
+            return
+
+        if self.original_bytes is None:
+            self.original_bytes = current
+
+        pc_write_bytes(ctx.pm, address, self.instructions)
+
+    def revert(self, ctx):
+        address = ctx.processes_base + self.offset
+        current = pc_read_bytes(ctx.pm, address, self.size)
+
+        if self.original_bytes is None:
+            # Log that we didn't capture the original bytes yet so no patch was applied
+            return
+
+        if current != self.instructions:
+            # Log that the bytes do not match the instructions
+            pass
+
+        pc_write_bytes(ctx.pm, address, self.original_bytes)
+        self.original_bytes = None
+
+# A logical set of patches that belong together (e.g. savemod_1 savemod_2)
+class PatchSet:
+    def __init__(
+        self,
+        name: str,
+        patches: list[Patch]
+    ):
+        self.name = name
+        self.patches = patches
+
+    def apply(self, ctx):
+        for patch in self.patches:
+            patch.apply(ctx)
+
+    def revert(self, ctx):
+        for patch in reversed(self.patches):
+            patch.revert(ctx)
+
+    def verify(self, ctx) -> bool:
+        return all(
+            patch.verify(ctx)
+            for patch in self.patches
+        )
+
+class PatchManager:
+    def __init__(self):
+        self.patch_sets: list[PatchSet] = []
+
+    def build_patches(self, ctx):
+        patch_sets: list[PatchSet] = []
+
+        patch_sets.append(
+            PatchSet("Requests", [
+                Patch(
+                    "Open_Requests",
+                    "Open Requests",
+                    0x21835A,
+                    bytes([0x90, 0x90, 0x90, 0x90]),
+                ),
+            ])
+        )
+
+        patch_sets.append(
+            PatchSet("Order Flag Writes", [
+                Patch(  "Order Flag Furniture Store",   "Disables the buy option for Furniture Store",
+                        0x1EA65E, bytes([0xD2, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Blossoms Grocery",  "Disables the buy option for Blossoms Groceries",
+                        0x1EA66D, bytes([0xC3, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Bados Accessories", "Disables the buy option for Bados Accessories",
+                        0x1EA67C, bytes([0xB4, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Bados Bargains",    "Disables the buy option for Bados Bargains",
+                        0x1EA68B, bytes([0xA5, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Clothing Shop",     "Disables the buy option for Clothing Shop",
+                        0x1EA69A, bytes([0x96, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Fish Market",       "Disables the buy option for Fish Market",
+                        0x1EA6A9, bytes([0x87, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Jewelry Shop",      "Disables the buy option for Jewelry Shop",
+                        0x1EA6B8, bytes([0x78, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Magic Shop",        "Disables the buy option for Magic Shop",
+                        0x1EA6C7, bytes([0x69, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Rune Ability Shop", "Disables the buy option for Rune Ability Shop",
+                        0x1EA6D6, bytes([0x5A, 0x05, 0xCB, 0x00])),
+                Patch(  "Order Flag Business License",  "Disables the buy option for Business License",
+                        0x1EA6E5, bytes([0x4B, 0x05, 0xCB, 0x00])),
+                #Patch( "Order Flag Nationalize Baths", "Disables the buy option for Nationalize Baths",
+                #       0x1EA6F4, bytes([0x3C, 0x05, 0xCB, 0x00])),
+            ])
+        )
+
+        patch_sets.append(
+            PatchSet("Stability", [
+                Patch(
+                    "Main_Menu_Return_Crash",
+                    "Fix return to main menu crash",
+                    0x157D84,
+                    bytes([0x90, 0x90, 0x90, 0x90, 0x90]),
+                ),
+            ])
+        )
+
+        if ctx.doctor_option:
+            patch_sets.append(
+                PatchSet("Free Doctor", [
+                    Patch(
+                        "Free_Doctor",
+                        "Removes Jones' doctor fee - NOPs the 6 byte charge instruction",
+                        0x20D97F,
+                        bytes([0x90] * 6),
+                    ),
+                ])
+            )
+
+        if ctx.skill_exp_multi:
+            patch_sets.append(
+                PatchSet("Skill EXP Multiplier", [
+                    Patch(
+                        "Skill_EXP_Multiplier",
+                        "Scales skill and crafting EXP by 1 << skill_exp_multi",
+                        0xB3E73,
+                        bytes([
+                            0x48, 0xC1, 0xE7, ctx.skill_exp_multi,  # shl rdi, skill_exp_multi
+                        ]) + bytes([0x90] * 10),
+                    ),
+                    # Patch("Disable_Craft_Exp", "Disable craft exp", 0x75629, bytes([0x90] * 6)),
+                    # Patch("Disable_Upgrade_Exp", "Disable upgrade exp", 0x3F064, bytes([0x90] * 5)),
+                ])
+            )
+
+        if ctx.exp_multi:
+            patch_sets.append(
+                PatchSet("EXP Multiplier", [
+                    Patch(
+                        "EXP_Multiplier",
+                        "Scales combat EXP by 1 << exp_multi",
+                        0xB2874,
+                        bytes([
+                            0x48, 0xC1, 0xE7, ctx.exp_multi,        # shl rdi, exp_multi
+                        ]) + bytes([0x90] * 10),
+                    ),
+                ])
+            )
+
+        if ctx.gay_dating:
+            patch_sets.append(
+                PatchSet("Gay Dating", [
+                    Patch(
+                        "Gay_Dating_1",
+                        "Turns the gender check into a jne so males can date males",
+                        0x2044B2,
+                        bytes([0x75]),
+                    ),
+                    Patch(
+                        "Gay_Dating_2",
+                        "Turns the gender check into a jne so females can date females",
+                        0x2273A2,
+                        bytes([0x75]),
+                    ),
+                ])
+            )
+
+        patch_sets.append(
+            PatchSet("Taming", [
+                Patch(
+                    "Friend Item Tame Bonus",
+                    "Triple Friend item tame bonus",
+                    0x970D4,
+                    bytes([
+                        0x48, 0xC1, 0xE3, 0x02,                     # shl rbx, 02
+                        0x90, 0x90,                                 # Nop
+                    ]),
+                ),
+                # 0x9676D (Lucky Charm) is written by patch_injects() via lucky_charm()
+            ])
+        )
+
+        patch_sets.append(
+            PatchSet("Friendship", [
+                Patch(
+                    "Friendship_Point_Multiplier",
+                    "Scales friendship point gains by 1 << fp_multi, replacing a check for Doug under specific conditions",
+                    0x225F44,
+                    bytes([
+                        0x49, 0x8B, 0xCF,                           # mov rcx,r15 {r15: fp_add, eax: new_fp}
+                        0xC1, 0xE1, ctx.fp_multi,                   # shl ecx,fp_multi
+                        0x01, 0xCF,                                 # add edi,ecx
+                        0xEB, 0x22,                                 # jmp RF4S.exe+225F70
+                    ]) + bytes([0x90] * 34),                        # pad out the replaced Doug check
+                ),
+            ])
+        )
+
         if ctx.extra_routine_ptr:
-            pc_free_mem(ctx.pm,ctx.extra_routine_ptr)
-        patch_injects(ctx)
+            path_ptr = ctx.extra_routine_ptr + 0x300
+            patch_sets.append(
+                PatchSet("Savemod", [
+                    Patch(
+                        "Savemod_1",
+                        "Turns the if statement that leads to the temporary folder path into an unconditional jump",
+                        0x254D90+0x7A,
+                        bytes([
+                            0xE9, 0xD0, 0x01, 0x00, 0x00,           # jmp     loc_7FF67BA94FDF
+                            0x90                                    # Nop
+                            ]),
+                    ),
+                    Patch(
+                        "Savemod_2",
+                        "Patches the actual save folder location",
+                        0x254D90+0x24F,
+                        bytes([
+                            0x48, 0xBA,                             # mov     rdx, path_ptr
+                            ]) + path_ptr.to_bytes(8, byteorder='little')
+                          + bytes([0x90] * 9),                      # Nop out GetTempPathA
+                    ),
+                ])
+            )
+
+        self.patch_sets = patch_sets
+
+    def apply(self, ctx):
+        for patch_set in self.patch_sets:
+            patch_set.apply(ctx)
+
+    def revert(self, ctx):
+        for patch_set in reversed(self.patch_sets):
+            patch_set.revert(ctx)
+
+    def verify(self, ctx) -> bool:
+        return all(
+            patch_set.verify(ctx)
+            for patch_set in self.patch_sets
+        )
+
+
+def get_patch_manager(ctx) -> PatchManager:
+    manager = getattr(ctx, "patch_manager", None)
+    if manager is None:
+        manager = PatchManager()
+        manager.build_patches(ctx)
+        ctx.patch_manager = manager
+    return manager
 
 
 def patch_game(ctx):
-    # Instead of a base patch, the client writes all patches directly to memory here
     try:
-
-        for offset, patch in basic_patches.items():
-            mem_offset = ctx.processes_base + offset
-            pc_write_bytes(ctx.pm,mem_offset,bytes(patch))
-        if ctx.doctor_option:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x20D97F,bytes([0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.skill_exp_multi:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xB3E73,bytes([0x48, 0xC1, 0xE7, ctx.skill_exp_multi, 0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.exp_multi:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0xB2874,bytes([0x48, 0xC1, 0xE7, ctx.exp_multi,       0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
-        if ctx.gay_dating:
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x2044B2,bytes([0x75]))
-            pc_write_bytes(ctx.pm,ctx.processes_base+0x2273A2,bytes([0x75]))
-        
-        
-        pc_write_bytes(ctx.pm,ctx.processes_base+0x970D4,bytes([0x48,0xC1,0xE3,0x02,0x90,0x90])) # Triple Friend item tame bonus
-        # Friendship point multiplier, this replaces a check for doug under specific conditons
-        pc_write_bytes(ctx.pm,ctx.processes_base+0x225F44,bytes([
-            0x49,0x8B,0xCF, # mov rcx,r15 {r15: fp_add, eax: new_fp}
-            0xC1,0xE1,ctx.fp_multi, # shl ecx,02
-            0x01,0xCF, # add edi,ecx
-            0xEB,0x22, # jmp RF4S.exe+225F70
-            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,
-            0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90]))
+        manager = get_patch_manager(ctx)
+        manager.apply(ctx)
     except Exception as e:
         loggerDebug.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
 
 
+def verify_patches(ctx):
+    try:
+        manager = get_patch_manager(ctx)
+        if not manager.verify(ctx):
+            manager.apply(ctx)
+    except Exception as e:
+        loggerDebug.critical(f"Error Verifying Patches: {e}\n{traceback.format_exc()}")
+
+    byte_val = pc_readb(ctx.pm, ctx.processes_base + 0x1F464B)
+    if byte_val == 0xC1:
+        patch_injects(ctx)
+
+
 def patch_injects(ctx):
     try:
-        ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
-        MageEngine_GetStoragePath = ctx.processes_base+0x254D90
+        if not ctx.extra_routine_ptr:
+            ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
         path_str = (ctx.ap_save_seed_path).replace("\\","/")
         pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x300, path_str.encode())
 
@@ -87,9 +331,6 @@ def patch_injects(ctx):
 
         pc_write_bytes(ctx.pm, ctx.extra_routine_ptr + 0x280, lucky_charm(ctx.processes_base))
         pc_write_bytes(ctx.pm, ctx.processes_base+0x9676D, generate_inject(ctx.extra_routine_ptr, 0x280, 2, "rcx"))
-
-        pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x7A, save_mod())
-        pc_write_bytes(ctx.pm, MageEngine_GetStoragePath + 0x24F, save_mod_2(ctx.extra_routine_ptr + 0x300))
 
         menu_slot_row_patches(ctx)
     except Exception as e:
@@ -211,7 +452,7 @@ def pandora_mandate(p_base):
     working_bytes += b'\x66\xB8\xFF\x00'                        # mov ax,00FF
     working_bytes += b'\x66\x89\x43\xF8'                        # mov [rbx-08],ax
     working_bytes += b'\x58'                                    # pop rax
-    working_bytes += b'\xC3'                                    # ret 
+    working_bytes += b'\xC3'                                    # ret
     return working_bytes
 
 def lucky_charm(p_base):
@@ -226,19 +467,7 @@ def lucky_charm(p_base):
     working_bytes += b'\x66\x29\xCB'                            # sub bx,cx
     working_bytes += b'\x48\x2D\xD0\x5C\x00\x00'                # sub rax,00005CD0
     working_bytes += b'\x8B\x08'                                # mov ecx,[rax]
-    working_bytes += b'\xC3'                                    # ret 
-    return working_bytes
-
-def save_mod():
-    working_bytes = b'\xE9\xD0\x01\x00\x00'                     # js        jmp     loc_7FF67BA94FDF
-    working_bytes += b'\x90'                                    # Nop
-    return working_bytes
-
-def save_mod_2(alloc_addr):
-    working_bytes = b'\x48\xBA'
-    working_bytes += alloc_addr.to_bytes(8, byteorder= 'little')                # lea     rdx, [rbp+590h+Buffer] ; src
-    for x in range(9):
-        working_bytes += b'\x90' # nop
+    working_bytes += b'\xC3'                                    # ret
     return working_bytes
 
 def menu_slot_row_patches(ctx):
@@ -249,8 +478,6 @@ def menu_slot_row_patches(ctx):
     for process_offset, patch_bytes in simple_patches.items():
         pc_write_bytes(ctx.pm, ctx.processes_base + process_offset, patch_bytes)
     pass
-
-
 
 def generate_inject(alloc_ptr, offset, padding, reg="rax"):
     try:
