@@ -112,7 +112,6 @@ def write_save_data(world:World):
     birthday = reverse_bits((world.options.birthday.value), 5) #0b10000
     birth_month = reverse_bits(world.options.birth_month.value, 2) # 0b00
     birth_bits = (birth_month << 5) | (birthday << 7)
-    logger.warning(f"birthday:{birthday:b}, birth_month: {birth_month:b}, birth_bits: {birth_bits:b}") 
     # 0b0000bbbb bmm00000
     # mm 
     save_data[0x1E656] = death_link | doctor_option | shopbox_link        # 0
@@ -185,7 +184,6 @@ def write_save_data(world:World):
 
     
     save_crc = zlib.crc32(bytes(save_data[4:0x223a8])) & 0xFFFFFFFF
-    logger.info(f"save crc: {hex(save_crc)}")
     for x in range(4):
         crc_byte = (save_crc >> (8 * x)) & 0xFF
         save_data[x] = crc_byte

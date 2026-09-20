@@ -281,7 +281,6 @@ class RF4World(World):
                 del duplicate_data_table[name]
             elif data.region in region_tiers:
                 if  region_tiers[data.region] > max_tier:
-                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
                     del duplicate_data_table[name]
                         
         for name, data in box_data_table.items():
@@ -289,7 +288,6 @@ class RF4World(World):
                 del duplicate_data_table[name]
             elif data.region in region_tiers:
                 if region_tiers[data.region] > max_tier :
-                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
                     del duplicate_data_table[name]
 
         for name, data in search_data_table.items():
@@ -297,7 +295,6 @@ class RF4World(World):
                 del duplicate_data_table[name]
             elif data.region in region_tiers:
                 if  region_tiers[data.region] > max_tier:
-                    #logger.warning(f"{name} {max_tier} > {region_tiers[data.region]} for {data.region}")
                     del duplicate_data_table[name]
 
         
