@@ -1,4 +1,5 @@
 from .pc_ap_methods import *
+from typing import TYPE_CHECKING
 from NetUtils import NetworkItem, ClientStatus
 from .game_data import *
 from .Locations import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
@@ -12,6 +13,8 @@ import base64
 import struct
 import random
 import math
+if TYPE_CHECKING:
+    from .Client import RF4Client
 
 pid = "RF4S.exe"
 RECV_INDEX = 0x1FC

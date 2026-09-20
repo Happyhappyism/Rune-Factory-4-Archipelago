@@ -2,10 +2,10 @@
 from worlds.AutoWorld import World
 from settings import get_settings
 from .ips import parse_ips_file, patch
-from .game_data import bundle_manifest, music_ids, hint_data, hint_appends
+from .game_data import bundle_manifest, music_ids
 from .pc_ap_methods import pc_check_process, pc_process_resume
 from .com_ap_methods import shuffle_dict
-
+from .trupin_hint import *
 from typing import NamedTuple
 
 import Utils
@@ -65,8 +65,8 @@ class SeedFileInfo:
     drop_increase: int = None
     monster_options: int = None
     sound_options: int = None
-    trupin_option: bool = None
-    element_option: bool = None
+    trupin_option: int = None
+    element_option: int = None
     player_name_bytes = None
     file_gender: int = None
     bundle_main_path = None
@@ -136,8 +136,8 @@ def set_seed_params(seed_f:SeedFileInfo):
         seed_f.monster_options = get_value_from_save(seed_f, 0x1E65C)
         extra_options = get_value_from_save(seed_f, 0x1E65D)
         seed_f.sound_options = extra_options & 0x3
-        seed_f.trupin_option = bool(extra_options & 0x4)
-        seed_f.element_option = bool(extra_options & 0x8)
+        seed_f.trupin_option = extra_options & 0x4
+        seed_f.element_option = extra_options & 0x8
         seed_f.file_gender = get_value_from_save(seed_f, 0x36) & 1
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -231,101 +231,17 @@ def check_files(seed_f:SeedFileInfo):
     except Exception as e:
         loggerDebug(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
-def modify_turpin_dialog(seed_f:SeedFileInfo):
-    try:
-        file_split = seed_f.save_file_name.split("rf4_")[0]
-        seed_f.hint_file_path = f"{seed_f.install_path}//Archipelago//{file_split}rf4_hints.json"
-        if os.path.exists(seed_f.hint_file_path):
-            modify_dialog(seed_f)
-        else:
-            modify_dialog(seed_f)
-    except Exception as e:
-        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
-
-    
-
-def write_turpin_hints(seed_f:SeedFileInfo):
-    from .Locations import location_table, ship_loc_list, chest_loc_list, request_loc_list, friend_loc_list, tame_loc_list, outfit_loc_list
-    try:
-        root = tk.Tk()
-        root.withdraw()
-        if seed_f.hint_file_path:
-            working_json_path = seed_f.hint_file_path
-        else:
-            working_json_path = filedialog.askopenfilename(title="Select AP generated hint .json file", filetypes=[("RF4 hint json", "*.json")])
-            seed_f.hint_file_path = working_json_path
-        root.destroy()
-        with open(working_json_path,'r') as f:
-            hint_json = json.load(f)
-        dialog_end = bundle_manifest["rf3mc.eng"][1] + 1
-        dialog_offset = 0
-        turpin_count = 0
-        turpin_dialog = {}
-        hl = f"\xEF\xBC\x90"
-        for index, turpin_bytes in hint_data.items():
-            #turpin_bytes = dialog.encode()
-            if index in hint_appends:
-                hint_item = hint_appends[index][0]
-                conjuction = hint_appends[index][1]
-                if hint_item in hint_json:
-                    hint_player = hint_json[hint_item][0]
-                    hint_location = hint_json[hint_item][1]
-                    if hint_player == seed_f.player_name:
-                        player_txt = "you"
-                    else:
-                        player_txt = hint_player
-                    if hint_location in location_table:
-                        loc_split = hint_location.split(" - ")
-                        if hint_location in ship_loc_list:
-                            diagetic = f"ship at least one [{hl}{loc_split[1]}{hl}]"
-                        elif hint_location in chest_loc_list:
-                            diagetic = f"search for treasure in {loc_split[0][:-6]}"
-                        elif hint_location in request_loc_list:
-                            diagetic = f"fulfill the request {hl}{loc_split[1]}{hl}"
-                        elif hint_location in friend_loc_list:
-                            villager = loc_split[1].split(" ")[0]
-                            diagetic = f"become friends with {hl}{villager}{hl}"
-                        elif hint_location in tame_loc_list:
-                            diagetic = f"become friends with the monster {hl}{loc_split[1]}{hl}"
-                        elif hint_location in outfit_loc_list:
-                            diagetic = f"buy the outfit {hl}{loc_split[1]}{hl}"
-                        else:
-                            diagetic = f"{hl}{hint_location}{hl}"
-                        hint_text = f"{player_txt}{conjuction}{diagetic}."
-                    else:
-                        hint_text = f"{player_txt}{conjuction}{hl}{hint_location}{hl}."
-                else:
-                    hint_text = f"check your pockets."
-                hint_bytes = hint_text.encode()
-                turpin_bytes += hint_bytes + b'\x00'
-            elif index == 0x70b0:
-                hint_text = hint_json["goal"]
-                hint_bytes = hint_text.encode()
-                turpin_bytes += hint_bytes + b'\x00'
-            else:
-                turpin_bytes +=  b'\x00'
-
-            turpin_size = len(turpin_bytes)
-            if turpin_size >= 64:
-                try:
-                    offset = 64
-                    while turpin_bytes[offset] != 0x20 and offset < turpin_size-1:
-                        offset+= 1
-                    if offset < turpin_size - 2:
-                        mod_turpin_bytes = bytearray(turpin_bytes)
-                        mod_turpin_bytes[offset] = 0xA
-                        turpin_bytes = bytes(mod_turpin_bytes)
-                        #struct.pack_into('B', turpin_bytes, offset, 0xA)
-                except Exception as e:
-                    loggerDebug.warning(f"offset: {hex(offset)}, turpin_size:{turpin_size}\nturpin_bytes:{turpin_bytes}\n{e}")
-            turpin_dialog[dialog_end + dialog_offset] = [index, turpin_bytes, turpin_size - 1]
-            dialog_offset += turpin_size
-            turpin_count += 1
-        return turpin_dialog, turpin_count
-    except Exception as e:
-        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
-
+# def append_dialog(out_dialog_bytes:SeedFileInfo, dialog_index, text, dialog_size):
+#     dialog_index = data[0]
+#     dialog_index = data[0]
+#     dialog_data_offset = (dialog_index * 0x8) + 0x8
+#     dialog_byte = data[1]
+#     dialog_size = data[2]
+#     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
+#     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
+#     out_dialog_bytes += dialog_byte
+#     return out_dialog_bytes
 
 def modify_dialog(seed_f:SeedFileInfo):
     try:
@@ -335,23 +251,32 @@ def modify_dialog(seed_f:SeedFileInfo):
         dialog_bytes = get_bundle_bytes(bundle_path,dialog_file_offset,size=dialog_file_size)
         out_dialog_bytes = bytearray(dialog_bytes)
         out_dialog_bytes += b'\x00'
-
-        turpin_hints, turpin_count = write_turpin_hints(seed_f)
-        new_dialog_size = 0x1BAC3 + turpin_count
-        #struct.pack_into(bytes, out_dialog_bytes, 4, new_dialog_size)
-        struct.pack_into('<I', out_dialog_bytes, 4, new_dialog_size)
-        for new_offset, data in turpin_hints.items():
-            dialog_index = data[0]
-            dialog_data_offset = (dialog_index * 0x8) + 0x8
-            dialog_byte = data[1]
-            dialog_size = data[2]
-            struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
-            struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
-            out_dialog_bytes += dialog_byte
+        if seed_f.trupin_option:
+            get_trupin_hint_file(seed_f)
+            if os.path.exists(seed_f.hint_file_path):
+                trupin_hints, trupin_count = write_trupin_hints(seed_f)
+                new_dialog_size = 0x1BAC3 + trupin_count
+                #struct.pack_into(bytes, out_dialog_bytes, 4, new_dialog_size)
+                struct.pack_into('<I', out_dialog_bytes, 4, new_dialog_size)
+                loggerDebug.warning(f"trupin_hints:{trupin_hints}")
+                for new_offset, data in trupin_hints.items():
+                    dialog_index = data[0]
+                    dialog_data_offset = (dialog_index * 0x8) + 0x8
+                    dialog_byte = data[1]
+                    dialog_size = data[2]
+                    struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
+                    struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
+                    out_dialog_bytes += dialog_byte
+                os.remove(seed_f.hint_file_path)
+            else:
+                loggerDebug.error(f"Hint File not found: {seed_f.hint_file_path}")
+        else:
+            return
         with open(os.path.join(f"{seed_f.ap_mod_path}/rf3mc.eng"), "wb") as param_file:
             param_file.write(out_dialog_bytes)
     except Exception as e:
         loggerDebug.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
+
 
 def modify_spells(seed_f:SeedFileInfo):
     try:
@@ -1060,8 +985,8 @@ def start_launch(seed_f:SeedFileInfo):
             modify_sound(seed_f)
             if seed_f.element_option:
                 modify_spells(seed_f)
-            if seed_f.trupin_option:
-                modify_turpin_dialog(seed_f)
+            
+            modify_dialog(seed_f)
             modify_system_text(seed_f)
             #get_save_file_extra_info(seed_f)
         launch_game_suspended(seed_f)
