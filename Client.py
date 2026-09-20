@@ -350,7 +350,7 @@ class RF4Client(CommonContext):
     player_name = None
     character_appearance = None
     menu_state_ptr = None
-    
+
 
     last_patch_check = time.time()
     last_loc_check = time.time()
@@ -411,6 +411,9 @@ class RF4Client(CommonContext):
         self.syncing = False
         self.slot_data = ""
         self.time_speed_command = None
+        # We need to wait until we have slot_data before patching
+        # As far as I understand it's sent with connection to the server
+        self.slot_data_ready = asyncio.Event()
 
     async def server_auth(self, password_requested: bool= False):
         if password_requested and not self.password:
@@ -476,13 +479,13 @@ class RF4Client(CommonContext):
                         goal_str = "Rune Hunt"
                     case 8:
                         goal_str = "Homeowner"
-                
+
                 if(args['slot_data']['DeathLink']):
                     self.death_link = True
                         #self.update_death_link(self.death_link)
                 if(args['slot_data']['ShopboxLink']):
                     self.shopbox_link = True
-                
+
                 if(args['slot_data']['GoalLoc']):
                     self.goal_loc = args['slot_data']['GoalLoc']
 
@@ -530,7 +533,7 @@ class RF4Client(CommonContext):
 
                 if(args['slot_data']['sphere_hunt_spheres']):
                     self.sphere_hunt_spheres = args['slot_data']['sphere_hunt_spheres']
-                
+
 
                 if(args['slot_data']['no_jones_fee']):
                     self.doctor_option = args['slot_data']['no_jones_fee']
@@ -580,7 +583,7 @@ class RF4Client(CommonContext):
                 if(args['slot_data']['character_appearance']):
                     self.character_appearance = args['slot_data']['character_appearance']
                 loggerSeed.info( \
-                f"""Seed: {self.seed_name}\n 
+                f"""Seed: {self.seed_name}\n
                 Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}
                 Shipsanities: [{shipsanitystr}]
                 Fortress Spheres Needed: {self.fortress_sphere_need},  Rune Prana Spheres Needed: {self.prana_sphere_need}
@@ -594,6 +597,9 @@ class RF4Client(CommonContext):
                     loggerSeed.info(f"Shipping_Percent: {self.ship_percent_need}%")
                 elif self.game_goal == 7:
                     loggerSeed.info(f"Goal Spheres Needed: {self.sphere_hunt_spheres}")
+
+                # Slot data is fully received by the server
+                self.slot_data_ready.set()
 
             if cmd in {"Bounced"}:
                 try:
@@ -668,7 +674,7 @@ class RF4Client(CommonContext):
                 return root
         self.ui = LOLManager(self)
         self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
-        
+
 
     # async def send_deathlink(self) -> None:
     #     self.sending_death_link = True
@@ -687,11 +693,11 @@ class RF4Client(CommonContext):
             self.processes_base = pc_get_proc_base(self.pm)
             if self.processes_base and self.seed_check_result:
                 # reads all game pointers from game memory, if the process base is not found will instead
-                
+
                 self.rf4d = self.processes_base + 0xE704A0
                 self.shipment_base = self.rf4d - 0x1390
                 self.seed_options = pc_read_bytes(self.pm,self.processes_base + 0xE90F4E, 0x12)
-                
+
                 self.ExpGainAd = self.processes_base + 0xE9AC14
                 self.moneyPtr = self.processes_base + 0xE94FA0
                 self.playerObj = pc_read_ptr(self.pm, self.processes_base + 0xE15078)
@@ -713,10 +719,6 @@ class RF4Client(CommonContext):
                 self.fridge_ptr = get_inv_ptr("Fridge", self.pm, self.processes_base)
                 self.rune_abilites_ptr = get_inv_ptr("Runes", self.pm, self.processes_base)
                 self.shop_box_ptr = get_inv_ptr("Shop", self.pm, self.processes_base)
-                if self.extra_routine_ptr:
-                    pc_free_mem(self.pm,self.extra_routine_ptr)
-                patch_injects(self)
-                patch_game(self)
 
                 got_items = self.items_received
                 process_items(self, got_items, 0)
@@ -829,19 +831,36 @@ def check_deathlink(ctx:RF4Client):
 async def game_watcher(ctx: RF4Client):
     try:
         attach_process_memory(ctx)
-        while not (ctx.processes_base) and not ctx.exit_event.is_set():
+        while not ctx.slot_data_ready.is_set() and not ctx.exit_event.is_set():
+            loggerClient.info("Waiting for the server connection before patching the game...")
+            await asyncio.sleep(3)
+        if ctx.exit_event.is_set():
+            return
+
+        loggerClient.info("Slot data received, starting patch sequence")
+
+        patched = False
+        while not patched and not ctx.exit_event.is_set():
             #if pc_check_process(pid):
             ctx.processes_base = pc_get_proc_base(ctx.pm)
+            loggerClient.info(f"process base: {hex(ctx.processes_base) if ctx.processes_base else None}")
             if ctx.processes_base:
                 patch_injects(ctx)
+                loggerClient.info("injects done")
+                patch_game(ctx)
+                loggerClient.info("patches done")
                 pc_process_resume(ctx.seed_f.process_obj.pid)
+                loggerClient.info(f"resumed {ctx.seed_f.process_obj.pid}")
                 ctx.setup_pointers()
-                varify_patches(ctx)
+                loggerClient.info("pointers set up")
+                verify_patches(ctx)
+                loggerClient.info("all patches successfully applied")
+                patched = True
             else:
                 loggerDebug.warning(f"Can not find process, attempting again")
-            await asyncio.sleep(10)
-        
-        
+            await asyncio.sleep(2)
+
+
         # Main Loop
         client_ticks = 0
         while not ctx.exit_event.is_set():
@@ -849,7 +868,7 @@ async def game_watcher(ctx: RF4Client):
                 client_ticks += 1
                 if ctx.seed is None:
                     # Wait for the client to connect
-                    await asyncio.sleep(10)
+                    await asyncio.sleep(2)
                     continue
                 # Make sure save file matches run seed
                 ctx.seed_check_result = seed_check(ctx)
@@ -860,7 +879,7 @@ async def game_watcher(ctx: RF4Client):
 
                 if cur_time - ctx.last_patch_check >= 300:
                     ctx.last_patch_check = time.time()
-                    varify_patches(ctx)
+                    verify_patches(ctx)
 
                 if ctx.death_link and "DeathLink" not in ctx.tags:
                     await ctx.update_death_link(ctx.death_link)
@@ -881,8 +900,8 @@ async def game_watcher(ctx: RF4Client):
                         process_items(ctx,item_list,start_index)
                     ctx.recv_item_storage.clear()
 
-                
-                
+
+
                 ctx.map_id = pc_read(ctx.pm, ctx.processes_base + 0x9EC578) & 0xFFFF
                 if ctx.death_link:
                     # Check if player is dead
@@ -909,7 +928,7 @@ async def game_watcher(ctx: RF4Client):
                 ctx.prev_map = ctx.map_id
                 ctx.game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
 
-                
+
                 if cur_time - ctx.last_loc_check >= 5:
                     sending = check_locations(ctx)
                     # Send new Locations
@@ -950,7 +969,7 @@ async def game_watcher(ctx: RF4Client):
 
 
 def launch(*args):
-    
+
     try:
         seed_f = SeedFileInfo()
         if args:
@@ -960,7 +979,7 @@ def launch(*args):
                     seed_f.aprf4s_file_path = arg
                     logger.info(f"seed_f-pre: {seed_f}")
         start_launch(seed_f) # -> Launch.py
-        
+
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
         return
