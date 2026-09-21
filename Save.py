@@ -16,7 +16,8 @@ from .client_methods import reverse_bits
 hint_item_list = [
         "Volkanon Axe","Obsidian Bridge","Obsidian Bridge","Chipsqueek Guide","Etherlink",
         "Autumn Bridge","Cerezo Bridge","Maya Bridge","Winters Grasp","Forging License",
-        "Crafting License","EZ Cooking License","Pro Cooking License","Chemistry License"
+        "Crafting License","EZ Cooking License","Pro Cooking License","Chemistry License",
+        "Fiersome Sun", "Aquaticus Rain"
     ]
 logger = logging.getLogger("Rune Factory 4 Save")
 class RF4SaveData():
