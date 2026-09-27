@@ -50,7 +50,7 @@ region_data_table: Dict[str, RF4RegionData] = {
     ]),
     "Mineral": RF4RegionData(),
     "Anywhere (Rare)": RF4RegionData(),
-    "Summer Field": RF4RegionData(["Summer Field"]),
+    "Summer Field": RF4RegionData(),
     "Keeno Lake": RF4RegionData(),
     "Cluck Cluck Nest": RF4RegionData(["Selphia Plains"]),
     "Water Ruins": RF4RegionData(["Water Ruins (Boss)","Water Ruins (Second Boss)"]),
@@ -191,6 +191,8 @@ region_data_table: Dict[str, RF4RegionData] = {
 
 
     # Requests
+    "First Task!": RF4RegionData(["How to place furniture!"]),
+    "How to place furniture!": RF4RegionData(["Make Lumber"]),
     "Make Lumber": RF4RegionData(["Make a shipment!"]),
     "Give an item!": RF4RegionData(["Purchase Rice!"]),
     "Purchase Rice!": RF4RegionData(["Make Material Stone!"]),

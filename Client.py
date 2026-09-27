@@ -600,7 +600,8 @@ class RF4Client(CommonContext):
 
                 # Slot data is fully received by the server
                 self.slot_data_ready.set()
-
+            if cmd in {"ConnectionRefused"}:
+                self.auth = self.get_username()
             if cmd in {"Bounced"}:
                 try:
                     if 'tags' in args and 'slots' in args:
@@ -822,6 +823,7 @@ def check_deathlink(ctx:RF4Client):
         ctx.sending_death_link = False
         ctx.last_death_link = time.time()
     elif player_hp <= 0 and ctx.last_death_link + 12 < time.time():
+        ctx.last_death_link = time.time()
         return True
     else:
         ctx.sending_death_link = False
@@ -832,8 +834,8 @@ async def game_watcher(ctx: RF4Client):
     try:
         attach_process_memory(ctx)
         while not ctx.slot_data_ready.is_set() and not ctx.exit_event.is_set():
-            loggerClient.info("Waiting for the server connection before patching the game...")
-            await asyncio.sleep(3)
+            loggerClient.info("Waiting for the server connection before patching the game, The game will launch when connected...")
+            await asyncio.sleep(8)
         if ctx.exit_event.is_set():
             return
 

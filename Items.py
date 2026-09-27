@@ -77,9 +77,9 @@ def parse_items(cell):
 def parse_csv(csv_name):
     #import csv
     import pkgutil
-    raw_csv_text =  str(pkgutil.get_data(__name__, f"data/{csv_name}.csv"))
+    raw_csv_text = pkgutil.get_data(__name__, f"data/{csv_name}.csv").decode("utf-8").replace("\r\n","\n")
     csvdata = {}
-    rows = str.split(raw_csv_text,"\\r\\n")
+    rows = str.split(raw_csv_text,"\n")
     col = []
     row_num = 0
     for row_raw in rows:

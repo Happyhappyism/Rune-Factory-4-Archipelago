@@ -334,8 +334,8 @@ def parse_csv(csv_name):
     #     rows = str.split(raw_csv_text,"\r\n")
     # else:
         # END DEBUG, Untab this later
-    raw_csv_text =  str(pkgutil.get_data(__name__, f"data/{csv_name}.csv"))
-    rows = str.split(raw_csv_text,"\\r\\n")
+    raw_csv_text = pkgutil.get_data(__name__, f"data/{csv_name}.csv").decode("utf-8").replace("\r\n","\n")
+    rows = str.split(raw_csv_text,"\n")
     #raw_csv_text =  str(pkgutil.get_data(__name__, f"data/{csv_name}.csv"))
     csvdata = {}
     
@@ -502,7 +502,7 @@ spell_list = [data.loc_name for name, data in shipment_data_table.items() if dat
 filler_items = {name: [data.apid, data.fill_weight, data.id, data.type, data.fill_amount] for name, data in shipment_data_table.items() if data.fill_weight != 0 and data.fill_weight is not None}
 chest_recipes = {name: data.recipe for name, data in chest_data_table.items() if data.recipe is not None}
 item_to_region = {name: data.region for name, data in shipment_data_table.items() if data.shipable == True}
-request_rules = {name: [data.request_req, data.item_req] for name, data in request_data_table.items() if data.item_req is not None}
+request_rules = {name: [data.request_req, data.item_req] for name, data in request_data_table.items()}
 request_list = list(request_data_table)
 top_requests = [name for name, data in request_data_table.items() if "Fenrir" in data.item_req]
 # request_data = {data.apid: [data.byte, data.mask] for name, data in request_data_table.items() if data.byte is not None}

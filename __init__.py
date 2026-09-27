@@ -304,6 +304,15 @@ class RF4World(World):
             if name in duplicate_data_table:
                 del duplicate_data_table[name]
 
+        goal_val = self.options.game_goal.value
+        match goal_val:
+            case 0:
+                custom_goal_loc = self.options.custom_goal_location.value
+                if custom_goal_loc in location_data_table:
+                    duplicate_data_table[custom_goal_loc] = location_data_table[custom_goal_loc]
+            case 6:
+                duplicate_data_table["Sechs Territory Shipment - White Stone"] = location_data_table["Sechs Territory Shipment - White Stone"]
+
         for region_name, region_data in region_data_table.items():
             #if region_name in self.included_stages or region_name in fixed_regions:
             region = self.get_region(region_name)

@@ -110,8 +110,8 @@ def write_save_data(world:World):
     show_enemy_HP = world.options.show_enemy_HP
     tourism = [0, 100,250, 500, 1000, 2500, 2500]
     skill_exp_multi = ((world.options.skill_exp_multiplier.value)  & 3) << 2
-    birthday = reverse_bits((world.options.birthday.value), 5) #0b10000
-    birth_month = reverse_bits(world.options.birth_month.value, 2) # 0b00
+    birthday = reverse_bits((world.options.birthday.value), 5) 
+    birth_month = reverse_bits(world.options.birth_month.value, 2)
     birth_bits = (birth_month << 5) | (birthday << 7)
     # 0b0000bbbb bmm00000
     # mm 

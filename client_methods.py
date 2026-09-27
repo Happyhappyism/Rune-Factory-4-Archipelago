@@ -110,18 +110,18 @@ def on_save_load(ctx):
     ctx.shop_box_ptr = get_inv_ptr("Shop", ctx.pm, ctx.processes_base)
     ctx.ExpGainAd = ctx.processes_base + 0xE9AC14
     ctx.time_pointer =  pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm,ctx.processes_base+0xE12868) +0xB0)
-    pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0) & 1
+    pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0)
     if pandora: 
         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
     else:
         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
     
-    iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 2
+    iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 1)
     if iris:
         pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
-        pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
+        #pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
     
-    king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0) & 1
+    king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0)
     if king_order:
         pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
     ctx.equip_effects = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xE15078) + 0x130)
@@ -219,7 +219,7 @@ def read_em_value(game_flags, offset, start_bit, bit_width):
     masked_value = raw_value & mask_1
     masked_value >>= start_bit
     em_value = reverse_bits(masked_value, bit_width)
-    print(f"start_offset: {hex(start_offset)}, end_bit: {end_bit}, byte_size: {byte_size}, raw_value:{hex(raw_value)}, mask_1:{mask_1:b}, masked_value:{hex(masked_value)}, em_value:{em_value}")
+    #print(f"start_offset: {hex(start_offset)}, end_bit: {end_bit}, byte_size: {byte_size}, raw_value:{hex(raw_value)}, mask_1:{mask_1:b}, masked_value:{hex(masked_value)}, em_value:{em_value}")
     return em_value
     
 
@@ -608,8 +608,10 @@ def check_goals(ctx):
         case 4: # Baths
             if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
                 game_clear = True
-
-        case 6:
+        case 5: # Eliza
+            if ctx.game_flags[0x164] & 0x2:
+                game_clear = True
+        case 6: # Marraige
             if 0x1C3FA0 in ctx.checked_locations: # Shipped White Stone
                 game_clear = True
 

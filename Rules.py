@@ -166,8 +166,8 @@ def get_location_rules(player):
             lambda state: can_make_recipe("Heavy Boots", state, player),
         "Rune Prana F2 B3 Chest - Greenifier+ x4":
             lambda state: can_make_recipe("Heavy Boots", state, player),
-        "Selphia Shipment - Accessory Bread":
-            lambda state: state.has("Crafting License", state, player),
+        # "Selphia Shipment - Accessory Bread":
+        #     lambda state: state.has("Crafting License", state, player),
         "Selphia Shipment - Accessory Bread":
             lambda state: state.has("Crafting License", player),
         "Sharance Maze Shipment - Accessory Bread+":
@@ -209,7 +209,7 @@ def set_rules(world: "RF4World"):
         player_locations.append(location.name)
     for loc_name in water_shoe_chests:
         try:
-            if world.options.max_ship_tier > 7:
+            if world.options.max_ship_tier.value > 7:
                 location = world.multiworld.get_location(loc_name, world.player)
                 add_rule(location, lambda state: can_make_recipe("Water Shoes", state, world.player))
         except Exception as e:
@@ -263,10 +263,10 @@ def set_rules(world: "RF4World"):
             location = world.multiworld.get_location(loc_name, world.player)
             add_rule(location, lambda state, name=name: can_make_recipe(name, state, world.player))
         except Exception as e:
-            logger.error(f"Item: {e} not found\n\n{traceback.format_exc()}")
+            logger.error(f"Item: {e} not found {name}\n\n{traceback.format_exc()}")
             continue
-        except Exception as e:
-            logger.warning(f"Ingredient: {e} not found for {name}")
+        # except Exception as e:
+        #     logger.warning(f"Ingredient: {e} not found for ")
 
     
     for name, data in friend_data_table.items():

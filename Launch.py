@@ -232,6 +232,9 @@ def check_files(seed_f:SeedFileInfo):
         loggerDebug(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
 
 
+def append_dialog(out_dialog_bytes):
+    pass
+
 # def append_dialog(out_dialog_bytes:SeedFileInfo, dialog_index, text, dialog_size):
 #     dialog_index = data[0]
 #     dialog_index = data[0]
@@ -254,19 +257,23 @@ def modify_dialog(seed_f:SeedFileInfo):
         if seed_f.trupin_option:
             get_trupin_hint_file(seed_f)
             if os.path.exists(seed_f.hint_file_path):
-                trupin_hints, trupin_count = write_trupin_hints(seed_f)
+                trupin_hints, trupin_dialog_data = write_trupin_hints(seed_f)
+                trupin_count = len(trupin_dialog_data)
                 new_dialog_size = 0x1BAC3 + trupin_count
+                out_dialog_bytes += trupin_hints
                 #struct.pack_into(bytes, out_dialog_bytes, 4, new_dialog_size)
                 struct.pack_into('<I', out_dialog_bytes, 4, new_dialog_size)
-                loggerDebug.warning(f"trupin_hints:{trupin_hints}")
-                for new_offset, data in trupin_hints.items():
-                    dialog_index = data[0]
+                #loggerDebug.warning(f"trupin_hints:{trupin_hints}")
+                for trupin_hint in trupin_dialog_data:
+                #for new_offset, data in trupin_dialog_data.items():
+                    dialog_index = trupin_hint.hint_index
                     dialog_data_offset = (dialog_index * 0x8) + 0x8
-                    dialog_byte = data[1]
-                    dialog_size = data[2]
+                    dialog_offset = trupin_hint.hint_offset
+                    #dialog_byte = data[1]
+                    dialog_size = trupin_hint.hint_size
                     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
-                    struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
-                    out_dialog_bytes += dialog_byte
+                    struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, dialog_offset)
+                    #out_dialog_bytes += dialog_byte
                 os.remove(seed_f.hint_file_path)
             else:
                 loggerDebug.error(f"Hint File not found: {seed_f.hint_file_path}")
@@ -557,7 +564,7 @@ def additional_file_patching(seed_f:SeedFileInfo):
 def get_text_entry_data(byte_list, entry_id):
     try:
         entry_total = int.from_bytes(byte_list[4:8])
-        if entry_id > entry_total:
+        if entry_id >= entry_total:
             return 0, 0
         entry_base = (8 * entry_id) + 8
         offset_ptr = entry_base + 4
@@ -604,7 +611,8 @@ def prompt_delete_save(seed_f:SeedFileInfo):
         root.withdraw()
         delete_slot = filedialog.askopenfilename(title="Select Delete an old run save file",initialdir=seed_f.ap_save_seed_path, filetypes=[("RF4 Save", "*.sav")])
         root.destroy()
-        return int(Path(delete_slot).stem[-2:])
+        if delete_slot:
+            return int(Path(delete_slot).stem[-2:])
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
@@ -615,7 +623,7 @@ def find_save_slot(seed_f:SeedFileInfo):
             f.seek(8)
             used_slots = int.from_bytes((f.read(4)),"little")
         for slot in range(0,20,1):
-            if used_slots & (1 << slot) == 0:
+            if (used_slots & (1 << slot)) == 0:
                 return slot + 1
         return prompt_delete_save(seed_f)
     except Exception as e:
@@ -740,7 +748,7 @@ def build_seed_combo(seed_f:SeedFileInfo):
                     goal_int = int.from_bytes(goal_byte, byteorder="little")
                     goal_str = get_goal_str(goal_int)
                     
-                    sys_f.seek(date_offset)
+                    sys_f.seek(slot_base + date_offset)
                     date_byte = sys_f.read(5)
                     date_str = date_byte.decode("utf-8")
 
@@ -881,11 +889,11 @@ def write_sys_save(seed_f:SeedFileInfo):
             f.seek(seed_name_offset)
             f.write(seed_name_bytes)
             f.seek(goal_offset)
-            f.write(int.to_bytes(seed_f.game_goal))
+            f.write(seed_f.game_goal.to_bytes(1))
             f.seek(date_offset)
             f.write(date_bytes)
             f.seek(gender_offset)
-            f.write(int.to_bytes(seed_f.file_gender))
+            f.write(seed_f.file_gender.to_bytes(1))
             f.seek(8)
             file_bytes = f.read()
             crc = compute_crc(file_bytes)
