@@ -252,7 +252,7 @@ class PatchManager:
                     ),
                 ])
             )
-
+        
         self.patch_sets = patch_sets
 
     def apply(self, ctx):
@@ -335,6 +335,22 @@ def patch_injects(ctx):
         menu_slot_row_patches(ctx)
     except Exception as e:
         loggerDebug.critical(f"Error  Injects: {e}\n{traceback.format_exc()}")
+
+
+item_patches = {
+    "pia":Patch(
+        "Pias Secret Spring",
+        "Working no longer decreases Monster worker's health.",
+        0xaea40,
+        bytes([0xC3,0x90, 0x90, 0x90, 0x90]),                        # NOP health decrease call
+    ),
+    "iris":Patch(
+        "Iris Song",
+        "(non healing)Spells no longer consume RP.",
+        0xED0A3,
+        bytes([0xBE,0x01,0x00,0x00,0x00,0x90,0x90]) # mov esi, 0x01
+    )
+}
 
 def airship_mod():
     #flag_adr = p_base + 0xE9AC40

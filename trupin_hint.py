@@ -119,6 +119,7 @@ def build_trupin_hint(seed_f:"SeedFileInfo",index, trupin_bytes, hint_json):
         if hint_item in hint_json:
             hint_player = hint_json[hint_item][0]
             hint_location = hint_json[hint_item][1]
+            hint_location_bytes = hint_location.encode("utf-8")
             if hint_player == seed_f.player_name:
                 player_txt = (f"{seed_f.player_name}").encode("utf-8")
             else:
@@ -127,7 +128,6 @@ def build_trupin_hint(seed_f:"SeedFileInfo",index, trupin_bytes, hint_json):
                 loc_split = hint_location.split(" - ")
                 loc_split_0 = (loc_split[0]).encode("utf-8")
                 loc_split_1 = (loc_split[1]).encode("utf-8")
-                hint_location_bytes = hint_location.encode("utf-8")
                 if hint_location in ship_loc_list:
                     ship_region = ship_loc_to_reg[hint_location].encode("utf-8")
                     diagetic = b"ship something from "+hl+ship_region+hl
@@ -161,7 +161,7 @@ def build_trupin_hint(seed_f:"SeedFileInfo",index, trupin_bytes, hint_json):
         trupin_bytes +=  b'\x00'
     trupin_size = len(trupin_bytes)
     
-    if trupin_size >= 64:
+    if trupin_size > 64:
         try:
             offset = 64
             while trupin_bytes[offset] != 0x20 and offset < trupin_size-1:

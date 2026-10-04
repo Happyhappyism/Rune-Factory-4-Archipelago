@@ -48,7 +48,7 @@ RECV_INDEX = 0x1FC
 
 class RF4CommandProcessor(ClientCommandProcessor):
     ctx: "RF4Client"
-    def _cmd_timespeed(self, *speed:str):
+    def _cmd_ts(self, *speed:str):
         """Change the in game time speed
         These can be in the following formats
         tuple name example: double, triple, half
@@ -350,6 +350,7 @@ class RF4Client(CommonContext):
     player_name = None
     character_appearance = None
     menu_state_ptr = None
+    scene_tbl_ptr = None
 
 
     last_patch_check = time.time()
@@ -605,16 +606,17 @@ class RF4Client(CommonContext):
             if cmd in {"Bounced"}:
                 try:
                     if 'tags' in args and 'slots' in args:
-                        tags = args['tags']
-                        player_slot = args['slots'][0]
-                        #loggerDebug.info(f"recieved bounce packet, tags:{tags}, slot: {player_slot}/{self.slot}")
-                        if "ShopboxLink" in tags and self.slot == player_slot:
-                            #loggerDebug.info(f"Bounced package: {args}")
-                            item_base64 = args['data']
-                            item_bytes = base64.b64decode(item_base64)
-                            shopbox_bytes = get_inv_bytes(self.pm, self.shop_box_ptr)
-                            free_slot = find_free_inv_slot(shopbox_bytes, self.shop_box_ptr)
-                            pc_write_bytes(self.pm,free_slot,item_bytes)
+                        if args['slots']:
+                            tags = args['tags']
+                            player_slot = args['slots'][0]
+                            #loggerDebug.info(f"recieved bounce packet, tags:{tags}, slot: {player_slot}/{self.slot}")
+                            if "ShopboxLink" in tags and self.slot == player_slot:
+                                #loggerDebug.info(f"Bounced package: {args}")
+                                item_base64 = args['data']
+                                item_bytes = base64.b64decode(item_base64)
+                                shopbox_bytes = get_inv_bytes(self.pm, self.shop_box_ptr)
+                                free_slot = find_free_inv_slot(shopbox_bytes, self.shop_box_ptr)
+                                pc_write_bytes(self.pm,free_slot,item_bytes)
                 except Exception as e:
                     loggerDebug.error(f"Error recieving bounce packet {e}\n{traceback.format_exc()}")
 
@@ -823,7 +825,7 @@ def check_deathlink(ctx:RF4Client):
         ctx.sending_death_link = False
         ctx.last_death_link = time.time()
     elif player_hp <= 0 and ctx.last_death_link + 12 < time.time():
-        ctx.last_death_link = time.time()
+        #ctx.last_death_link = time.time()
         return True
     else:
         ctx.sending_death_link = False

@@ -68,7 +68,7 @@ def give_furniture(pm, processes_base, furniture,mapid,xpos,ypos):
     furnitre_bytes = b''.join([map_bytes,place_bytes,funiture_bytes,x_bytes,y_bytes])
     pc_write_bytes(pm, furniture_offset + offset, furnitre_bytes)
 
-def give_progressive_item(ctx, item_type, progress_offset, tier_base):
+def give_progressive_item(ctx:"RF4Client", item_type, progress_offset, tier_base):
     try:
         #recipe_tiering
         progress_counter = pc_readb(ctx.pm, ctx.processes_base + 0xE90296 + progress_offset)
@@ -88,7 +88,7 @@ def give_progressive_item(ctx, item_type, progress_offset, tier_base):
         give_item(ctx, item_data_table["Rune Crystal"].item_id)
         loggerDebug.critical(f"Error recieving progressive item {e}\nitem_type:{item_type}, progress_counter:{progress_counter}, tier_base:{tier_base}\n{traceback.format_exc()}")
 
-def give_item(ctx, item_idx):
+def give_item(ctx:"RF4Client", item_idx):
     try:
         inv_ptr = ctx.storage_box_ptr
         inv_bytes = get_inv_bytes(ctx.pm, inv_ptr)
@@ -103,7 +103,7 @@ def give_item(ctx, item_idx):
     except Exception as e:
         loggerDebug.critical(f"Error giving item item {e}\nitem_idx:{item_idx}\n{traceback.format_exc()}")
 
-def on_save_load(ctx):
+def on_save_load(ctx:"RF4Client"):
     ctx.storage_box_ptr = get_inv_ptr("Storage", ctx.pm, ctx.processes_base)
     ctx.fridge_ptr = get_inv_ptr("Fridge", ctx.pm, ctx.processes_base)
     ctx.rune_abilites_ptr = get_inv_ptr("Runes", ctx.pm, ctx.processes_base)
@@ -116,11 +116,16 @@ def on_save_load(ctx):
     else:
         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
     
-    iris = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 1)
-    if iris:
-        pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
+    iris_have = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 1)
+    if iris_have:
+        item_patches["iris"].apply(ctx)
+        #pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x01,0x00,0x00,0x00,0x90,0x90])) # mov esi, 0x00
         #pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
-    
+    pia_have = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 2)
+    if pia_have:
+        item_patches["pia"].apply(ctx)
+        #pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0x90,0x90])) # mov esi, 0x00
+        
     king_order = pc_read_bit(ctx.pm, ctx.game_flags_ptr + 0x254, 0)
     if king_order:
         pc_write_bytes(ctx.pm,ctx.processes_base+0x21CE92,bytes([0xE9, 0xBC,0x00,0x00,0x00, 0x90])) # jmp +0xBC
@@ -129,6 +134,7 @@ def on_save_load(ctx):
         ctx.acc_eff_ptr =  pc_read_ptr(ctx.pm, ctx.equip_effects + 0x198)
     ctx.menu_state_ptr = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xDCAA10) + 0x18)
     ctx.rune_spheres =  pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
+    ctx.scene_tbl_ptr = pc_read_ptr(pc_read_ptr(ctx.pm, ctx.processes_base+0xE9E558) + 0x591C0)
     loggerClient.info(f"Rune Spheres Collected: {ctx.rune_spheres}")
 
 def get_inv_ptr(inventory, pm, processes_base):
@@ -276,13 +282,13 @@ def expand_barns(barn_int):
 
 
 
-def set_airship_flags(ctx, airship_base, story_item):
+def set_airship_flags(ctx:"RF4Client", airship_base, story_item):
     for data in airship_flags[story_item]:
         offset = data[0]
         bit = data[1]
         pc_set_bit(ctx.pm, airship_base + offset, bit)
 
-def process_items(ctx, item_list, start_index):
+def process_items(ctx:"RF4Client", item_list, start_index):
     
     try:
         if not ctx.game_flags_ptr:
@@ -410,9 +416,11 @@ def process_items(ctx, item_list, start_index):
                     
                     case "Iris's Song":
                         pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,1)
-                        pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90]))
-
-                    
+                        item_patches["iris"].apply(ctx)
+                        #pc_write_bytes(ctx.pm,ctx.processes_base+0xED0A3,bytes([0xBE,0x00,0x00,0x00,0x00,0x90,0x90]))
+                    case "Pia's Secret Spring":
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,2)
+                        item_patches["pia"].apply(ctx)
                         #pc_writeb(p, ctx.processes_base + 0x21CE13, 0x00)
                     case "Rune Sphere":
                         sphere_have = pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
@@ -468,7 +476,7 @@ def process_items(ctx, item_list, start_index):
             elif item_id in physical_items:
                 item_data = item_data_table[physical_items[item_id]]
                 match item_data.item_type:
-                    case "Bread" | "Crop" | "Dish" | "Fish":
+                    case "Mushroom" | "Bread" | "Crop" | "Dish" | "Fish":
                         inv_ptr = ctx.fridge_ptr
                     case "Spell":
                         inv_ptr = ctx.rune_abilites_ptr
@@ -494,7 +502,7 @@ def process_items(ctx, item_list, start_index):
     except Exception as e:
         loggerDebug.critical(f"Error processing items {e}\n{traceback.format_exc()}")
 
-def check_locations(ctx):
+def check_locations(ctx:"RF4Client"):
     sending = []
     shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
 # Check Shipment Locations
@@ -588,7 +596,7 @@ def check_locations(ctx):
 
     return sending
 
-def check_goals(ctx):
+def check_goals(ctx:"RF4Client"):
     story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
     game_clear = False
     match ctx.game_goal:
