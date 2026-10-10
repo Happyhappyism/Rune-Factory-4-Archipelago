@@ -189,6 +189,8 @@ region_data_table: Dict[str, RF4RegionData] = {
     "Rune Prana F7":  RF4RegionData(["Rune Prana F7 (Boss)"]),
     "Rune Prana F7 (Boss)":  RF4RegionData(),
 
+    "Not implemented":  RF4RegionData(), # Intended to be unreachable as a failsafe for unused locations
+
 
     # Requests
     "First Task!": RF4RegionData(["How to place furniture!"]),

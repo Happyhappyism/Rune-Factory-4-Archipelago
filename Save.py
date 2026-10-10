@@ -101,8 +101,26 @@ def write_save_data(world:World):
     extra_options |= (world.options.shuffle_sound_effects.value << 1)
     extra_options |= (world.options.trupin_hint.value << 2)
     extra_options |= (world.options.shuffle_elements.value << 3)
-    
+    extra_options |= (world.options.custom_music.value << 4)
 
+    sanity_options = world.options.chestsanity.value
+    sanity_options |= (world.options.barriersanity.value << 1)
+    sanity_options |= (world.options.boss_sanity.value << 2)
+    sanity_options |= (world.options.boxsanity.value << 3)
+    sanity_options |= (world.options.requestsanity.value << 4)
+    sanity_options |= (world.options.tamesanity.value << 5)
+    sanity_options |= (world.options.outfitsanity.value << 6)
+    sanity_options |= (world.options.friendsanity.value << 7)
+
+    shipment_options = world.options.cropsanity.value
+    shipment_options |= (world.options.fishsanity.value << 1)
+    shipment_options |= (world.options.dropsanity.value << 2)
+    shipment_options |= (world.options.spellsanity.value << 3)
+    shipment_options |= (world.options.mineralsanity.value << 4)
+    shipment_options |= (world.options.foragesanity.value << 5)
+    shipment_options |= (world.options.chemicsanity.value << 6)
+    shipment_options |= (world.options.grocerysanity.value << 7)
+    
     appearance = world.options.character_appearance.value
     start_weapon = world.starting_weapon
     daily_trupin = world.options.daily_trupin
@@ -122,7 +140,9 @@ def write_save_data(world:World):
     save_data[0x1E65A] = game_goal                                          # 4
     save_data[0x1E65B] = drop_boost
     save_data[0x1E65C] = monster_options
-    save_data[0x1E65D] = extra_options                                       # 5
+    save_data[0x1E65D] = extra_options
+    save_data[0x1E65E] = sanity_options
+    save_data[0x1E65F] = shipment_options                                         # 5
     for x in range(4):
         save_data[0x20698+x] = (internal_seed >> (8 * x)) & 0xFF
     save_data[0x20714] = (tourism[royalty_rank]) & 0xFF

@@ -99,6 +99,7 @@ class RF4TameData(NamedTuple):
     produce: str = None
     drop: list = None
     boss: bool = False
+    boss_id: int = None
 
 class RF4OutfitData(NamedTuple):
     apid: int = 0
@@ -282,7 +283,7 @@ def parse_tame(cell):
             case "ID" | "APID":
                 if cell_value:
                     cell[col_name] = int(cell[col_name],16)
-            case "Tier":
+            case "Tier" | "Boss ID":
                 if cell_value:
                     cell[col_name] = int(cell[col_name])
             case "Region":
@@ -302,7 +303,7 @@ def parse_tame(cell):
                     cell_items = [chance for chance in (cell[col_name].split(" + ")) if chance != 0]
                     cell[col_name] = cell_items
             
-    return RF4TameData(name = cell['Name'], index = cell['ID'], apid = cell["APID"], region= cell['Region'], produce=cell["Produce"], boss= cell['Is Boss'],
+    return RF4TameData(name = cell['Name'], index = cell['ID'], apid = cell["APID"], region= cell['Region'], produce=cell["Produce"], boss= cell['Is Boss'], boss_id = cell['Boss ID'],
                         tier= cell['Tier'], drop= cell['Drop'], liked_item= cell['Friend Item'], drop_rates = cell['Drop Chance'], loc_name= f"{cell["Region"]} Tame - {cell['Name']}")
 
 
@@ -441,6 +442,12 @@ barrier_data_table = parse_mapobj_json("barrier_flags", 0x1C4600, "Barrier")
 box_data_table = parse_mapobj_json("box_flags", 0x1C4700, "Box")
 search_data_table = parse_mapobj_json("search_flags", 0x1C4800, "Search")
 
+# Boss data table
+boss_data_table = {name: RF4TameData(
+    apid = 0x1C4900 + data.boss_id, region= data.region, name=name, loc_name= f"{data.region} - Defeat {name}", index=data.index,
+    tier=data.tier, boss_id= data.boss_id, boss=True
+) for name, data in tame_data_table.items() if data.boss and data.boss_id is not None}
+
 #Shipments
 location_data_table= {data.name: RF4LocationData(
     item_id= data.id, address=data.apid, loc_type= "shipment", region=data.region, name=data.name, loc_name= data.loc_name)
@@ -484,8 +491,13 @@ location_data_table.update({name:
 })
 # Searchsanity
 location_data_table.update({name:
-    RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "box")
+    RF4LocationData(address=data.apid, region=data.region, name=name, loc_name=data.loc_name, loc_type= "search")
     for name, data in search_data_table.items()
+})
+# Boss Sanity
+location_data_table.update({data.loc_name:
+    RF4LocationData(address=data.apid, region=data.region, loc_type="tame", name=data.name, loc_name= data.loc_name)
+    for name, data in boss_data_table.items() if data.boss_id is not None
 })
 
 location_table = {data.loc_name: data.address for name, data in location_data_table.items() if data.address is not None}
@@ -495,6 +507,7 @@ shipment_data = {data.apid: [data.start_byte, data.start_bit] for name, data in 
 chest_data =    {data.apid: [data.byte, data.mask] for name, data in chest_data_table.items()}
 request_data =  {data.apid: [data.byte, data.mask, data.prog] for name, data in request_data_table.items() if data.include}
 tame_data =     {data.index: data.apid for name, data in tame_data_table.items() if data.liked_item is not None}
+boss_kill_data ={data.apid: data.boss_id for name, data in boss_data_table.items() if data.boss_id is not None}
 recipe_levels = {data.name: [data.level, data.craft_type, data.ingredients] for name, data in recipe_data_table.items() if data.level is not None}
 
 
@@ -529,6 +542,7 @@ outfit_loc_list = [data.loc_name for name, data in outfit_data_table.items()]
 barrier_loc_list = [data.loc_name for name, data in barrier_data_table.items()]
 box_loc_list = [data.loc_name for name, data in box_data_table.items()]
 search_loc_list = [data.loc_name for name, data in box_data_table.items()]
+boss_loc_list = [data.loc_name for name, data in boss_data_table.items()]
 
 recipe_tiering = {}
 
@@ -546,4 +560,3 @@ for name, data in recipe_data_table.items():
 bugged_locs = [
     "Sechs Territory F1 I2 Chest - Mystery Potion x3 + Levelizer"
 ]
-

@@ -14,23 +14,24 @@ shipment_data_table, recipe_data_table, chest_data_table, request_data_table,\
 friend_items, tame_data_table
 from .Launch import *
 
-import base64
+
 import pymem
-
-
-# Big thank you to the Lobotomy Corperation Developer K3 for reference on how to setup the client
-
+import json
 import asyncio
 import Utils
-import time
+# Big thank you to the Lobotomy Corperation Developer K3 for reference on how to setup the client
+
+
+#import base64
+#import time
 # import os
 # import sys
 # import shutil
 # import requests
-import json
+
 
 #Debug
-import traceback
+#import traceback
 
 if __name__ == "__main__":
     Utils.init_logging("RF4Client", exception_logger="Client")
@@ -318,19 +319,19 @@ class RF4Client(CommonContext):
     rune_spheres: int = 0
     game_flags = None
 
-    processes_base = None
-    game_flag_ptr_base = None
-    game_flags_ptr = None
+    processes_base: int = None
+    game_flag_ptr_base: int = None
+    game_flags_ptr: int = None
     seed_options = None
-    playerObj = None
-    combat_ptr = None
-    skill_base = None
-    ExpGainAd = None
-    storage_box_ptr = None
-    fridge_ptr = None
-    rune_abilites_ptr = None
-    shop_box_ptr = None
-    friend_ptr = None
+    playerObj: int = None
+    combat_ptr: int = None
+    skill_base: int = None
+    ExpGainAd: int = None
+    storage_box_ptr: int = None
+    fridge_ptr: int = None
+    rune_abilites_ptr: int = None
+    shop_box_ptr: int = None
+    friend_ptr: int = None
     rf4d = None
     shipment_base = None
     moneyPtr = None
@@ -342,15 +343,16 @@ class RF4Client(CommonContext):
     shipsanities:dict = {}
     equip_effects = None
     seed_check_result: bool = False
-    acc_eff_ptr = None
-    fodder_ptr = None
-    playerfile_ptr = None
-    map_id = 0
-    prev_map = 0
+    acc_eff_ptr: int = None
+    fodder_ptr: int = None
+    playerfile_ptr: int = None
+    map_id: int = 0
+    prev_map: int = 0
     player_name = None
-    character_appearance = None
+    character_appearance: int = None
     menu_state_ptr = None
     scene_tbl_ptr = None
+    scene_tbl_ptr_base = None
 
 
     last_patch_check = time.time()
@@ -358,14 +360,15 @@ class RF4Client(CommonContext):
     last_goal_check = time.time()
     last_seed_check = time.time()
 
-    doctor_option = False
+    doctor_option: bool = False
     skill_exp_multi = 0
     exp_multi = 0
     fp_multi = 0
     old_spheres: int = 0
 
-    extra_routine_ptr = None
-    sphere_hunt_spheres = 100
+    extra_routine_ptr:int = None
+    mc_ptr:int = None
+    sphere_hunt_spheres:int = 100
 
     start_weapon: str = None
     progressive_weapon: int  = None
@@ -397,6 +400,7 @@ class RF4Client(CommonContext):
     recv_item_storage = {}
     time_speed = 4096
     ship_count: int = 0
+    boss_sanity: bool = False
 
     ap_save_seed_path = None
     process_obj = None
@@ -583,6 +587,8 @@ class RF4Client(CommonContext):
                     self.progressive_accessory = args['slot_data']['progressive_accessory']
                 if(args['slot_data']['character_appearance']):
                     self.character_appearance = args['slot_data']['character_appearance']
+                if(args['slot_data']['boss_sanity']):
+                    self.boss_sanity = args['slot_data']['boss_sanity']
                 loggerSeed.info( \
                 f"""Seed: {self.seed_name}\n
                 Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}
@@ -737,6 +743,7 @@ class RF4Client(CommonContext):
                     #    pc_writeb(self.pm, self.processes_base + 0xE9AC39, 1)
                 else:
                     pc_write(self.pm, self.processes_base + 0xE9AC38, 0)
+                #patch_mc(self)
             else:
                 pass
                 #loggerDebug.warning(f"Pointers failed to setup:{self.processes_base} - {self.seed_check_result}")
@@ -761,80 +768,19 @@ class RF4Client(CommonContext):
         except Exception as e:
             loggerDebug.error(f"Something wrong with logging the pointers {e}\n{traceback.format_exc()}")
 
-def seed_check(ctx: RF4Client):
-    ctx.game_flag_ptr_base = pc_read_ptr(ctx.pm, ctx.processes_base + 0xE9E4B0)
-    if not ctx.game_flag_ptr_base:
-        # make sure save data can be read
-        return False
-    ctx.game_flags_ptr = pc_read_ptr(ctx.pm, ctx.game_flag_ptr_base + 8)
-    if ctx.game_flags_ptr:
-        try:
-            seed_check = pc_read(ctx.pm, ctx.game_flags_ptr+ RECV_INDEX + 2) & 0xFFFF
-            if seed_check != 0:
-                if not ctx.auth:
-                    # Get player name from save file
-                    player_name_bytes = pc_read_bytes(ctx.pm, ctx.processes_base + 0xE90272, 0x20)
-                    ctx.player_name = ctx.player_name = bytes([byte for byte in player_name_bytes if byte != 0]).decode("utf-8")
-                    ctx.auth = ctx.player_name
-                if (seed_check != ctx.seed):
-                    # client File seed does not match the server seed
-                    loggerClient.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(ctx.seed)}, Found: {hex(seed_check)}")
-                    ctx.processes_base = pc_get_proc_base(ctx.pm)
-                    if ctx.processes_base:
-                        ctx.setup_pointers()
-                    return False
-                elif (ctx.seed is None):
-                    # Client isn't connected to the server
-                    return False
-                else:
-                    # Client and Server seeds match
-                    if ctx.seed_check_result == False:
-                        # First seed check success
-                        ctx.seed_check_result = True
-                        ctx.setup_pointers()
-                        on_save_load(ctx)
-                        logger.info(f"Seed check passed")
-                return True
-            else:
-                return False
-        except TypeError as t:
-            loggerDebug.error(f"Error checking seed {t}\n{traceback.format_exc()}")
-            ctx.setup_pointers()
-            return False
-    else:
-        loggerDebug.error(f"Game flag pointer not found")
-        ctx.setup_pointers()
-        return False
 
-def attach_process_memory(ctx:RF4Client):
-    process_id = ctx.seed_f.process_obj.pid
-    ctx.pm = pymem.Pymem()
-    ctx.pm.open_process_from_id(process_id)
 
-def check_deathlink(ctx:RF4Client):
-    player_hp = pc_read(ctx.pm, ctx.combat_ptr)
-    player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
-    menu_state = pc_readb(ctx.pm, ctx.processes_base + 0xE128F0)
-    if player_status_eff & 0x40 and player_hp > 0:
-        ctx.sending_death_link = False
-        ctx.last_death_link = time.time()
-    elif menu_state:
-        ctx.sending_death_link = False
-        ctx.last_death_link = time.time()
-    elif ctx.map_id in death_map_excludes:
-        ctx.sending_death_link = False
-        ctx.last_death_link = time.time()
-    elif player_hp <= 0 and ctx.last_death_link + 12 < time.time():
-        #ctx.last_death_link = time.time()
-        return True
-    else:
-        ctx.sending_death_link = False
-    return False
+    def attach_process_memory(self):
+        process_id = self.seed_f.process_obj.pid
+        self.pm = pymem.Pymem()
+        self.pm.open_process_from_id(process_id)
+
+
 
 
 async def game_watcher(ctx: RF4Client):
     try:
-        attach_process_memory(ctx)
+        ctx.attach_process_memory()
         while not ctx.slot_data_ready.is_set() and not ctx.exit_event.is_set():
             loggerClient.info("Waiting for the server connection before patching the game, The game will launch when connected...")
             await asyncio.sleep(8)
@@ -880,7 +826,8 @@ async def game_watcher(ctx: RF4Client):
                     await asyncio.sleep(2)
                     continue
                 cur_time = time.time()
-
+                #if not ctx.mc_ptr:
+                #    check_mc_patch(ctx)
                 if cur_time - ctx.last_patch_check >= 300:
                     ctx.last_patch_check = time.time()
                     verify_patches(ctx)
@@ -933,7 +880,7 @@ async def game_watcher(ctx: RF4Client):
                 ctx.game_flags = pc_read_bytes(ctx.pm, ctx.game_flags_ptr, 0x33F)
 
 
-                if cur_time - ctx.last_loc_check >= 5:
+                if cur_time - ctx.last_loc_check >= 3:
                     sending = check_locations(ctx)
                     # Send new Locations
                     ctx.last_loc_check = time.time()

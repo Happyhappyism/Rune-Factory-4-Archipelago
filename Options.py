@@ -82,6 +82,7 @@ class MutliRequest(DefaultOnToggle):
 
 class MaxItemTier(Range):
     """Determines the max tier of an item to be included as a shipment
+    This extends to many other location types as well
     Item tiers can be viewed on the spreadsheet found at 
     https://docs.google.com/spreadsheets/d/1YU6grqkNfm-fRCV1gIQCDBU466W79-UGnRhtYPxam4Q/edit?gid=2037917468#gid=2037917468"""
     range_start = 5
@@ -220,12 +221,19 @@ class BarrierSanity(Toggle):
 class BoxSanity(Toggle):
     """Include boxes as locations"""
 
+class BossSanity(Toggle):
+    """Include boss kills as locations"""
+
 class SearchSanity(Toggle):
     """Misleading placeholder name for now, for now these are the one time pickup items in a few maps
     Not recommended very RNG heavy"""
     
 class MusicShuffle(Toggle):
     """Shuffle background music tracks"""
+
+class CustomMusic(Toggle):
+    """When shuffle_music is enabled, this will mix in .ogg audio files into the randomized tracks
+    These can be placed in [RF4S install directory]/Archipelago/Music"""
 
 class SfxShuffle(Toggle):
     """Shuffle sound effects"""
@@ -434,7 +442,8 @@ rf4_options_group = [
         OutfitSanity,
         BarrierSanity,
         BoxSanity,
-        SearchSanity
+        SearchSanity,
+        BossSanity
     ]),
     OptionGroup("Location Limitations", [
         MaxItemTier,
@@ -452,14 +461,15 @@ rf4_options_group = [
         RoyaltyRank,
         CharaApperance,
         BGM,
-        MusicShuffle,
-        SfxShuffle,
         OpenAirship,
         ProgressiveWeapon,
         ProgressiveArmor,
         ProgressiveAccessory,
         ShuffleElements,
-        GayDating
+        GayDating,
+        MusicShuffle,
+        CustomMusic,
+        SfxShuffle
     ]),
     OptionGroup("Server Group Options",[
         DeathLink,
@@ -511,8 +521,7 @@ class RF4Options(PerGameCommonOptions):
 
     max_ship_tier: MaxItemTier
     max_sell_value: MaxSell
-
-    chestsanity: ChestSanity
+    
     cropsanity: CropSanity
     fishsanity: Fishsanity
     craftsanity: CraftSanity
@@ -526,14 +535,18 @@ class RF4Options(PerGameCommonOptions):
     foragesanity: ForageSanity
     chemicsanity: ChemicSanity
     grocerysanity: GrocerySanity
+
+    chestsanity: ChestSanity
+    boss_sanity: BossSanity
     barriersanity: BarrierSanity
     boxsanity: BoxSanity
     searchsanity: SearchSanity
 
     background_music: BGM
     shuffle_music: MusicShuffle
+    custom_music:CustomMusic
     shuffle_sound_effects: SfxShuffle
-
+    
     requestsanity:RequestSanity
     friendsanity: Friendsanity
     tamesanity: Petsanity

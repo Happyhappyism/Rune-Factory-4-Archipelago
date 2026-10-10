@@ -156,7 +156,15 @@ def pc_set_bit(pm, adr, bit, reset=False):
     except Exception as e:
         logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
         return None
-    
+def pc_write_ptr(pm, adr, value):
+    try:
+        #pm = pymem.Pymem(proc)
+        pm.write_ulonglong(adr, value)
+        
+    except Exception as e:
+        logger.warning(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
+        return None
+
 def pc_follow_ptr_list(proc, ptr_list, dll_base):
     value = dll_base
     for offset in ptr_list:

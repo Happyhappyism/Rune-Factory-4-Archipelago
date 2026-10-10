@@ -1,7 +1,9 @@
 # Many of the follow codes were made by
 # @minhnhatx and @ajip from https://fearlessrevolution.com/viewtopic.php?t=18439
 from .pc_ap_methods import *
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .Client import RF4Client
 loggerDebug = logging.getLogger("Rune Factory 4 Debug")
 
 # A single continous memory modification
@@ -279,7 +281,7 @@ def get_patch_manager(ctx) -> PatchManager:
     return manager
 
 
-def patch_game(ctx):
+def patch_game(ctx:"RF4Client"):
     try:
         manager = get_patch_manager(ctx)
         manager.apply(ctx)
@@ -287,7 +289,7 @@ def patch_game(ctx):
         loggerDebug.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
 
 
-def verify_patches(ctx):
+def verify_patches(ctx:"RF4Client"):
     try:
         manager = get_patch_manager(ctx)
         if not manager.verify(ctx):
@@ -299,8 +301,41 @@ def verify_patches(ctx):
     if byte_val == 0xC1:
         patch_injects(ctx)
 
+def check_mc_patch(ctx:"RF4Client"):
+    try:
+        if not ctx.mc_ptr:
+            ctx.scene_tbl_ptr_base = pc_read_ptr(ctx.pm, ctx.processes_base+0xE9E558) + 0x591C0
+            if ctx.scene_tbl_ptr_base:
+                ctx.scene_tbl_ptr = pc_read_ptr(ctx.pm,ctx.scene_tbl_ptr_base)
+                patch_mc(ctx)
+    except Exception as e:
+        loggerDebug.critical(f"Error Verifying Patches: {e}\n{traceback.format_exc()}")
 
-def patch_injects(ctx):
+def patch_mc(ctx:"RF4Client"):
+    try:
+        gcs_1 = pc_read_ptr(ctx.pm,ctx.processes_base + 0xE3CB18)
+        gcs_2 = pc_read_ptr(ctx.pm,gcs_1 + 0x20)
+        global_scene_ptr =  pc_read_ptr(ctx.pm, gcs_2 + 0x10)
+        #loggerDebug.warning(f"mc_ptr:{(ctx.mc_ptr)} scene_tbl_ptr_base:{(ctx.scene_tbl_ptr_base)} gcs_1:{gcs_1} gcs_2:{gcs_2} global_scene_ptr:{global_scene_ptr} ")
+        if (not ctx.mc_ptr) and global_scene_ptr:
+            ctx.mc_ptr = pc_alloc_mem(ctx.pm, 0x480000)
+            with open(f"{ctx.seed_f.static_patch_path}/rf3.mc", "rb") as mc_file:
+                mc_bytes = mc_file.read()
+                mc_file.seek(0x234C)
+                global_scene_bytes = mc_file.read(0x10000)
+            #loggerDebug.warning()
+            pc_write_bytes(ctx.pm, ctx.mc_ptr, mc_bytes)
+            pc_write_ptr(ctx.pm, ctx.scene_tbl_ptr_base, ctx.mc_ptr)
+            
+            loggerDebug.warning(f"mc_ptr:{(ctx.mc_ptr)} scene_tbl_ptr_base:{(ctx.scene_tbl_ptr_base)} gcs_1:{gcs_1} gcs_2:{gcs_2} global_scene_ptr:{global_scene_ptr} ")
+            loggerDebug.warning(f"mc_ptr:{hex(ctx.mc_ptr)} scene_tbl_ptr_base:{hex(ctx.scene_tbl_ptr_base)} gcs_1:{hex(gcs_1)} gcs_2:{hex(gcs_2)} global_scene_ptr:{hex(global_scene_ptr)} ")
+            pc_write_bytes(ctx.pm, global_scene_ptr, global_scene_bytes)
+
+            #ctx.scene_tbl_ptr = ctx.mc_ptr
+    except Exception as e:
+        loggerDebug.critical(f"Error Generating MC Inject: {e}\n{traceback.format_exc()}")
+
+def patch_injects(ctx:"RF4Client"):
     try:
         if not ctx.extra_routine_ptr:
             ctx.extra_routine_ptr = pc_alloc_mem(ctx.pm, 0x1000)
@@ -487,13 +522,16 @@ def lucky_charm(p_base):
     return working_bytes
 
 def menu_slot_row_patches(ctx):
-    alloc_addr = ctx.extra_routine_ptr
-    simple_patches = {
-        0x158960: b'\x42\x0f\xB6\x84\x02\x7B\x05\x00\x00', # move text check to norad farm
-    }
-    for process_offset, patch_bytes in simple_patches.items():
-        pc_write_bytes(ctx.pm, ctx.processes_base + process_offset, patch_bytes)
-    pass
+    try:
+        alloc_addr = ctx.extra_routine_ptr
+        simple_patches = {
+            0x158960: b'\x42\x0f\xB6\x84\x02\x7B\x05\x00\x00', # move text check to norad farm
+        }
+        for process_offset, patch_bytes in simple_patches.items():
+            pc_write_bytes(ctx.pm, ctx.processes_base + process_offset, patch_bytes)
+        pass
+    except Exception as e:
+        loggerDebug.critical(f"Error Generating Inject: {e}\n{traceback.format_exc()}")
 
 def generate_inject(alloc_ptr, offset, padding, reg="rax"):
     try:

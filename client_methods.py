@@ -3,14 +3,14 @@ from typing import TYPE_CHECKING
 from NetUtils import NetworkItem, ClientStatus
 from .game_data import *
 from .Locations import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
-box_flag_data, search_flag_data
+box_flag_data, search_flag_data, boss_kill_data
 from .Items import item_data_table, wep_cats, story_flag_items, order_flag_items,special_items, perm_items, physical_items, item_id_to_name, trap_items, progressive_items
 from .game_patches import *
 from .Locations import recipe_tiering
 import logging
 import traceback
 import base64
-import struct
+import time
 import random
 import math
 if TYPE_CHECKING:
@@ -18,10 +18,13 @@ if TYPE_CHECKING:
 
 pid = "RF4S.exe"
 RECV_INDEX = 0x1FC
+BOSS_DEFEATS_OFF = 0xE92F94
 
 loggerClient = logging.getLogger("Rune Factory 4 Client")
 loggerSeed = logging.getLogger("Rune Factory 4 Seed Info")
 loggerDebug = logging.getLogger("Rune Factory 4 Debug")
+
+
 
 def find_free_inv_slot(inv_bytes,inv_ptr):
     try:
@@ -103,6 +106,51 @@ def give_item(ctx:"RF4Client", item_idx):
     except Exception as e:
         loggerDebug.critical(f"Error giving item item {e}\nitem_idx:{item_idx}\n{traceback.format_exc()}")
 
+def seed_check(ctx: "RF4Client"):
+    ctx.game_flag_ptr_base = pc_read_ptr(ctx.pm, ctx.processes_base + 0xE9E4B0)
+    if not ctx.game_flag_ptr_base:
+        # make sure save data can be read
+        return False
+    ctx.game_flags_ptr = pc_read_ptr(ctx.pm, ctx.game_flag_ptr_base + 8)
+    if ctx.game_flags_ptr:
+        try:
+            seed_check = pc_read(ctx.pm, ctx.game_flags_ptr+ RECV_INDEX + 2) & 0xFFFF
+            if seed_check != 0:
+                if not ctx.auth:
+                    # Get player name from save file
+                    player_name_bytes = pc_read_bytes(ctx.pm, ctx.processes_base + 0xE90272, 0x20)
+                    ctx.player_name = ctx.player_name = bytes([byte for byte in player_name_bytes if byte != 0]).decode("utf-8")
+                    ctx.auth = ctx.player_name
+                if (seed_check != ctx.seed):
+                    # client File seed does not match the server seed
+                    loggerClient.warning(f"Seed mismatch detected, please ensure the right file is loaded. Expected: {hex(ctx.seed)}, Found: {hex(seed_check)}")
+                    ctx.processes_base = pc_get_proc_base(ctx.pm)
+                    if ctx.processes_base:
+                        ctx.setup_pointers()
+                    return False
+                elif (ctx.seed is None):
+                    # Client isn't connected to the server
+                    return False
+                else:
+                    # Client and Server seeds match
+                    if ctx.seed_check_result == False:
+                        # First seed check success
+                        ctx.seed_check_result = True
+                        ctx.setup_pointers()
+                        on_save_load(ctx)
+                        logger.info(f"Seed check passed")
+                return True
+            else:
+                return False
+        except TypeError as t:
+            loggerDebug.error(f"Error checking seed {t}\n{traceback.format_exc()}")
+            ctx.setup_pointers()
+            return False
+    else:
+        loggerDebug.error(f"Game flag pointer not found")
+        ctx.setup_pointers()
+        return False
+
 def on_save_load(ctx:"RF4Client"):
     ctx.storage_box_ptr = get_inv_ptr("Storage", ctx.pm, ctx.processes_base)
     ctx.fridge_ptr = get_inv_ptr("Fridge", ctx.pm, ctx.processes_base)
@@ -134,7 +182,7 @@ def on_save_load(ctx:"RF4Client"):
         ctx.acc_eff_ptr =  pc_read_ptr(ctx.pm, ctx.equip_effects + 0x198)
     ctx.menu_state_ptr = pc_read_ptr(ctx.pm, pc_read_ptr(ctx.pm, ctx.processes_base + 0xDCAA10) + 0x18)
     ctx.rune_spheres =  pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
-    ctx.scene_tbl_ptr = pc_read_ptr(pc_read_ptr(ctx.pm, ctx.processes_base+0xE9E558) + 0x591C0)
+    #patch_mc(ctx)
     loggerClient.info(f"Rune Spheres Collected: {ctx.rune_spheres}")
 
 def get_inv_ptr(inventory, pm, processes_base):
@@ -279,7 +327,28 @@ def expand_barns(barn_int):
     return rebuild
 
 
-
+def check_deathlink(ctx:"RF4Client"):
+    player_hp = pc_read(ctx.pm, ctx.combat_ptr)
+    player_status_eff = pc_readb(ctx.pm, ctx.playerObj + 0xB4)
+    menu_state = pc_readb(ctx.pm, ctx.processes_base + 0xE128F0)
+    if player_status_eff & 0x40 and player_hp > 0:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif (player_status_eff & 0x40) != 0x40:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif menu_state:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif ctx.map_id in death_map_excludes:
+        ctx.sending_death_link = False
+        ctx.last_death_link = time.time()
+    elif player_hp <= 0 and ctx.last_death_link + 12 < time.time():
+        #ctx.last_death_link = time.time()
+        return True
+    else:
+        ctx.sending_death_link = False
+    return False
 
 
 def set_airship_flags(ctx:"RF4Client", airship_base, story_item):
@@ -503,137 +572,151 @@ def process_items(ctx:"RF4Client", item_list, start_index):
         loggerDebug.critical(f"Error processing items {e}\n{traceback.format_exc()}")
 
 def check_locations(ctx:"RF4Client"):
-    sending = []
-    shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
-# Check Shipment Locations
-    ctx.ship_count = 0
-    for loc_id, loc_data in shipment_data.items():
+    try:
+        sending = []
+        shipment_bytes = pc_read_bytes(ctx.pm, ctx.shipment_base, 4151)
+    # Check Shipment Locations
+        ctx.ship_count = 0
+        for loc_id, loc_data in shipment_data.items():
 
-        byte_slice = shipment_bytes[loc_data[0]: loc_data[0]+4]
-        shipment_val = mask_shipment(byte_slice, loc_data[1])
-        if shipment_val:
-            ctx.ship_count += 1
-            sending.append(loc_id)
+            byte_slice = shipment_bytes[loc_data[0]: loc_data[0]+4]
+            shipment_val = mask_shipment(byte_slice, loc_data[1])
+            if shipment_val:
+                ctx.ship_count += 1
+                sending.append(loc_id)
 
-    # Check Chest Locations
-    if ctx.chestsanity:
-        for loc_id, loc_data in chest_data.items():
-            offset = loc_data[0]
-            mask = loc_data[1]
-            try:
-                if ctx.game_flags[offset] & mask:
-                    sending.append(loc_id)
-            except Exception as e:
-                loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
-
-    # Check Request Locations
-    #prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
-    if ctx.requestsanity:
-        for loc_id, loc_data in request_data.items():
-            offset = loc_data[0]
-            mask = loc_data[1]
-            prog = loc_data[2]
-            try:
-                if offset:
+        # Check Chest Locations
+        if ctx.chestsanity:
+            for loc_id, loc_data in chest_data.items():
+                offset = loc_data[0]
+                mask = loc_data[1]
+                try:
                     if ctx.game_flags[offset] & mask:
                         sending.append(loc_id)
-                elif prog:
+                except Exception as e:
+                    loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
-                    prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
-                    if prog_level >= prog:
+        # Check Request Locations
+        #prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
+        if ctx.requestsanity:
+            for loc_id, loc_data in request_data.items():
+                offset = loc_data[0]
+                mask = loc_data[1]
+                prog = loc_data[2]
+                try:
+                    if offset:
+                        if ctx.game_flags[offset] & mask:
+                            sending.append(loc_id)
+                    elif prog:
+
+                        prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
+                        if prog_level >= prog:
+                            sending.append(loc_id)
+                        # for early tutorial requests that don't set specific flags
+
+                except Exception as e:
+                    loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
+
+        # Check Friendsanity Locations
+        if ctx.friendsanity == 1:
+            friend_levels = check_friendship_level(ctx.pm, ctx.friend_ptr)
+            for name, index in friendsanity_data.items():
+                for level in range(0,10):
+                    loc_id = 0x1C4300 + ((index * 0x10) + level)
+                    if friend_levels[name][0] > level:
                         sending.append(loc_id)
-                    # for early tutorial requests that don't set specific flags
 
-            except Exception as e:
-                loggerDebug.critical(f"Error {e}\nlooking for {hex(offset)} for {hex(loc_id)} using mask {mask}")
-
-    # Check Friendsanity Locations
-    if ctx.friendsanity == 1:
-        friend_levels = check_friendship_level(ctx.pm, ctx.friend_ptr)
-        for name, index in friendsanity_data.items():
-            for level in range(0,10):
-                loc_id = 0x1C4300 + ((index * 0x10) + level)
-                if friend_levels[name][0] > level:
+        # Check Tamesanity Locations
+        if ctx.tamesanity:
+            monster_bytes = pc_read_bytes(ctx.pm, ctx.monster_ptr, 0x1C20)
+            for monster_slot in range(0, 0x1C20, 0x24):
+                monster_id = monster_bytes[monster_slot+0x14]
+                if monster_id != 0 and (monster_id in tame_data):
+                    loc_id = tame_data[monster_id]
                     sending.append(loc_id)
 
-    # Check Tamesanity Locations
-    if ctx.tamesanity:
-        monster_bytes = pc_read_bytes(ctx.pm, ctx.monster_ptr, 0x1C20)
-        for monster_slot in range(0, 0x1C20, 0x24):
-            monster_id = monster_bytes[monster_slot+0x14]
-            if monster_id != 0 and (monster_id in tame_data):
-                loc_id = tame_data[monster_id]
-                sending.append(loc_id)
+        # Check Outfitsanity Locations
+        if ctx.outfitsanity:
+            for loc_id, data in outfit_game_data.items():
+                offset = data[0]
+                mask = data[1]
+                try:
+                    if ctx.game_flags[offset] & mask:
+                        sending.append(loc_id)
+                except Exception as e:
+                    loggerDebug.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
-    # Check Outfitsanity Locations
-    if ctx.outfitsanity:
-        for loc_id, data in outfit_game_data.items():
-            offset = data[0]
-            mask = data[1]
-            try:
-                if ctx.game_flags[offset] & mask:
+        # Check Barriersanity Locations
+        if ctx.barriersanity:
+            for loc_id, flag_id in barrier_flag_data.items():
+                if check_field_flag(ctx.game_flags, flag_id):
                     sending.append(loc_id)
-            except Exception as e:
-                loggerDebug.critical(f"Error {e}\nlooking for otufit {hex(offset)} for {hex(loc_id)} using mask {mask}")
 
-    # Check Barriersanity Locations
-    if ctx.barriersanity:
-        for loc_id, flag_id in barrier_flag_data.items():
-            if check_field_flag(ctx.game_flags, flag_id):
-                sending.append(loc_id)
+        # Check Boxsanity Locations
+        if ctx.boxsanity:
+            for loc_id, flag_id in box_flag_data.items():
+                if check_field_flag(ctx.game_flags, flag_id):
+                    sending.append(loc_id)
 
-    # Check Boxsanity Locations
-    if ctx.boxsanity:
-        for loc_id, flag_id in box_flag_data.items():
-            if check_field_flag(ctx.game_flags, flag_id):
-                sending.append(loc_id)
+        # Check Boxsanity Locations
+        if ctx.searchsanity:
+            for loc_id, flag_id in search_flag_data.items():
+                if check_field_flag(ctx.game_flags, flag_id):
+                    sending.append(loc_id)
 
-    # Check Boxsanity Locations
-    if ctx.searchsanity:
-        for loc_id, flag_id in search_flag_data.items():
-            if check_field_flag(ctx.game_flags, flag_id):
-                sending.append(loc_id)
-
-    return sending
+        # Check Boss Sanity Locations
+        if ctx.boss_sanity:
+            boss_bytes = pc_read_bytes(ctx.pm, ctx.processes_base + BOSS_DEFEATS_OFF, 54)
+            for loc_id, boss_id in boss_kill_data.items():
+                if boss_bytes[boss_id] > 0:
+                    sending.append(loc_id)
+        return sending
+    except Exception as e:
+        loggerDebug.critical(f"Error checking locations {e}\n{traceback.format_exc()}")
 
 def check_goals(ctx:"RF4Client"):
-    story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
-    game_clear = False
-    match ctx.game_goal:
-        case 1: # Ethelberd
-            if story_state == 0xEB:
-                game_clear = True
+    try:
+        story_state = pc_readb(ctx.pm, ctx.game_flags_ptr)
+        game_clear = False
+        match ctx.game_goal:
+            case 1: # Ethelberd
+                if story_state == 0xEB:
+                    game_clear = True
 
 
-        case 2: # Ragnarok
-            if story_state == 0xFF:
-                game_clear = True
+            case 2: # Ragnarok
+                if story_state == 0xFF:
+                    game_clear = True
 
-        case 3: # Ship percentage
-            if ((ctx.ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need:
+            case 3: # Ship percentage
+                if ((ctx.ship_count / game_consts["total shipments"])* 100) >= ctx.ship_percent_need:
 
-                game_clear = True
-        case 4: # Baths
-            if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
-                game_clear = True
-        case 5: # Eliza
-            if ctx.game_flags[0x164] & 0x2:
-                game_clear = True
-        case 6: # Marraige
-            if 0x1C3FA0 in ctx.checked_locations: # Shipped White Stone
-                game_clear = True
+                    game_clear = True
+            case 4: # Baths
+                if pc_read(ctx.pm, ctx.processes_base + 0xE9AC16) & 0x40:
+                    game_clear = True
+            case 5: # Eliza
+                if ctx.game_flags[0x164] & 0x2:
+                    game_clear = True
+            case 6: # Marraige
+                if ctx.game_flags[0xA6] & 0xF8:
+                    game_clear = True
+                elif ctx.game_flags[0xA7] & 0x7F:
+                    game_clear = True
 
-        case 7: #Rune Sphere Hunt
-            if ctx.rune_spheres >= ctx.sphere_hunt_spheres:
-                game_clear = True
+            case 7: #Rune Sphere Hunt
+                if ctx.rune_spheres >= ctx.sphere_hunt_spheres:
+                    game_clear = True
 
-        case 8: # Homeowner
-            if not ctx.game_flags[0x20F] & 0x2:
-                game_clear = True
+            case 8: # Homeowner
+                if not ctx.game_flags[0x20F] & 0x2:
+                    game_clear = True
 
-        case 0: # Specific goal
-            if ctx.goal_loc in ctx.local_checked_locations:
-                game_clear = True
-    return game_clear
-
+            case 0: # Specific goal
+                if ctx.goal_loc in ctx.local_checked_locations:
+                    game_clear = True
+        return game_clear
+    except Exception as e:
+        loggerDebug.critical(f"Error checking goal {e}\n{traceback.format_exc()}")
+    
     

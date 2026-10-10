@@ -4,7 +4,7 @@ from BaseClasses import Region, Tutorial, MultiWorld, ItemClassification
 from worlds.AutoWorld import WebWorld, World
 from .Items import RF4Item, item_data_table, item_table, item_filler, item_filler_weight, trap_filler, trap_filler_weight, top_tools
 from .Locations import RF4Location, location_data_table, location_table, locked_locations,bugged_locs, request_list, top_requests, \
-    friend_data_table, tame_data_table, outfit_data_table, chest_loc_list, barrier_data_table, box_data_table, search_data_table
+    friend_data_table, tame_data_table, outfit_data_table, chest_loc_list, barrier_data_table, box_data_table, search_data_table, boss_data_table
 from .Options import RF4Options, rf4_options_group
 from .Regions import region_data_table
 from .Rules import *
@@ -221,7 +221,7 @@ class RF4World(World):
                     if not self.options.mineralsanity:
                         del duplicate_data_table[name]
                         continue
-                case "Mushroom" | "Other" | "Grass" | "Seed":
+                case "Mushroom" | "Other" | "Grass" | "Seed" | "Special":
                     if not self.options.foragesanity:
                         del duplicate_data_table[name]
                         continue
@@ -272,6 +272,8 @@ class RF4World(World):
                 elif data.tier > max_tier:
                     del duplicate_data_table[name]
 
+
+
         for name, data in outfit_data_table.items():
             if not self.options.outfitsanity:
                 del duplicate_data_table[name]
@@ -294,11 +296,16 @@ class RF4World(World):
             if not self.options.searchsanity:
                 del duplicate_data_table[name]
             elif data.region in region_tiers:
-                if  region_tiers[data.region] > max_tier:
+                if region_tiers[data.region] > max_tier:
                     del duplicate_data_table[name]
 
-        
-        
+        for name_raw, data in boss_data_table.items():
+            name = data.loc_name
+            if name in duplicate_data_table:
+                if not self.options.boss_sanity:
+                    del duplicate_data_table[name]
+                elif data.tier > max_tier:
+                    del duplicate_data_table[name]
 
         for name in bugged_locs:
             if name in duplicate_data_table:
@@ -310,8 +317,8 @@ class RF4World(World):
                 custom_goal_loc = self.options.custom_goal_location.value
                 if custom_goal_loc in location_data_table:
                     duplicate_data_table[custom_goal_loc] = location_data_table[custom_goal_loc]
-            case 6:
-                duplicate_data_table["Sechs Territory Shipment - White Stone"] = location_data_table["Sechs Territory Shipment - White Stone"]
+            #case 6:
+            #    duplicate_data_table["Sechs Territory Shipment - White Stone"] = location_data_table["Sechs Territory Shipment - White Stone"]
 
         for region_name, region_data in region_data_table.items():
             #if region_name in self.included_stages or region_name in fixed_regions:
@@ -383,6 +390,7 @@ class RF4World(World):
             "progressive_armor": self.options.progressive_armor.value,
             "progressive_accessory": self.options.progressive_accessory.value,
             "character_appearance": self.options.character_appearance.value,
+            "boss_sanity": self.options.boss_sanity.value,
         
         }
     

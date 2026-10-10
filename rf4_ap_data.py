@@ -44,4 +44,5 @@ slot_data_defaults = {
     "progressive_armor": False,
     "progressive_accessory": False,
     "character_appearance": 0,
+    "boss_sanity": False,
 }

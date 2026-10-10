@@ -45,6 +45,7 @@ class SeedFileInfo:
     old_run_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special//Archipelago//Seeds'
     ap_mod_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special//Bundle//mods//archipelago'
     ap_save_seed_path: str = None
+    static_patch_path:str = None
     seed_name: str = None # '23056638599226981367'
     seed_path: str = None
     save_file_path_raw: str = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
@@ -67,6 +68,7 @@ class SeedFileInfo:
     sound_options: int = None
     trupin_option: int = None
     element_option: int = None
+    custmusic_option:int = None
     player_name_bytes = None
     file_gender: int = None
     bundle_main_path = None
@@ -138,6 +140,7 @@ def set_seed_params(seed_f:SeedFileInfo):
         seed_f.sound_options = extra_options & 0x3
         seed_f.trupin_option = extra_options & 0x4
         seed_f.element_option = extra_options & 0x8
+        seed_f.custmusic_option = extra_options & 0x10
         seed_f.file_gender = get_value_from_save(seed_f, 0x36) & 1
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -150,6 +153,7 @@ def set_seedf_paths(seed_f:SeedFileInfo):
         seed_f.ap_save_seed_path = f"{seed_f.install_path}/Archipelago/Saves"
         seed_f.old_run_path = f"{seed_f.install_path}//Archipelago//Seeds"
         seed_f.bundle_main_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
+        seed_f.static_patch_path = f"{seed_f.install_path}//Archipelago//Patch"
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
@@ -165,6 +169,10 @@ def create_missing_paths(seed_f:SeedFileInfo):
         os.mkdir(seed_f.ap_save_seed_path)
     if not os.path.isdir(seed_f.old_run_path):
         os.mkdir(seed_f.old_run_path)
+    if not os.path.isdir(seed_f.static_patch_path):
+        os.mkdir(seed_f.static_patch_path)
+    if not os.path.isdir(f"{seed_f.ap_rf4_base}//Music"):
+            os.mkdir(f"{seed_f.ap_rf4_base}//Music")
     seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"rf4_sys.sav")
     if not os.path.isfile(seed_f.ap_sys_save_path):
         sys_file_bytes = pkgutil.get_data(__name__, f"data/rf4_sys.sav")
@@ -245,15 +253,29 @@ def append_dialog(out_dialog_bytes):
 #     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
 #     out_dialog_bytes += dialog_byte
 #     return out_dialog_bytes
+def modify_existing_dialog_text(d_bytes, entry_number:int, new_text:str) -> None:
+    try:
+        entry_offset = (entry_number * 0x8) + 0x8
+        dialog_offset =  int.from_bytes((d_bytes[entry_offset+4:entry_offset+8]), 'little')
+        entry_size =  int.from_bytes((d_bytes[entry_offset:entry_offset+4]), 'little')
+        new_text_bytes = new_text[:entry_size].encode("utf-8") + b'\x00'
+        struct.pack_into('<I', d_bytes, dialog_offset, len(new_text))
+        struct.pack_into(f'{entry_size}s', d_bytes, dialog_offset, new_text_bytes)
+    except Exception as e:
+        loggerDebug.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
 
 def modify_dialog(seed_f:SeedFileInfo):
     try:
+        from .game_data import text_modifications
+
         bundle_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
         dialog_file_offset = bundle_manifest["rf3mc.eng"][0]
         dialog_file_size = bundle_manifest["rf3mc.eng"][1]
         dialog_bytes = get_bundle_bytes(bundle_path,dialog_file_offset,size=dialog_file_size)
         out_dialog_bytes = bytearray(dialog_bytes)
         out_dialog_bytes += b'\x00'
+        for id, text in text_modifications.items():
+            modify_existing_dialog_text(out_dialog_bytes, id, text)
         if seed_f.trupin_option:
             get_trupin_hint_file(seed_f)
             if os.path.exists(seed_f.hint_file_path):
@@ -277,8 +299,7 @@ def modify_dialog(seed_f:SeedFileInfo):
                 os.remove(seed_f.hint_file_path)
             else:
                 loggerDebug.error(f"Hint File not found: {seed_f.hint_file_path}")
-        else:
-            return
+        
         with open(os.path.join(f"{seed_f.ap_mod_path}/rf3mc.eng"), "wb") as param_file:
             param_file.write(out_dialog_bytes)
     except Exception as e:
@@ -318,8 +339,27 @@ def modify_spells(seed_f:SeedFileInfo):
             loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 
+def mix_custom_music(seed_f:SeedFileInfo):
+    from .game_data import music_ids
+    bgm_tracks = [name for id, name in music_ids.items() if name[:3] == "SEQ"]
+    custom_music_path = Path(f"{seed_f.ap_rf4_base}//Music")
+    cust_track_list = []
+    for track in custom_music_path.iterdir():
+        if track.suffix == ".ogg":
+            cust_track_list.append(track)
+    random.shuffle(bgm_tracks)
+    random.shuffle(cust_track_list)
+    for x in range(min(len(bgm_tracks),len(cust_track_list))):
+        picked_track = cust_track_list[x]
+        replaced_track = bgm_tracks[x]
+        out_path = os.path.join(seed_f.ap_mod_path, replaced_track )
+        shutil.copy(picked_track,out_path)
+
+
 def modify_sound(seed_f:SeedFileInfo):
     try:
+        if seed_f.custmusic_option:
+            mix_custom_music(seed_f)
         bundle_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
         sound_file_offset = bundle_manifest["common_audio_data.bdat"][0]
         sound_file_size = bundle_manifest["common_audio_data.bdat"][1]
@@ -556,6 +596,13 @@ def additional_file_patching(seed_f:SeedFileInfo):
         files_to_patch = [
             "title_header_load_eng.texture"
         ]
+        sanity_options = get_save_value(seed_f.save_file_path,0x1E65E)
+        shipment_options = get_save_value(seed_f.save_file_path,0x1E65F)
+        if sanity_options & 0x8:
+            files_to_patch.append("MOBJ_BOX.texture")
+            files_to_patch.append("MOBJ_BOX_WINTER.texture")
+        if sanity_options & 0x1:
+            files_to_patch.append("M26_0.model")
         for file in files_to_patch:
             apply_file_patch(seed_f,file)
     except Exception as e:
@@ -842,10 +889,24 @@ def get_save_file(seed_f:SeedFileInfo):
 
 def adjust_plist(seed_f:SeedFileInfo):
     try:
+        #TODO
         pass
     except Exception as e:
         loggerDebug.error(f"Error modifying plist file: {e}\n{traceback.format_exc()}")
     
+def release_deleted_slots(seed_f:SeedFileInfo):
+    try:
+        used_slots = 0
+        ap_save_seed_path = seed_f.ap_save_seed_path
+        for x in range(20):
+            sav_path = Path(f"{ap_save_seed_path}/rf4_s{(x+1):02d}.sav")
+            
+            if sav_path.is_file():
+                used_slots |= (1 << x)
+            #loggerDebug.warning(f"sav_path:{sav_path}, used_slots: {hex(used_slots)}")
+        return used_slots
+    except Exception as e:
+        loggerDebug.error(f"Error modifying plist file: {e}\n{traceback.format_exc()}")
 
 def write_sys_save(seed_f:SeedFileInfo):
     try:
@@ -873,13 +934,16 @@ def write_sys_save(seed_f:SeedFileInfo):
         seed_name_bytes = seed_f.seed_name.encode()
         date_bytes = seed_f.save_create_date.encode()
         player_string = ((seed_f.player_name[0:12]).encode("utf-8")) + b'\x00'
+        used_slots = release_deleted_slots(seed_f)
         with open(seed_f.ap_sys_save_path, "r+b") as f:
             f.seek(8)
-            used_slots = int.from_bytes((f.read(4)),"little")
+            used_slots &= int.from_bytes((f.read(4)),"little")
             mask = 1 << slot_idx
             new_slots = used_slots | mask
             f.seek(8)
             f.write(new_slots.to_bytes(4,'little'))
+            f.seek(0x14)
+            f.write(slot_idx.to_bytes(1))
             f.seek(save_offset)
             f.write(base_save_bytes)
             f.seek(name_offset)
@@ -921,6 +985,27 @@ def check_new_save(seed_f:SeedFileInfo):
     except Exception as e:
         loggerDebug.error(f"Error checking for new save: {e}\n{traceback.format_exc()}")
         return False
+
+def patch_scenerio(seed_f:SeedFileInfo):
+    try:
+        bundle1_name = f"bundlePatch1.mbundle"
+        bundle1_path = f"{seed_f.install_path}/Bundle/{bundle1_name}"
+        mc_bytes = get_bundle_bytes(bundle1_path,0x15,0x475155)
+        patch_bytes = pkgutil.get_data(__name__, f"data/patches/rf3mc.ips")
+        with open(f"{seed_f.ap_mod_path}/rf3.mc", "wb") as mc_file:
+            mc_file.write(patch(mc_bytes,parse_ips_file(patch_bytes)))
+        
+    except Exception as e:
+        loggerDebug.error(f"Writing new scenerio: {e}\n{traceback.format_exc()}")
+
+def move_bundle_1(seed_f:SeedFileInfo, restore= False):
+    bundle1_name = f"bundlePatch1.mbundle"
+    bundle1_path = f"{seed_f.install_path}/Bundle/{bundle1_name}"
+    bundle1_store_path = f"{seed_f.static_patch_path}/{bundle1_name}"
+    if restore:
+        shutil.move(bundle1_store_path, bundle1_path)
+    else:
+        shutil.move(bundle1_path, bundle1_store_path)
 
 def set_aprf4s_reg():
     try:
@@ -971,6 +1056,7 @@ def closing_functions(seed_f:SeedFileInfo):
         if seed_f.seed_name:
             create_run_seed_dir(seed_f)
             shutil.rmtree(seed_f.ap_mod_path)
+        move_bundle_1(seed_f, restore= True)
     except Exception as e:
         loggerDebug.error(f"Error backing up seed mod {e}")
 
@@ -996,7 +1082,9 @@ def start_launch(seed_f:SeedFileInfo):
             
             modify_dialog(seed_f)
             modify_system_text(seed_f)
+            patch_scenerio(seed_f)
             #get_save_file_extra_info(seed_f)
+        move_bundle_1(seed_f)
         launch_game_suspended(seed_f)
         set_aprf4s_reg()
     except Exception as e:
