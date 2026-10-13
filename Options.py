@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from Options import Choice, Range, OptionList, OptionGroup, Toggle, DefaultOnToggle, Removed, PerGameCommonOptions, OptionSet, StartInventoryPool, DeathLink, FreeText
+from .audio_data import sfx_list
 
 class Goal(Choice):
     """Game's Goal
@@ -232,8 +233,22 @@ class MusicShuffle(Toggle):
     """Shuffle background music tracks"""
 
 class CustomMusic(Toggle):
-    """When shuffle_music is enabled, this will mix in .ogg audio files into the randomized tracks
+    """This will randomly add in music in the custom music folder over BGM tracks in the game
+    formats can be .ogg, .mp3 or .wav, may want to adjust RMS to -18 dB for better audio mixing
     These can be placed in [RF4S install directory]/Archipelago/Music"""
+
+class CustomSFX(Toggle):
+    """this will randomly add in sound effects from the custom sound effects folder into the game
+    formats can be .ogg, .mp3 or .wav, may want to adjust RMS to -13 dB for better audio mixing
+    These can be placed in [RF4S install directory]/Archipelago/SFX
+    Longer sound effects can be placed in [RF4S install directory]/Archipelago/Fanfair
+    Those will replace longer sound effects in game (usually 3 or more seconds)
+    """
+
+class ExcludeSFX(OptionList):
+    """Listed sound effect names will be excluded from being randomized with shuffle_sound_effects and custom_sfx
+    example usage: ['SE_WALK_L.ogg', 'SE_WALK_R.ogg','SE_RUN_L.wav','SE_RUN_R.wav']"""
+    valid_keys = sfx_list
 
 class SfxShuffle(Toggle):
     """Shuffle sound effects"""
@@ -252,6 +267,9 @@ class OpenAirship(Toggle):
 
 class Petsanity(Toggle):
     """Include monster tames as locations"""
+
+class FestivalSanity(Toggle):
+    """Include festival placements as locations, one for first, second and third place for each festival"""
 
 class OutfitSanity(Toggle):
     """Include clothing store outfits as locations"""
@@ -443,7 +461,8 @@ rf4_options_group = [
         BarrierSanity,
         BoxSanity,
         SearchSanity,
-        BossSanity
+        BossSanity,
+        FestivalSanity
     ]),
     OptionGroup("Location Limitations", [
         MaxItemTier,
@@ -469,7 +488,9 @@ rf4_options_group = [
         GayDating,
         MusicShuffle,
         CustomMusic,
-        SfxShuffle
+        SfxShuffle,
+        CustomSFX,
+        ExcludeSFX
     ]),
     OptionGroup("Server Group Options",[
         DeathLink,
@@ -541,12 +562,15 @@ class RF4Options(PerGameCommonOptions):
     barriersanity: BarrierSanity
     boxsanity: BoxSanity
     searchsanity: SearchSanity
+    festival_sanity: FestivalSanity
 
     background_music: BGM
     shuffle_music: MusicShuffle
     custom_music:CustomMusic
     shuffle_sound_effects: SfxShuffle
-    
+    custom_sfx:CustomSFX
+    excluded_sfx: ExcludeSFX
+
     requestsanity:RequestSanity
     friendsanity: Friendsanity
     tamesanity: Petsanity

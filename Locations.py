@@ -6,7 +6,7 @@ import logging
 import pkgutil
 import json
 
-from .game_data import friendsanity_data, friend_items, outfit_data
+from .game_data import friendsanity_data, friend_items, outfit_data, festival_list
 
 #from .com_ap_methods import parse_csv
 if TYPE_CHECKING:
@@ -119,6 +119,16 @@ class RF4MapObj(NamedTuple):
     loc_name: str = None
     map_type: str = None
 
+class RF4FestivalData(NamedTuple):
+    name: str = None
+    apid: int = 0
+    region: str = None
+    id: int = None
+    loc_name: str = None
+    season: int = None
+    day: int = None
+    prince_points: int = None
+    rank: int = None
 
 class RF4LocationData(NamedTuple):
     name: str = None
@@ -448,6 +458,28 @@ boss_data_table = {name: RF4TameData(
     tier=data.tier, boss_id= data.boss_id, boss=True
 ) for name, data in tame_data_table.items() if data.boss and data.boss_id is not None}
 
+# Generate Festival data
+fest_rank_names = ["Gold", "Silver", "Bronze"]
+festival_data_table = {}
+fest_idx = 0
+for festival, fest_region in festival_list.items():
+    base_apid = 0x1C4940 + (fest_idx * 4)
+    for festival_rank in range(3):
+        rank_name = fest_rank_names[festival_rank]
+        apid = base_apid + festival_rank
+        fest_loc_name = f"Selphia Festival - {festival} {rank_name}"
+        festival_data_table[f"{festival} {rank_name}"] = RF4FestivalData(
+            apid = apid, region = fest_region, id = fest_idx, loc_name=fest_loc_name, rank = festival_rank + 1
+        )
+    fest_idx += 1
+        
+# festival_data_table = {name: RF4FestivalData(
+#     apid = 0x1C4940 + (list(festival_list).index(name) * 4),
+#     region = fest_region,
+#     id = (list(festival_list).index(name)),
+#     loc_name= f"Selphia Festival - {name}"
+# ) for name, fest_region in festival_list.items()}
+
 #Shipments
 location_data_table= {data.name: RF4LocationData(
     item_id= data.id, address=data.apid, loc_type= "shipment", region=data.region, name=data.name, loc_name= data.loc_name)
@@ -499,19 +531,19 @@ location_data_table.update({data.loc_name:
     RF4LocationData(address=data.apid, region=data.region, loc_type="tame", name=data.name, loc_name= data.loc_name)
     for name, data in boss_data_table.items() if data.boss_id is not None
 })
+# Festival Sanity
+location_data_table.update({name:
+    RF4LocationData(address=data.apid, region=data.region, loc_type="festival", name=data.name, loc_name= data.loc_name)
+    for name, data in festival_data_table.items() if data.id is not None
+})
 
 location_table = {data.loc_name: data.address for name, data in location_data_table.items() if data.address is not None}
 locked_locations = {name: data for name, data in location_data_table.items() if data.locked_item}
 
-shipment_data = {data.apid: [data.start_byte, data.start_bit] for name, data in shipment_data_table.items() if data.shipable == True}
-chest_data =    {data.apid: [data.byte, data.mask] for name, data in chest_data_table.items()}
-request_data =  {data.apid: [data.byte, data.mask, data.prog] for name, data in request_data_table.items() if data.include}
-tame_data =     {data.index: data.apid for name, data in tame_data_table.items() if data.liked_item is not None}
-boss_kill_data ={data.apid: data.boss_id for name, data in boss_data_table.items() if data.boss_id is not None}
 recipe_levels = {data.name: [data.level, data.craft_type, data.ingredients] for name, data in recipe_data_table.items() if data.level is not None}
 
 
-spell_list = [data.loc_name for name, data in shipment_data_table.items() if data.type == "Spell" and data.shipable == True]
+
 filler_items = {name: [data.apid, data.fill_weight, data.id, data.type, data.fill_amount] for name, data in shipment_data_table.items() if data.fill_weight != 0 and data.fill_weight is not None}
 chest_recipes = {name: data.recipe for name, data in chest_data_table.items() if data.recipe is not None}
 item_to_region = {name: data.region for name, data in shipment_data_table.items() if data.shipable == True}
@@ -520,29 +552,10 @@ request_list = list(request_data_table)
 top_requests = [name for name, data in request_data_table.items() if "Fenrir" in data.item_req]
 # request_data = {data.apid: [data.byte, data.mask] for name, data in request_data_table.items() if data.byte is not None}
 
-outfit_game_data = {data.apid: [data.byte, data.mask] for name, data in outfit_data_table.items()}
-barrier_flag_data = {data.apid: data.field_flag for name, data in barrier_data_table.items()}
-box_flag_data = {data.apid: data.field_flag for name, data in box_data_table.items()}
-search_flag_data = {data.apid: data.field_flag for name, data in search_data_table.items()}
 
-ship_loc_name = {data.name: data.loc_name  for name, data in shipment_data_table.items()}
-recipe_loc_name = {data.name:data.loc_name  for name, data in recipe_data_table.items()}
-request_loc_name = {data.name: data.loc_name  for name, data in request_data_table.items()}
-friend_loc_name = {data.name: data.loc_name  for name, data in friend_data_table.items()}
-tame_loc_name = {data.name: data.loc_name  for name, data in tame_data_table.items()}
-boss_tame_list = [data.loc_name for name, data in tame_data_table.items() if data.boss == True]
-top_crop_list = [data.loc_name for name, data in shipment_data_table.items() if data.tier >= 6 and (data.type == "Crop" or data.type == "Large Crop" or data.type == "Gold Crop")]
 
-ship_loc_list = [data.loc_name for name, data in shipment_data_table.items()]
-chest_loc_list = [data.loc_name for name, data in chest_data_table.items()]
-request_loc_list = [data.loc_name for name, data in request_data_table.items()]
-friend_loc_list = [data.loc_name for name, data in friend_data_table.items()]
-tame_loc_list = [data.loc_name for name, data in tame_data_table.items()]
-outfit_loc_list = [data.loc_name for name, data in outfit_data_table.items()]
-barrier_loc_list = [data.loc_name for name, data in barrier_data_table.items()]
-box_loc_list = [data.loc_name for name, data in box_data_table.items()]
-search_loc_list = [data.loc_name for name, data in box_data_table.items()]
-boss_loc_list = [data.loc_name for name, data in boss_data_table.items()]
+
+
 
 recipe_tiering = {}
 

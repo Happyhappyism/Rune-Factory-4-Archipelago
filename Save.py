@@ -102,6 +102,7 @@ def write_save_data(world:World):
     extra_options |= (world.options.trupin_hint.value << 2)
     extra_options |= (world.options.shuffle_elements.value << 3)
     extra_options |= (world.options.custom_music.value << 4)
+    extra_options |= (world.options.custom_sfx.value << 5)
 
     sanity_options = world.options.chestsanity.value
     sanity_options |= (world.options.barriersanity.value << 1)

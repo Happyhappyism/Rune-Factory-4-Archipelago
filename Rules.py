@@ -4,8 +4,8 @@ from BaseClasses import CollectionState
 from worlds.AutoWorld import World
 import logging
 from .Items import area_items
-from .Locations import recipe_data_table, shipment_data_table, recipe_levels, item_to_region, friend_data_table, tame_data_table, \
-                        recipe_loc_name, ship_loc_name, request_loc_name, tame_loc_name, outfit_data_table, boss_tame_list, top_crop_list
+from .Locations import recipe_data_table, shipment_data_table, recipe_levels, friend_data_table, tame_data_table, outfit_data_table
+from .location_data import recipe_loc_name, boss_tame_list, top_crop_list
 from .game_data import game_consts
 #from worlds.zillion import region
 logger = logging.getLogger("Rune Factory 4 Rules")
@@ -67,6 +67,12 @@ def get_region_rules(player, options):
             lambda state: state.has("Pro Cooking License", player),
         "Selphia -> Selphia Clothing Shop":
             lambda state: state.has("Clothing Shop", player),
+        "Selphia -> Festival":
+            lambda state: state.has("Clorica's Pillow", player),
+        "Festival -> Cooking Festival":
+            lambda state: state.has("EZ Cooking License", player) or state.has("Pro Cooking License", player),
+        "Festival -> Crafting Festival":
+            lambda state: state.has("Forging License", player) or state.has("Crafting License", player)
     }
     for name, data in request_rules.items():
         required_request = data[0]
@@ -188,11 +194,16 @@ def get_location_rules(player):
             lambda state: state.has("Forging License", player),
         "Sharance Maze Shipment - Weapon Bread+":
             lambda state: state.has("Forging License", player),
+        "Autumn Road I4 Chest - 18600G":
+            lambda state: state.has("Alicia's Crystal Ball", player),
+        "Autumn Road I4 Chest - Parallel Laser Lv.2":
+            lambda state: state.has("Alicia's Crystal Ball", player),
     }
     return location_rules
 
 def set_rules(world: "RF4World"):
-    from .Locations import location_data_table, chest_recipes, chest_data_table, spell_list
+    from .Locations import location_data_table, chest_recipes, chest_data_table
+    from .location_data import spell_list
     water_shoe_chests = [
     "Selphia Plains - West G12 Chest - Leveliser",
     "Selphia Plains - West G12 Chest - Boiled Gyoza Recipe",

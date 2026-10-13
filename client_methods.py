@@ -2,11 +2,11 @@ from .pc_ap_methods import *
 from typing import TYPE_CHECKING
 from NetUtils import NetworkItem, ClientStatus
 from .game_data import *
-from .Locations import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
-box_flag_data, search_flag_data, boss_kill_data
+from .Locations import recipe_tiering
+from .location_data import shipment_data, chest_data, request_data, tame_data, outfit_game_data, barrier_flag_data, \
+box_flag_data, search_flag_data, boss_kill_data, festival_data
 from .Items import item_data_table, wep_cats, story_flag_items, order_flag_items,special_items, perm_items, physical_items, item_id_to_name, trap_items, progressive_items
 from .game_patches import *
-from .Locations import recipe_tiering
 import logging
 import traceback
 import base64
@@ -491,6 +491,10 @@ def process_items(ctx:"RF4Client", item_list, start_index):
                         pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,2)
                         item_patches["pia"].apply(ctx)
                         #pc_writeb(p, ctx.processes_base + 0x21CE13, 0x00)
+                    case "Clorica's Pillow":
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,3)
+                    case "Alicia's Crystal Ball":
+                        pc_set_bit(ctx.pm, ctx.game_flags_ptr + 0x254,4)
                     case "Rune Sphere":
                         sphere_have = pc_readb(ctx.pm, ctx.game_flags_ptr + 0x1F8)
                         sphere_have += 1
@@ -669,6 +673,17 @@ def check_locations(ctx:"RF4Client"):
             boss_bytes = pc_read_bytes(ctx.pm, ctx.processes_base + BOSS_DEFEATS_OFF, 54)
             for loc_id, boss_id in boss_kill_data.items():
                 if boss_bytes[boss_id] > 0:
+                    sending.append(loc_id)
+
+        if ctx.festival_sanity:
+            fest_rank_int = int.from_bytes((ctx.game_flags[0x61:0x65]), byteorder='little')
+            for loc_id, data in festival_data.items():
+                fest_id = data[0]
+                fest_rank = data[1]
+                fest_val = (fest_rank_int >> (2*fest_id)) & 3
+                best_rank = reverse_bits(fest_val, 2)
+                #loggerDebug.info(f"fest_id: {fest_id}, fest_rank:{fest_rank}, fest_val:{fest_val}, best_rank:{best_rank}, fest_rank_int:{hex(fest_rank_int)}")
+                if (best_rank <= fest_rank) and best_rank != 0:
                     sending.append(loc_id)
         return sending
     except Exception as e:

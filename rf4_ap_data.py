@@ -45,4 +45,5 @@ slot_data_defaults = {
     "progressive_accessory": False,
     "character_appearance": 0,
     "boss_sanity": False,
+    "festival_sanity": False,
 }

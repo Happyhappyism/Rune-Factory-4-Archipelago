@@ -23,6 +23,7 @@ region_data_table: Dict[str, RF4RegionData] = {
         "Selphia Clothing Shop",
         #"Jewelry Shop",
         "Mineral",
+        "Festival",
         "Make Lumber",
         "Build a Monster Barn!"
         ]),
@@ -155,8 +156,9 @@ region_data_table: Dict[str, RF4RegionData] = {
     "EZ Cooking": RF4RegionData(),
     "Pro Cooking": RF4RegionData(),
 
-    "Mineral": RF4RegionData(),
-
+    "Festival": RF4RegionData(["Cooking Festival", "Crafting Festival"]),
+    "Cooking Festival": RF4RegionData(),
+    "Crafting Festival": RF4RegionData(),
     "Selphia Clothing Shop": RF4RegionData(),
     #"Jewelry Shop": RF4RegionData(),
 

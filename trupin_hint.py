@@ -103,9 +103,9 @@ def get_trupin_hint_file(seed_f:"SeedFileInfo"):
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def build_trupin_hint(seed_f:"SeedFileInfo",index, trupin_bytes, hint_json):
-    from .Locations import location_table, ship_loc_list, chest_loc_list, request_loc_list, friend_loc_list, \
-        tame_loc_list, outfit_loc_list, barrier_loc_list, box_loc_list, search_loc_list, boss_loc_list, \
-        chest_data_table, shipment_data_table, tame_data_table
+    from .Locations import location_table, chest_data_table, shipment_data_table, tame_data_table
+    from .location_data import ship_loc_list, chest_loc_list, request_loc_list, friend_loc_list, \
+        tame_loc_list, outfit_loc_list, barrier_loc_list, box_loc_list, search_loc_list, boss_loc_list, festival_loc_list\
     # returns bytes for hint dialog
     chest_loc_to_reg = {data.loc_name: data.region for name, data in chest_data_table.items()}
     ship_loc_to_reg = {data.loc_name: data.region for name, data in shipment_data_table.items()}

@@ -10,8 +10,7 @@ from .rf4_ap_data import *
 #from .game_patches import *
 #from .Items import inventory_slots
 from .Locations import  \
-shipment_data_table, recipe_data_table, chest_data_table, request_data_table,\
-friend_items, tame_data_table
+shipment_data_table, recipe_data_table, chest_data_table, request_data_table, tame_data_table
 from .Launch import *
 
 
@@ -401,6 +400,7 @@ class RF4Client(CommonContext):
     time_speed = 4096
     ship_count: int = 0
     boss_sanity: bool = False
+    festival_sanity= 0
 
     ap_save_seed_path = None
     process_obj = None
@@ -455,6 +455,7 @@ class RF4Client(CommonContext):
                 self.setup_pointers()
                 player_data = args['players']
                 self.slot_id = args['slot']
+                
                 for player in player_data:
                     self.player_to_slot[(player.name).lower()] = player.slot
 
@@ -589,6 +590,8 @@ class RF4Client(CommonContext):
                     self.character_appearance = args['slot_data']['character_appearance']
                 if(args['slot_data']['boss_sanity']):
                     self.boss_sanity = args['slot_data']['boss_sanity']
+                if(args['slot_data']['festival_sanity']):
+                    self.festival_sanity = args['slot_data']['festival_sanity']
                 loggerSeed.info( \
                 f"""Seed: {self.seed_name}\n
                 Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}
@@ -604,7 +607,7 @@ class RF4Client(CommonContext):
                     loggerSeed.info(f"Shipping_Percent: {self.ship_percent_need}%")
                 elif self.game_goal == 7:
                     loggerSeed.info(f"Goal Spheres Needed: {self.sphere_hunt_spheres}")
-
+                loggerClient.info(f"Please wait while the game launches")
                 # Slot data is fully received by the server
                 self.slot_data_ready.set()
             if cmd in {"ConnectionRefused"}:
@@ -928,7 +931,7 @@ def launch(*args):
                 logger.info(f"arg: {arg}")
                 if ".aprf4s" in arg:
                     seed_f.aprf4s_file_path = arg
-                    logger.info(f"seed_f-pre: {seed_f}")
+                    #logger.info(f"seed_f-pre: {seed_f}")
         start_launch(seed_f) # -> Launch.py
 
     except Exception as e:

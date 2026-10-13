@@ -28,7 +28,7 @@ logger = logging.getLogger("Rune Factory 4 Rom")
 class RF4ProcedurePatch(APProcedurePatch, APTokenMixin):
     game = "Rune Factory 4"
     hash = MD5Hash
-    patch_file_ending = ".aprune4"
+    patch_file_ending = ".aprf4s"
     result_file_ending = ".exe"
 
     @classmethod

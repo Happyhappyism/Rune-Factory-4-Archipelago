@@ -2,10 +2,11 @@
 from worlds.AutoWorld import World
 from settings import get_settings
 from .ips import parse_ips_file, patch
-from .game_data import bundle_manifest, music_ids
+from .game_data import bundle_manifest
 from .pc_ap_methods import pc_check_process, pc_process_resume
 from .com_ap_methods import shuffle_dict
 from .trupin_hint import *
+from .audio_launch import *
 from typing import NamedTuple
 
 import Utils
@@ -19,6 +20,7 @@ import json
 import traceback
 import subprocess
 import zipfile
+import plistlib
 import winreg
 
 from io import BytesIO
@@ -60,6 +62,7 @@ class SeedFileInfo:
     ap_sys_save_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special/Archipelago/Saves\\rf4_sys.sav'
     sys_file_path: str = None
     hint_file_path: str = None
+    #audexclude_file_path: str = None
     save_params: list = None
     player_name: str = None
     player_model: int = None
@@ -69,6 +72,7 @@ class SeedFileInfo:
     trupin_option: int = None
     element_option: int = None
     custmusic_option:int = None
+    custsfx_option: int = None
     player_name_bytes = None
     file_gender: int = None
     bundle_main_path = None
@@ -141,6 +145,7 @@ def set_seed_params(seed_f:SeedFileInfo):
         seed_f.trupin_option = extra_options & 0x4
         seed_f.element_option = extra_options & 0x8
         seed_f.custmusic_option = extra_options & 0x10
+        seed_f.custsfx_option = extra_options & 0x20
         seed_f.file_gender = get_value_from_save(seed_f, 0x36) & 1
     except Exception as e:
         print(f"An unexpected error occurred: {e}\n{traceback.format_exc()}")
@@ -172,16 +177,17 @@ def create_missing_paths(seed_f:SeedFileInfo):
     if not os.path.isdir(seed_f.static_patch_path):
         os.mkdir(seed_f.static_patch_path)
     if not os.path.isdir(f"{seed_f.ap_rf4_base}//Music"):
-            os.mkdir(f"{seed_f.ap_rf4_base}//Music")
+        os.mkdir(f"{seed_f.ap_rf4_base}//Music")
+    if not os.path.isdir(f"{seed_f.ap_rf4_base}//SFX"):
+        os.mkdir(f"{seed_f.ap_rf4_base}//SFX")
+    if not os.path.isdir(f"{seed_f.ap_rf4_base}//Fanfair"):
+        os.mkdir(f"{seed_f.ap_rf4_base}//Fanfair")
     seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"rf4_sys.sav")
     if not os.path.isfile(seed_f.ap_sys_save_path):
         sys_file_bytes = pkgutil.get_data(__name__, f"data/rf4_sys.sav")
         with open(seed_f.ap_sys_save_path, "wb") as f:
             f.write(sys_file_bytes)
-    #plist_path = seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"Settings.plist")
-    #if not os.path.isfile(plist_path):
-    #    plist_org = os.path.join(f"{os.getenv('APPDATA')}\\Rune Factory 4 Special","Settings.plist")
-    #    shutil.copy(plist_org,plist_path)
+    #adjust_settings_plist(seed_f)
 
 def launch_game_suspended(seed_f:SeedFileInfo):
     path = f"{seed_f.install_path}/RF4S.exe"
@@ -243,23 +249,13 @@ def check_files(seed_f:SeedFileInfo):
 def append_dialog(out_dialog_bytes):
     pass
 
-# def append_dialog(out_dialog_bytes:SeedFileInfo, dialog_index, text, dialog_size):
-#     dialog_index = data[0]
-#     dialog_index = data[0]
-#     dialog_data_offset = (dialog_index * 0x8) + 0x8
-#     dialog_byte = data[1]
-#     dialog_size = data[2]
-#     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
-#     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, new_offset)
-#     out_dialog_bytes += dialog_byte
-#     return out_dialog_bytes
 def modify_existing_dialog_text(d_bytes, entry_number:int, new_text:str) -> None:
     try:
         entry_offset = (entry_number * 0x8) + 0x8
         dialog_offset =  int.from_bytes((d_bytes[entry_offset+4:entry_offset+8]), 'little')
         entry_size =  int.from_bytes((d_bytes[entry_offset:entry_offset+4]), 'little')
         new_text_bytes = new_text[:entry_size].encode("utf-8") + b'\x00'
-        struct.pack_into('<I', d_bytes, dialog_offset, len(new_text))
+        struct.pack_into('<I', d_bytes, entry_offset, len(new_text_bytes) - 1)
         struct.pack_into(f'{entry_size}s', d_bytes, dialog_offset, new_text_bytes)
     except Exception as e:
         loggerDebug.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
@@ -337,69 +333,6 @@ def modify_spells(seed_f:SeedFileInfo):
             param_file.write(out_magic_bytes)
     except Exception as e:
             loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
-
-
-def mix_custom_music(seed_f:SeedFileInfo):
-    from .game_data import music_ids
-    bgm_tracks = [name for id, name in music_ids.items() if name[:3] == "SEQ"]
-    custom_music_path = Path(f"{seed_f.ap_rf4_base}//Music")
-    cust_track_list = []
-    for track in custom_music_path.iterdir():
-        if track.suffix == ".ogg":
-            cust_track_list.append(track)
-    random.shuffle(bgm_tracks)
-    random.shuffle(cust_track_list)
-    for x in range(min(len(bgm_tracks),len(cust_track_list))):
-        picked_track = cust_track_list[x]
-        replaced_track = bgm_tracks[x]
-        out_path = os.path.join(seed_f.ap_mod_path, replaced_track )
-        shutil.copy(picked_track,out_path)
-
-
-def modify_sound(seed_f:SeedFileInfo):
-    try:
-        if seed_f.custmusic_option:
-            mix_custom_music(seed_f)
-        bundle_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
-        sound_file_offset = bundle_manifest["common_audio_data.bdat"][0]
-        sound_file_size = bundle_manifest["common_audio_data.bdat"][1]
-        sound_bytes = get_bundle_bytes(bundle_path,sound_file_offset,size=sound_file_size)
-
-        out_sound_bytes = bytearray(sound_bytes)
-        music_list = {}
-        wav_list = {}
-        strm_sfx_list = {}
-        strm_other_list = {}
-        data_base = 0x1100
-        for idx, track_name in music_ids.items():
-            #track_name = data[0]
-            data_offset = (idx * 0xC) + data_base
-            if track_name[0:3] == "SEQ" and track_name[-4:] == ".ogg":
-                music_list[data_offset] = sound_bytes[data_offset:data_offset+0xC]
-            elif (track_name[0:6] == "STRM_O" or track_name[0:6] == "STRM_F") and track_name[-4:] == ".ogg":
-                strm_other_list[data_offset] = sound_bytes[data_offset:data_offset+0xC]
-            elif track_name[0:2] == "SE" and track_name[-4:] == ".wav":
-                wav_list[data_offset] = sound_bytes[data_offset:data_offset+0xC]
-            elif track_name[0:4] == "STRM" and track_name[-4:] == ".ogg":
-                strm_sfx_list[data_offset] = sound_bytes[data_offset:data_offset+0xC]
-
-        if seed_f.sound_options & 1: # Music shuffle enabled
-            shuffled_music = shuffle_dict(music_list)
-            for offset, data in shuffled_music.items():
-                struct.pack_into('12s', out_sound_bytes, offset, data)
-
-        if seed_f.sound_options & 2:
-            shuffled_wav = shuffle_dict(wav_list)
-            for offset, data in shuffled_wav.items():
-                struct.pack_into('12s', out_sound_bytes, offset, data)
-            shuffled_strm = shuffle_dict(strm_sfx_list)
-            for offset, data in shuffled_strm.items():
-                struct.pack_into('12s', out_sound_bytes, offset, data)
-
-        with open(os.path.join(f"{seed_f.ap_mod_path}/common_audio_data.bdat"), "wb") as param_file:
-            param_file.write(out_sound_bytes)
-    except Exception as e:
-        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def modify_npc_params(seed_f:SeedFileInfo):
     try:
@@ -728,6 +661,7 @@ def process_aprf4s(seed_f:SeedFileInfo):
                     if ".sav" in file.filename:
                         sav_file_name = file.filename
                 archive.extractall(seed_f.ap_rf4_base)
+                #os.remove(os.path.join(seed_f.ap_rf4_base,"archipelago.json"))
             if sav_file_name:
                 seed_f.save_file_name = sav_file_name
                 seed_f.seed_name = seed_f.save_file_name.split("_")[1]
@@ -887,9 +821,13 @@ def get_save_file(seed_f:SeedFileInfo):
     except Exception as e:
             loggerDebug.error(f"Error getting save file: {e}\n{traceback.format_exc()}")
 
-def adjust_plist(seed_f:SeedFileInfo):
+def adjust_settings_plist(seed_f:SeedFileInfo):
     try:
-        #TODO
+        plist_path = seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"Settings.plist")
+        if not os.path.isfile(plist_path):
+            plist_org = os.path.join(f"{os.getenv('APPDATA')}\\Rune Factory 4 Special","Settings.plist")
+            if os.path.isfile(plist_org):
+                shutil.copy(plist_org,plist_path)
         pass
     except Exception as e:
         loggerDebug.error(f"Error modifying plist file: {e}\n{traceback.format_exc()}")
@@ -1050,10 +988,19 @@ def create_run_seed_dir(seed_f:SeedFileInfo):
             shutil.copytree(seed_f.ap_mod_path, seed_path, dirs_exist_ok=True)
     except Exception as e:
         loggerDebug.error(f"Error moving seed mod {e}")
+        
+def delete_unsaved_seed_files(seed_f:SeedFileInfo):
+    bgm_path = f"{seed_f.ap_mod_path}/Audio"
+    try:
+        if os.path.isdir(bgm_path):
+            shutil.rmtree(bgm_path)
+    except Exception as e:
+        loggerDebug.error(f"Error moving seed mod {e}")
 
 def closing_functions(seed_f:SeedFileInfo):
     try:
         if seed_f.seed_name:
+            delete_unsaved_seed_files(seed_f)
             create_run_seed_dir(seed_f)
             shutil.rmtree(seed_f.ap_mod_path)
         move_bundle_1(seed_f, restore= True)
@@ -1084,6 +1031,8 @@ def start_launch(seed_f:SeedFileInfo):
             modify_system_text(seed_f)
             patch_scenerio(seed_f)
             #get_save_file_extra_info(seed_f)
+        else:
+            reload_custom_music(seed_f)
         move_bundle_1(seed_f)
         launch_game_suspended(seed_f)
         set_aprf4s_reg()

@@ -3,14 +3,15 @@ from typing import List, Dict, Any, ClassVar
 from BaseClasses import Region, Tutorial, MultiWorld, ItemClassification
 from worlds.AutoWorld import WebWorld, World
 from .Items import RF4Item, item_data_table, item_table, item_filler, item_filler_weight, trap_filler, trap_filler_weight, top_tools
-from .Locations import RF4Location, location_data_table, location_table, locked_locations,bugged_locs, request_list, top_requests, \
-    friend_data_table, tame_data_table, outfit_data_table, chest_loc_list, barrier_data_table, box_data_table, search_data_table, boss_data_table
+from .Locations import location_table, locked_locations, location_data_table
 from .Options import RF4Options, rf4_options_group
 from .Regions import region_data_table
 from .Rules import *
 from .Rom import get_base_rom_path as get_base_rom_path
-from .Save import write_hint_data, write_save_data
+#from .Save import write_hint_data, write_save_data
+from .Gen import generate_aprf4s
 from worlds.generic.Rules import set_rule, add_rule
+
 #from .Rules import set_rules
 
 from worlds.LauncherComponents import Component, components, Type, launch_subprocess, icon_paths, SuffixIdentifier
@@ -19,9 +20,11 @@ from worlds.LauncherComponents import Component, components, Type, launch_subpro
 import Utils
 import dataclasses
 import typing
+from base64 import b64encode
 #import random
 import io
 import os
+import yaml
 #import pkgutil
 #import Patch
 import settings
@@ -83,6 +86,7 @@ class RF4WebWorld(WebWorld):
 
     tutorials = [setup_en]
     option_groups = rf4_options_group
+
 
 class RF4World(World):
     """Have fun!"""
@@ -167,9 +171,13 @@ class RF4World(World):
         self.multiworld.itempool += item_pool
 
     def create_regions(self) -> None:
-        import copy
-        from .Locations import shipment_data_table, chest_data_table
+        from .Locations import RF4Location,  bugged_locs, request_list, top_requests, shipment_data_table, chest_data_table, festival_data_table, \
+        friend_data_table, tame_data_table, outfit_data_table, barrier_data_table, box_data_table, search_data_table, boss_data_table
+        from .location_data import chest_loc_list
         from .game_data import region_tiers
+
+        import copy
+        
         for region_name in region_data_table.keys():
             region = Region(region_name, self.player, self.multiworld)
             self.multiworld.regions.append(region)
@@ -307,6 +315,11 @@ class RF4World(World):
                 elif data.tier > max_tier:
                     del duplicate_data_table[name]
 
+        for name, data in festival_data_table.items():
+            if not self.options.festival_sanity:
+                if name in duplicate_data_table:
+                    del duplicate_data_table[name]
+
         for name in bugged_locs:
             if name in duplicate_data_table:
                 del duplicate_data_table[name]
@@ -391,60 +404,10 @@ class RF4World(World):
             "progressive_accessory": self.options.progressive_accessory.value,
             "character_appearance": self.options.character_appearance.value,
             "boss_sanity": self.options.boss_sanity.value,
+            "festival_sanity": self.options.festival_sanity.value,
         
         }
     
     def generate_output(self, output_directory: str):
-        outfilepname = f"_P{self.player}"
-        outfilepname += f"_{self.multiworld.get_file_safe_player_name(self.player).replace(' ', '').replace('_','')}"
-        self.rom_name_text = f'RF4{Utils.__version__.replace(".", "")[0:3]}_{self.player}_{self.multiworld.seed:11}\0'
-        self.romName = bytearray(self.rom_name_text, "utf8")[:0x20]
-        self.romName.extend([0] * (0x20 - len(self.romName)))
-        self.rom_name = self.romName
-        self.playerName = bytearray(self.multiworld.player_name[self.player], "utf8")[:0x20]
-        self.playerName.extend([0] * (0x20 - len(self.playerName)))
-        out_file_name = self.multiworld.get_out_file_name_base(self.player)
-        player_alt_name = out_file_name.split("_",3)
-        player_alt_name[3] = player_alt_name[3].split("_")[0]
-        out_file_name = "_".join(player_alt_name)
-
-        if self.options.start_weapon.value == "Random" or  self.options.start_weapon.value == "random":
-            self.starting_weapon = self.random.choice([0x149,0x16A,0x18C,0x1C4,0x1AD,0x1FC,0x21B,0x1D8])
-        else:
-            self.starting_weapon = self.options.start_weapon.value
-
-
-        ap_save_bytes = write_save_data(self)
-        save_file_name = f"{out_file_name}_rf4.sav"
-        if self.options.trupin_hint:
-            hint_file_name = f"{out_file_name}_rf4_hints.json"
-            hint_data = write_hint_data(self)
-            hint_json = json.dumps(hint_data)
-        zip_buffer = io.BytesIO()
-        zip_file_name = f"{out_file_name}_rf4.aprf4s"
-        zip_file_path = os.path.join(output_directory, zip_file_name)
-        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
-            zipf.writestr(save_file_name, ap_save_bytes)
-            if self.options.trupin_hint:
-                zipf.writestr(hint_file_name, hint_json)
-
-        zip_bytes = zip_buffer.getvalue()
-        with open(zip_file_path, "wb") as f:
-            f.write(zip_bytes)
-        # save_file_name = f"{out_file_name}_rf4.sav"
-        # save_temp_path = os.path.join(output_directory, save_file_name)
-        # with open(save_temp_path, "wb") as f:
-        #     f.write(ap_save_bytes)
-        # files_to_zip = [save_temp_path]
-        # if self.options.trupin_hint:
-        #     hint_file_name = f"{out_file_name}_rf4_hints.json"
-        #     hint_temp_path = os.path.join(output_directory, hint_file_name)
-        #     hint_data = write_hint_data(self)
-        #     with open(hint_temp_path, "w") as f:
-        #         json.dump(hint_data, f)
-        #     files_to_zip.append(hint_temp_path)
-        # zip_temp_path = os.path.join(output_directory, f"{out_file_name}_rf4.aprf4s")
-        # with zipfile.ZipFile(zip_temp_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-        #     for file in files_to_zip:
-        #         zipf.write(file)
+        generate_aprf4s(self,output_directory)
                 
