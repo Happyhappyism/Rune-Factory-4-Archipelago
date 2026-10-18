@@ -676,7 +676,7 @@ def check_locations(ctx:"RF4Client"):
                     sending.append(loc_id)
 
         if ctx.festival_sanity:
-            fest_rank_int = int.from_bytes((ctx.game_flags[0x61:0x65]), byteorder='little')
+            fest_rank_int = int.from_bytes((ctx.game_flags[0x61:0x66]), byteorder='little')
             for loc_id, data in festival_data.items():
                 fest_id = data[0]
                 fest_rank = data[1]

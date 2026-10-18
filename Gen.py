@@ -22,12 +22,13 @@ class RF4Container(APPlayerContainer):
 
 
     def __init__(self, save_file: bytes, base_path: str, output_directory: str,
-                player=None, player_name: str = "", out_file_name:str = None, hint_file: str = None, audio_excludes: str = None, server: str = ""):
+                player=None, player_name: str = "", out_file_name:str = None, hint_file: str = None, audio_excludes: str = None, audio_mapping_json:str = None, server: str = ""):
         self.patch_data = save_file
         self.hint_file = hint_file
         self.audio_excludes = audio_excludes
         self.file_path = base_path
         self.out_file_name = out_file_name
+        self.audio_map = audio_mapping_json
         container_path = os.path.join(output_directory, base_path)
         self.patch_file_ending: str = ".aprf4s"
         # if "data" in kwargs:
@@ -52,6 +53,10 @@ class RF4Container(APPlayerContainer):
         if self.audio_excludes:
             excluded_audio_file = f"{self.out_file_name}_rf4_audioexclude.json"
             opened_zipfile.writestr(excluded_audio_file, self.audio_excludes)
+
+        if self.audio_map:
+            excluded_audio_file = f"{self.out_file_name}_rf4_audiomap.json"
+            opened_zipfile.writestr(excluded_audio_file, self.audio_map)
 
         super().write_contents(opened_zipfile)
 
@@ -82,12 +87,18 @@ def generate_aprf4s(self:"RF4World", output_directory: str):
     else:
         hint_json = None
     #logger.info(f"audio exclude: {self.options.excluded_sfx.value} - {self.options.excluded_sfx}")
-    if self.options.excluded_sfx.value:
+    if self.options.excluded_audio.value:
         #excluded_audio_file = f"{out_file_name}_rf4_audioexclude.json"
-        excluded_audio_list = self.options.excluded_sfx.value
+        excluded_audio_list = self.options.excluded_audio.value
         excluded_audio_json = json.dumps(excluded_audio_list)
     else:
         excluded_audio_json = None
+    if self.options.audio_mapping.value:
+        #excluded_audio_file = f"{out_file_name}_rf4_audioexclude.json"
+        audio_mapping_dict = self.options.audio_mapping.value
+        audio_mapping_json = json.dumps(audio_mapping_dict)
+    else:
+        audio_mapping_json = None
     zip_file_name = f"{out_file_name}.aprf4s"
     zip_file_path = os.path.join(output_directory, zip_file_name)
 
@@ -103,5 +114,5 @@ def generate_aprf4s(self:"RF4World", output_directory: str):
     # with open(zip_file_path, "wb") as f:
     #     f.write(zip_bytes)
     #mod_dir = os.path.join(output_directory, mod_name + "_" + Utils.__version__ + ".zip")
-    aprf4s = RF4Container(ap_save_bytes, zip_file_path, output_directory, self.player, self.multiworld.get_file_safe_player_name(self.player),out_file_name, hint_json, excluded_audio_json)
+    aprf4s = RF4Container(ap_save_bytes, zip_file_path, output_directory, self.player, self.multiworld.get_file_safe_player_name(self.player),out_file_name, hint_json, excluded_audio_json, audio_mapping_json)
     aprf4s.write()

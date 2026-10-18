@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from Options import Choice, Range, OptionList, OptionGroup, Toggle, DefaultOnToggle, Removed, PerGameCommonOptions, OptionSet, StartInventoryPool, DeathLink, FreeText
+from Options import Choice, Range, OptionList, OptionGroup, OptionDict, Toggle, DefaultOnToggle, Removed, PerGameCommonOptions, OptionSet, StartInventoryPool, DeathLink, FreeText
 from .audio_data import sfx_list
 
 class Goal(Choice):
@@ -253,6 +253,15 @@ class ExcludeSFX(OptionList):
 class SfxShuffle(Toggle):
     """Shuffle sound effects"""
 
+class AudioMapping(OptionDict):
+    """Map custom audio files to specific files, 
+    these can replace specific file names or an alias for the filename 
+    these are listed in https://docs.google.com/spreadsheets/d/1YU6grqkNfm-fRCV1gIQCDBU466W79-UGnRhtYPxam4Q/edit?gid=1747058601#gid=1747058601
+    example format
+    audio_mapping: {'new_music':'SEQ_TOWN_SPRING.ogg',
+     'new_sound.wav': 'skillup'}
+    """
+
 class Friendsanity(Choice):
     """Include Friendship levels as locations or items that sets everyone's friendship levels"""
     option_off = 0
@@ -479,18 +488,12 @@ rf4_options_group = [
         StartWeapon,
         RoyaltyRank,
         CharaApperance,
-        BGM,
         OpenAirship,
         ProgressiveWeapon,
         ProgressiveArmor,
         ProgressiveAccessory,
         ShuffleElements,
         GayDating,
-        MusicShuffle,
-        CustomMusic,
-        SfxShuffle,
-        CustomSFX,
-        ExcludeSFX
     ]),
     OptionGroup("Server Group Options",[
         DeathLink,
@@ -512,6 +515,15 @@ rf4_options_group = [
         ShopStart,
         AxeStart,
         RecipeStart
+    ]),
+    OptionGroup("Audio Options", [
+        BGM,
+        MusicShuffle,
+        CustomMusic,
+        SfxShuffle,
+        CustomSFX,
+        ExcludeSFX,
+        AudioMapping
     ]),
     OptionGroup("Monster Randomizations",[
         RandomMonsterModel,
@@ -569,7 +581,8 @@ class RF4Options(PerGameCommonOptions):
     custom_music:CustomMusic
     shuffle_sound_effects: SfxShuffle
     custom_sfx:CustomSFX
-    excluded_sfx: ExcludeSFX
+    excluded_audio: ExcludeSFX
+    audio_mapping: AudioMapping
 
     requestsanity:RequestSanity
     friendsanity: Friendsanity

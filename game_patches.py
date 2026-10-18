@@ -384,6 +384,12 @@ item_patches = {
         "(non healing)Spells no longer consume RP.",
         0xED0A3,
         bytes([0xBE,0x01,0x00,0x00,0x00,0x90,0x90]) # mov esi, 0x01
+    ),
+    "pandora_fp": Patch(
+        "Pandora Mandate FP",
+        "Maxes out tamed monster FP",
+        0x0,
+        bytes([])
     )
 }
 

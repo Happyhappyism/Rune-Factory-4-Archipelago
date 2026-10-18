@@ -5,7 +5,7 @@ from BaseClasses import Location
 import logging
 import pkgutil
 import json
-
+from .process_csv import parse_csv, RF4TameData
 from .game_data import friendsanity_data, friend_items, outfit_data, festival_list
 
 #from .com_ap_methods import parse_csv
@@ -17,66 +17,13 @@ logger = logging.getLogger("Rune Factory 4 Locations")
 class RF4Location(Location):
     game = "Rune Factory 4"
 
-class RF4ShipData(NamedTuple):
-    name: str = None
-    id: int = None
-    start_byte: int = 0
-    start_bit: int = 0
-    apid: int = None
-    type: str = None
-    region: str = "Selphia"
-    loc_name: str = None
-    #level: int = 0
-    tier: int = 0
-    shipable: bool = True
-    buy_value: int = 0
-    sell_value: int = 0
-    required_items: list = None
-    fill_weight: int = 0
-    fill_amount: int = 1
-    monster: str = None
-
-class RF4ChestData(NamedTuple):
-    items: list = None
-    id: int = 0
+class RF4MapObj(NamedTuple):
     apid: int = 0
     region: str = None
+    room_number: int = 0
+    field_flag: int = None
     loc_name: str = None
-    byte: int = 0
-    mask: int = 0
-    name: str = None
-    room: str = None
-    tier: int = 0
-    recipe: list = None
-    notes: str = None
-
-class RF4RecipeData(NamedTuple):
-    id: int = 0
-    #apid: int = 0
-    #region: str = None
-    loc_name: str = None
-    byte: int = 0
-    mask: int = 0
-    craft_type: str = None
-    subtype: str = None
-    level: int = 0
-    name: str = None
-    tier: int = None
-    ingredients: list = None
-
-class RF4RequestData(NamedTuple):
-    #region_con: str = None
-    apid: int = 0
-    name: str = None
-    loc_name: str = None
-    byte: int = 0
-    mask: int = 0
-    prog: int = 0
-    reqid: int = 0
-    include: bool = False
-    request_req: str = None
-    item_req: list = None
-    tier: int = None
+    map_type: str = None
 
 class RF4FriendData(NamedTuple):
     apid: int = 0
@@ -87,20 +34,6 @@ class RF4FriendData(NamedTuple):
     liked_item: str = None
     loved_item: str = None
 
-class RF4TameData(NamedTuple):
-    apid: int = 0
-    name: str = None
-    loc_name: str = None
-    index: int = 0
-    tier: int = 0
-    liked_item: str = None
-    drop_rates: list = None
-    region: str = None
-    produce: str = None
-    drop: list = None
-    boss: bool = False
-    boss_id: int = None
-
 class RF4OutfitData(NamedTuple):
     apid: int = 0
     name: str = None
@@ -110,14 +43,6 @@ class RF4OutfitData(NamedTuple):
     mask: int = 0
     tier: int = 0
     cost: int = 0
-
-class RF4MapObj(NamedTuple):
-    apid: int = 0
-    region: str = None
-    room_number: int = 0
-    field_flag: int = None
-    loc_name: str = None
-    map_type: str = None
 
 class RF4FestivalData(NamedTuple):
     name: str = None
@@ -141,240 +66,6 @@ class RF4LocationData(NamedTuple):
     loc_type: Optional[str] = None
     required_items: Optional[list] = None
     loc_name: str = None
-
-
-# def get_class_defaults(cell, class_type):
-#     default_dict = class_type._field_defaults
-#     for cell_name in cell:
-#         cell_default = default_dict[cell_name.lower()]
-#         if not default_dict[cell_name.lower()]:
-#             cell[cell_name] = cell_default
-#     return cell
-
-def match_csv(csv_name, csvdata, cell):
-    match csv_name:
-        case "Rune Factory 4 AP - Shipments":
-            csvdata[cell["Name"]] = parse_shipment(cell)
-        case "Rune Factory 4 AP - Chests":
-            csvdata[cell["ID"]] = parse_chest(cell)
-        case "Rune Factory 4 AP - Recipes":
-            csvdata[cell["Name"]] = parse_recipe(cell)
-        case "Rune Factory 4 AP - Requests Info":
-            csvdata[cell["Name"]] = parse_request(cell)
-        case "Rune Factory 4 AP - Tame":
-            csvdata[cell["Name"]] = parse_tame(cell)
-        case _:
-            logger.warning(f"csv {csv_name} not found")
-    return csvdata
-
-
-
-
-def parse_shipment(cell):
-    for col_name, cell_value in cell.items():
-        match col_name:
-            case "Name":
-                cell[col_name] = cell[col_name].replace("/",'')
-            case "ID" | "APID":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name],16)
-            case "Byte" | "Bit" | "Level" | "Rarity" | "Filler Weight" | "Filler Count":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-            case "Tier" | "Buy" | "Sell":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-                else:
-                    cell[col_name] = 0
-            case "Region":
-                if not cell_value:
-                    cell[col_name] = "Selphia"
-            case "Required items":
-                if cell_value:
-                    cell[col_name] = (cell['Required items']).split(" + ")
-            case "Shipable":
-                if cell_value == "FALSE":
-                    cell[col_name] = False
-                else:
-                    cell[col_name] = True
-    
-    return RF4ShipData(name = cell['Name'], id = cell["ID"], start_byte = cell["Byte"], start_bit = cell["Bit"], 
-                    apid = cell["APID"], type= cell["Type"], region = cell["Region"], 
-                    tier= cell["Tier"], shipable=bool(cell["Shipable"]), buy_value = cell["Buy"], sell_value = cell["Sell"], 
-                    monster = cell["Monster"], fill_weight = cell["Filler Weight"], fill_amount = cell["Filler Count"], required_items = cell["Required items"],
-                    loc_name= f"{cell["Region"]} Shipment - {cell['Name']}" )
-
-def parse_chest(cell):
-    for col_name, cell_value in cell.items():
-        match col_name:
-            case "ID" | "APID" | "Byte" | "Mask":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name],16)
-            case "Tier":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-            case "Region":
-                if not cell_value:
-                    cell[col_name] = "Selphia"
-            case "Items":
-                if cell_value:
-                    cell[col_name] = (cell['Items']).split(" + ")
-            case "Recipe":
-                if cell_value:
-                    cell[col_name] = (cell['Recipe']).split(" + ")
-    return RF4ChestData(name = cell['Location Name'],loc_name=cell['Location Name'], id = cell['ID'], apid = cell["APID"], room= cell['Room Code'], recipe=cell["Recipe"],
-                        items = cell["Items"] , tier = cell["Tier"], region = cell["Region"], byte= cell['Byte'], mask= cell['Mask'], notes= cell['Notes'])
-
-
-def parse_recipe(cell):
-    for col_name, cell_value in cell.items():
-        match col_name:
-            case "ID" | "Byte" | "Mask":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name],16)
-            case "Level":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-            case "Type":
-                match cell[col_name]:
-                    case "Forging":
-                        loc_string = f"Forge Shipment"
-                    case "Crafting":
-                        loc_string = f"Crafting Shipment"
-                    case "Chemistry":
-                        loc_string = f"Selphia Shipment"
-                    case "Cooking":
-                        match cell['Subtype']:
-                            case "Mixer" | "Knife" | "Frying Pan":
-                                loc_string = "EZ Cooking Shipment"
-                            case "Oven" | "Steamer" | "Pot":
-                                loc_string = "Pro Cooking Shipment"
-                            case _:
-                                loc_string = "Cooking Shipment"
-                    case _:
-                        loc_string = f"Selphia Shipment"
-
-            case "Ingredients":
-                if cell_value:
-                    cell[col_name] = (((cell['Ingredients']).replace('"','')).split(" + "))
-    return RF4RecipeData(name = cell['Name'], id = cell['ID'], craft_type = cell["Type"], level= cell['Level'],
-                        subtype = cell["Subtype"], byte= cell['Address'], mask= cell['Mask'], ingredients= cell['Ingredients'],
-                        loc_name= f"{loc_string} - {cell['Name']}")
-
-def parse_request(cell):
-    for col_name, cell_value in cell.items():
-        match col_name:
-            case "APID" | "Byte" | "Mask":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name],16)
-                else:
-                    cell[col_name] = None
-            case "Prog" | "Request ID":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-                else:
-                    cell[col_name] = None
-            case "Item Requirements":
-                if cell_value:
-                    cell[col_name] = (((cell[col_name]).replace('"','')).split(" + "))
-                else:
-                    cell[col_name] = []
-            case "Include":
-                if cell_value:
-                    cell[col_name] = bool(cell[col_name])
-    return RF4RequestData(name = cell['Name'], apid = cell['APID'],  byte= cell['Byte'], mask= cell['Mask'], prog= cell['Prog'],
-                          request_req = cell['Region Connect'], item_req= cell['Item Requirements'], reqid= cell['Request ID'], include= cell['Include'],
-                          loc_name= f"Selphia Request - {cell['Name']}")
-            
-
-def parse_tame(cell):
-    for col_name, cell_value in cell.items():
-        match col_name:
-            case "ID" | "APID":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name],16)
-            case "Tier" | "Boss ID":
-                if cell_value:
-                    cell[col_name] = int(cell[col_name])
-            case "Region":
-                if not cell_value:
-                    cell[col_name] = "Selphia"
-            case "Drop":
-                if cell_value:
-                    cell_items = [item for item in (cell[col_name].split(" + ")) if item != '']
-                    cell[col_name] = cell_items
-            case "Is Boss":
-                if cell_value == "Yes":
-                    cell[col_name] = True
-                else:
-                    cell[col_name] = False
-            case "Drop Chance":
-                if cell_value:
-                    cell_items = [chance for chance in (cell[col_name].split(" + ")) if chance != 0]
-                    cell[col_name] = cell_items
-            
-    return RF4TameData(name = cell['Name'], index = cell['ID'], apid = cell["APID"], region= cell['Region'], produce=cell["Produce"], boss= cell['Is Boss'], boss_id = cell['Boss ID'],
-                        tier= cell['Tier'], drop= cell['Drop'], liked_item= cell['Friend Item'], drop_rates = cell['Drop Chance'], loc_name= f"{cell["Region"]} Tame - {cell['Name']}")
-
-
-
-def parse_csv(csv_name):
-    #import csv
-    
-
-    # ##DEBUGGING PURPOSES ONLY
-    # import requests
-    # match csv_name:
-    #     case "Rune Factory 4 AP - Shipments":
-    #         gid = "2037917468"
-    #     case "Rune Factory 4 AP - Chests":
-    #         gid = "868007808"
-    #     case "Rune Factory 4 AP - Recipes":
-    #         gid = "206530369"
-    #     case _:
-    #         gid = None
-    # #URL = f'https://docs.google.com/spreadsheets/d/1YU6grqkNfm-fRCV1gIQCDBU466W79-UGnRhtYPxam4Q//export?format=csv&gid={SHEET_ID}'
-    
-    # if gid is not None:
-    #     url = f"https://docs.google.com/spreadsheets/d/1YU6grqkNfm-fRCV1gIQCDBU466W79-UGnRhtYPxam4Q/export?format=csv&gid={gid}"
-    #     headers = {
-    #             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    #         }
-    #     response = (requests.get(url, headers=headers))
-    #     raw_csv_text = response.text
-    #     rows = str.split(raw_csv_text,"\r\n")
-    # else:
-        # END DEBUG, Untab this later
-    raw_csv_text = pkgutil.get_data(__name__, f"data/{csv_name}.csv").decode("utf-8").replace("\r\n","\n")
-    rows = str.split(raw_csv_text,"\n")
-    #raw_csv_text =  str(pkgutil.get_data(__name__, f"data/{csv_name}.csv"))
-    csvdata = {}
-    
-    col = []
-    row_num = 0
-    for row_raw in rows:
-        row= str.split(row_raw, ",")
-        try:
-            row[1]
-        except Exception as e:
-            break
-        if row_num == 0:
-            for col_name in row:
-                if col_name[:2] == 'b"' or col_name[:2] == "b'":
-                    col_name = col_name[2:]
-                col.append(col_name)
-            row_num += 1
-            continue
-        for x in range(len(row)):
-            if row[x] == '':
-                row[x] = None
-        
-        cell = {}
-        for col_name in col:
-            cell[col_name] = row[col.index(col_name)]
-        csvdata = match_csv(csv_name, csvdata, cell)
-        row_num += 1
-    return csvdata
 
 def parse_mapobj_json(json_name, ap_base, loc_type):
     mobj_file = pkgutil.get_data(__name__, f"data/{json_name}.json").decode("utf-8")
@@ -473,12 +164,6 @@ for festival, fest_region in festival_list.items():
         )
     fest_idx += 1
         
-# festival_data_table = {name: RF4FestivalData(
-#     apid = 0x1C4940 + (list(festival_list).index(name) * 4),
-#     region = fest_region,
-#     id = (list(festival_list).index(name)),
-#     loc_name= f"Selphia Festival - {name}"
-# ) for name, fest_region in festival_list.items()}
 
 #Shipments
 location_data_table= {data.name: RF4LocationData(
@@ -528,7 +213,7 @@ location_data_table.update({name:
 })
 # Boss Sanity
 location_data_table.update({data.loc_name:
-    RF4LocationData(address=data.apid, region=data.region, loc_type="tame", name=data.name, loc_name= data.loc_name)
+    RF4LocationData(address=data.apid, region=data.region, loc_type="boss", name=data.name, loc_name= data.loc_name)
     for name, data in boss_data_table.items() if data.boss_id is not None
 })
 # Festival Sanity

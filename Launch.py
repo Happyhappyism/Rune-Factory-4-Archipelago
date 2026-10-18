@@ -62,7 +62,8 @@ class SeedFileInfo:
     ap_sys_save_path: str = None # 'D:/SteamLibrary/steamapps/common/Rune Factory 4 Special/Archipelago/Saves\\rf4_sys.sav'
     sys_file_path: str = None
     hint_file_path: str = None
-    #audexclude_file_path: str = None
+    audexclude_file_path: str = None
+    audmap_file_path: str = None
     save_params: list = None
     player_name: str = None
     player_model: int = None
@@ -292,7 +293,7 @@ def modify_dialog(seed_f:SeedFileInfo):
                     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset, dialog_size)
                     struct.pack_into('<I', out_dialog_bytes, dialog_data_offset + 4, dialog_offset)
                     #out_dialog_bytes += dialog_byte
-                os.remove(seed_f.hint_file_path)
+                
             else:
                 loggerDebug.error(f"Hint File not found: {seed_f.hint_file_path}")
         
@@ -534,6 +535,7 @@ def additional_file_patching(seed_f:SeedFileInfo):
         if sanity_options & 0x8:
             files_to_patch.append("MOBJ_BOX.texture")
             files_to_patch.append("MOBJ_BOX_WINTER.texture")
+            files_to_patch.append("MOBJ_FIELD_METAL02.texture")
         if sanity_options & 0x1:
             files_to_patch.append("M26_0.model")
         for file in files_to_patch:
@@ -988,7 +990,29 @@ def create_run_seed_dir(seed_f:SeedFileInfo):
             shutil.copytree(seed_f.ap_mod_path, seed_path, dirs_exist_ok=True)
     except Exception as e:
         loggerDebug.error(f"Error moving seed mod {e}")
-        
+
+def clean_aprf4s_files(seed_f:SeedFileInfo):
+    try:
+        save_file_path = os.path.join(seed_f.ap_rf4_base,seed_f.save_file_name)
+        #exclude_audio_path = os.path.join(seed_f.aprf4s_file_path,"")
+        manifest_path = os.path.join(seed_f.ap_rf4_base,"archipelago.json")
+        if seed_f.hint_file_path:
+            if Path(seed_f.hint_file_path).is_file():
+                os.remove(seed_f.hint_file_path)
+        if Path(save_file_path).is_file():
+            os.remove(save_file_path)
+        if Path(manifest_path).is_file():
+            os.remove(manifest_path)
+        if seed_f.audexclude_file_path:
+            if Path(seed_f.audexclude_file_path).is_file():
+                os.remove(seed_f.audexclude_file_path)
+        if seed_f.audmap_file_path:
+            if Path(seed_f.audmap_file_path).is_file():
+                os.remove(seed_f.audmap_file_path)
+    except Exception as e:
+        loggerDebug.error(f"Error moving seed mod {e}")
+
+
 def delete_unsaved_seed_files(seed_f:SeedFileInfo):
     bgm_path = f"{seed_f.ap_mod_path}/Audio"
     try:
@@ -1033,6 +1057,7 @@ def start_launch(seed_f:SeedFileInfo):
             #get_save_file_extra_info(seed_f)
         else:
             reload_custom_music(seed_f)
+        clean_aprf4s_files(seed_f)
         move_bundle_1(seed_f)
         launch_game_suspended(seed_f)
         set_aprf4s_reg()

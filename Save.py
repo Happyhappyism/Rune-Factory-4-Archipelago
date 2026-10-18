@@ -159,6 +159,7 @@ def write_save_data(world:World):
         save_data[0x5C49] += 1
     save_data[0x20740] = appearance
     save_data[0x1E947] = BGM_val
+    save_data[0x1E8CA] |= 0x8   # Collapse Venti
     if daily_trupin:
         save_data[0x2071F] |= 0x4
     if show_enemy_level:

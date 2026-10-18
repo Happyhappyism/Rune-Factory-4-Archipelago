@@ -8,6 +8,7 @@ bundle_manifest = {
     "title_header_load_eng.texture": [0xD0C1DCD3,0x10640],
     "MOBJ_BOX.texture": [0xF499BC5F,0x4638],
     "MOBJ_BOX_WINTER.texture": [0xFE61C98F, 0x4640],
+    "MOBJ_FIELD_METAL02.texture": [0x8A010C8A, 0x4640],
     "M26_0.model": [0x723BEC21, 0x471E0]
 }
 text_modifications = {
