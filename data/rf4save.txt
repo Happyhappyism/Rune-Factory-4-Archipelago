@@ -1,0 +1,37 @@
+get NAME filename
+get FILESIZE asize
+get MAGIC long
+set PAD long 0xE0
+
+if MAGIC == 1144276562 # string 'RF4D'
+get FILECRC long
+set PAD long 0
+else
+set FILECRC long MAGIC
+set PAD long 0xE0
+endif
+
+SavePos OFFSET
+xmath SIZE "FILESIZE - OFFSET - PAD"
+
+# print "File CRC: %FILECRC|x%, data pos: %OFFSET%, pad by %PAD%, data size: %SIZE%"
+
+encryption CRC 0xEDB88320 "32 -1 -1 0 0 1"
+log MEMORY_FILE OFFSET SIZE
+set NEWCRC long QUICKBMS_CRC
+
+if FILECRC == NEWCRC
+print "Save CRC seems to be intact! No modification necessary."
+CleanExit
+endif
+
+encryption "" ""
+log MEMORY_FILE 0 FILESIZE
+
+math OFFSET - 4
+goto OFFSET MEMORY_FILE
+put NEWCRC long MEMORY_FILE
+print "Checksum fixed! New CRC: %NEWCRC|x%"
+
+log NAME 0 FILESIZE MEMORY_FILE
+CleanExit
