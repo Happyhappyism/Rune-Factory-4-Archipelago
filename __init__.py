@@ -405,7 +405,7 @@ class RF4World(World):
             "character_appearance": self.options.character_appearance.value,
             "boss_sanity": self.options.boss_sanity.value,
             "festival_sanity": self.options.festival_sanity.value,
-        
+            "chest_shuffle": self.options.chest_shuffle.value,
         }
     
     def generate_output(self, output_directory: str):

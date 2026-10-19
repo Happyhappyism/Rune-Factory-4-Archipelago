@@ -401,6 +401,7 @@ class RF4Client(CommonContext):
     ship_count: int = 0
     boss_sanity: bool = False
     festival_sanity= 0
+    chest_shuffle = 0
 
     ap_save_seed_path = None
     process_obj = None
@@ -592,6 +593,8 @@ class RF4Client(CommonContext):
                     self.boss_sanity = args['slot_data']['boss_sanity']
                 if(args['slot_data']['festival_sanity']):
                     self.festival_sanity = args['slot_data']['festival_sanity']
+                if(args['slot_data']['chest_shuffle']):
+                    self.chest_shuffle = args['slot_data']['chest_shuffle']
                 loggerSeed.info( \
                 f"""Seed: {self.seed_name}\n
                 Goal: {goal_str}\n DeathLink: {bool(self.death_link)},  ShopboxLink: {bool(self.shopbox_link)}

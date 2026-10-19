@@ -178,7 +178,7 @@ location_data_table.update({data.name:
 # Requestsanity
 location_data_table.update({data.name: 
     RF4LocationData(address=data.apid,region=data.name,name=data.name, loc_name= data.loc_name,loc_type="request")
-    for name, data in request_data_table.items()}) 
+    for name, data in request_data_table.items() if data.include == True}) 
 
 #Friendsanity
 location_data_table.update({name:

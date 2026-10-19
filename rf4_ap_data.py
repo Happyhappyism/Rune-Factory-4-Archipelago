@@ -46,4 +46,5 @@ slot_data_defaults = {
     "character_appearance": 0,
     "boss_sanity": False,
     "festival_sanity": False,
+    "chest_shuffle": 0
 }

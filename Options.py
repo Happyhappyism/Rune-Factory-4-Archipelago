@@ -241,14 +241,14 @@ class CustomSFX(Toggle):
     """this will randomly add in sound effects from the custom sound effects folder into the game
     formats can be .ogg, .mp3 or .wav, may want to adjust RMS to -13 dB for better audio mixing
     These can be placed in [RF4S install directory]/Archipelago/SFX
-    Longer sound effects can be placed in [RF4S install directory]/Archipelago/Fanfair
+    Longer sound effects can be placed in [RF4S install directory]/Archipelago/Fanfare
     Those will replace longer sound effects in game (usually 3 or more seconds)
     """
 
 class ExcludeSFX(OptionList):
     """Listed sound effect names will be excluded from being randomized with shuffle_sound_effects and custom_sfx
     example usage: ['SE_WALK_L.ogg', 'SE_WALK_R.ogg','SE_RUN_L.wav','SE_RUN_R.wav']"""
-    valid_keys = sfx_list
+    #valid_keys = sfx_list
 
 class SfxShuffle(Toggle):
     """Shuffle sound effects"""
@@ -286,6 +286,14 @@ class OutfitSanity(Toggle):
 class ShopboxLink(DefaultOnToggle):
     """Allows you to send items between other Rune Factory 4 players with server command /send playername"""
 
+class ChestShuffle(Choice):
+    """When enabled will shuffle the contents of chests, chests with gold or recipies will not be shuffled
+    Choosing empty will have all non-gold/recipe chests contain nothing."""
+    option_off = 0
+    option_shuffled = 1
+    option_empty = 2
+    default = 0
+
 class IncludeTraps(Toggle):
     """Include traps"""
 
@@ -310,7 +318,7 @@ class GayDating(Toggle):
 class ShuffleElements(Toggle):
     """When enabled will shuffle magical elements. This shuffles all player spells of the given element to another. i.e. all water becomes dark. All Dark becomes Earth, etc.
     To figure out what elements they've been shuffled into, look at the color of the shockwaves made when striking an enemy with the spell.
-    The elements also change the spell's advance properties, for example a water spell that becomes dark will also make enemies flinch as if it were a dark spell."""
+    The elements also change the spell's advanced properties, for example a water spell that becomes dark will also make enemies flinch as if it were a dark spell."""
 
 class SharanceStart(Removed):
     """Start with Sharance Maze unlocked, does not effect logic"""
@@ -486,6 +494,7 @@ rf4_options_group = [
     ]),
     OptionGroup("Gameplay Options", [
         StartWeapon,
+        ChestShuffle,
         RoyaltyRank,
         CharaApperance,
         OpenAirship,
@@ -575,6 +584,10 @@ class RF4Options(PerGameCommonOptions):
     boxsanity: BoxSanity
     searchsanity: SearchSanity
     festival_sanity: FestivalSanity
+    requestsanity:RequestSanity
+    friendsanity: Friendsanity
+    tamesanity: Petsanity
+    outfitsanity: OutfitSanity
 
     background_music: BGM
     shuffle_music: MusicShuffle
@@ -584,11 +597,8 @@ class RF4Options(PerGameCommonOptions):
     excluded_audio: ExcludeSFX
     audio_mapping: AudioMapping
 
-    requestsanity:RequestSanity
-    friendsanity: Friendsanity
-    tamesanity: Petsanity
-    outfitsanity: OutfitSanity
-
+    
+    chest_shuffle: ChestShuffle
     max_friendship: MaxFriend
     trupin_hint: TrupinHint
     daily_trupin: DailyTrupin

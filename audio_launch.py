@@ -63,14 +63,14 @@ def create_cmusic_json(seed_f:"SeedFileInfo"):
         exclude_audio_list = get_audio_exclude_file(seed_f)
         custom_music_path = Path(f"{seed_f.ap_rf4_base}//Music")
         custom_sfx_path = Path(f"{seed_f.ap_rf4_base}//SFX")
-        custom_fanfair_path = Path(f"{seed_f.ap_rf4_base}//Fanfair")
+        custom_fanfair_path = Path(f"{seed_f.ap_rf4_base}//Fanfare")
         if seed_f.custmusic_option:
             bgm_tracks = list(dict.fromkeys([data.name for id, data in music_data_table.items() if data.type == "BGM" and data.game == "RF4" and data.name not in exclude_audio_list]))
             random.shuffle(bgm_tracks)
             pick_random_cust_sound(custom_music_path, bgm_tracks, cmusic_plist_dict)
         if seed_f.custsfx_option:
-            sfx_list = list(dict.fromkeys([data.name for id, data in music_data_table.items() if data.type == "SFX" and data.name not in exclude_audio_list]))
-            sfxl_list = list(dict.fromkeys([data.name for id, data in music_data_table.items() if data.type == "SFXL" and data.name not in exclude_audio_list]))
+            sfx_list = list(dict.fromkeys([data.name for id, data in music_data_table.items() if data.type == "SFX" and data.name not in exclude_audio_list and data.tags not in exclude_audio_list]))
+            sfxl_list = list(dict.fromkeys([data.name for id, data in music_data_table.items() if data.type == "SFXL" and data.name not in exclude_audio_list and data.tags not in exclude_audio_list]))
             random.shuffle(sfx_list)
             random.shuffle(sfxl_list)
             pick_random_cust_sound(custom_sfx_path, sfx_list, cmusic_plist_dict)
@@ -147,15 +147,15 @@ def build_randomized_base_music_lists(seed_f:"SeedFileInfo", out_sound_bytes, so
     from .audio_data import music_data_table
     try:
         exclude_audio_list = get_audio_exclude_file(seed_f)
-        bgm_tracks = [id for id, data in music_data_table.items() if data.type == "BGM" if data.name not in exclude_audio_list]
-        sfx_list = [id for id, data in music_data_table.items() if data.type == "SFX" if data.name not in exclude_audio_list]
-        fanfair_list = [id for id, data in music_data_table.items() if data.type == "SFXL" if data.name not in exclude_audio_list]
+        bgm_tracks = [id for id, data in music_data_table.items() if data.type == "BGM" if data.name not in exclude_audio_list and data.tags not in exclude_audio_list]
+        sfx_list = [id for id, data in music_data_table.items() if data.type == "SFX" if data.name not in exclude_audio_list and data.tags not in exclude_audio_list]
+        fanfare_list = [id for id, data in music_data_table.items() if data.type == "SFXL" if data.name not in exclude_audio_list and data.tags not in exclude_audio_list]
         if seed_f.sound_options & 1: # Music shuffle enabled
             shuffle_audio_list(out_sound_bytes, sound_bytes, bgm_tracks)
 
         if seed_f.sound_options & 2:
             shuffle_audio_list(out_sound_bytes, sound_bytes, sfx_list)
-            shuffle_audio_list(out_sound_bytes, sound_bytes, fanfair_list)
+            shuffle_audio_list(out_sound_bytes, sound_bytes, fanfare_list)
     except Exception as e:
         loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 

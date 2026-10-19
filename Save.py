@@ -174,9 +174,10 @@ def write_save_data(world:World):
             0x2C8: 0xFC,
             0x2C9: 0xFF,
             0x2CA: 0x3F,
-            0x2AF: 0x8
+            0x2AF: 0x8,
+            0x2D5: 0xE0
         }
-        for offset in range(0x1EB49,0x1EB99, 1):
+        for offset in range(0x1EB49,0x1EB9A, 1):
             save_data[offset] = 0xFF
         for offset, mask in exclude_list.items():
             save_data[0x1E8C4 + offset] ^= mask

@@ -1,6 +1,7 @@
 from .Locations import shipment_data_table, chest_data_table, request_data_table, tame_data_table, boss_data_table, \
 outfit_data_table, barrier_data_table, box_data_table, search_data_table, festival_data_table, friend_data_table, recipe_data_table
-
+import logging
+logger = logging.getLogger("Rune Factory 4 Location Data")
 
 shipment_data = {data.apid: [data.start_byte, data.start_bit] for name, data in shipment_data_table.items() if data.shipable == True}
 chest_data =    {data.apid: [data.byte, data.mask] for name, data in chest_data_table.items()}

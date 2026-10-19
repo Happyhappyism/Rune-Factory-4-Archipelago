@@ -161,6 +161,7 @@ def on_save_load(ctx:"RF4Client"):
     pandora = pc_read_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0)
     if pandora: 
         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
+        item_patches["pandora_fp"].apply(ctx)
     else:
         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x3F)
     
@@ -421,6 +422,8 @@ def process_items(ctx:"RF4Client", item_list, start_index):
                     case 0x1C3B2D: # Pandoras Mandate
                         pc_set_bit(ctx.pm, ctx.ExpGainAd + 0x2B, 0)
                         pc_writeb(ctx.pm,ctx.processes_base+0x971EF, 0x1F)
+                        item_patches["pandora_fp"].apply(ctx)
+                        
                 item_data = item_data_table[order_flag_items[item_id]]
                 if item_data.set_byte is not None:
                     pc_set_bit(ctx.pm, ctx.ExpGainAd + item_data.set_byte, item_data.set_bit)
@@ -603,6 +606,8 @@ def check_locations(ctx:"RF4Client"):
         # Check Request Locations
         #prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
         if ctx.requestsanity:
+            prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
+            #loggerDebug.info(f"prog: {prog_level}")
             for loc_id, loc_data in request_data.items():
                 offset = loc_data[0]
                 mask = loc_data[1]
@@ -612,8 +617,6 @@ def check_locations(ctx:"RF4Client"):
                         if ctx.game_flags[offset] & mask:
                             sending.append(loc_id)
                     elif prog:
-
-                        prog_level = read_em_value(ctx.game_flags, 0x1E8E4, 3, 9)
                         if prog_level >= prog:
                             sending.append(loc_id)
                         # for early tutorial requests that don't set specific flags
