@@ -81,6 +81,7 @@ class SeedFileInfo:
     save_create_date: str = None
     game_goal: int = None
     goal_str: str = None
+    locale:str = "eng"
     process_obj = None
     aprf4s_file_path = None # 'C:\\ProgramData\\Archipelago\\output\\AP_23056638599226981367_P1_It_rf4.aprf4s'
 
@@ -266,8 +267,8 @@ def modify_dialog(seed_f:SeedFileInfo):
         from .game_data import text_modifications
 
         bundle_path = f"{seed_f.install_path}/Bundle/bundleMain.mbundle"
-        dialog_file_offset = bundle_manifest["rf3mc.eng"][0]
-        dialog_file_size = bundle_manifest["rf3mc.eng"][1]
+        dialog_file_offset = bundle_manifest[f"rf3mc.{seed_f.locale}"][0]
+        dialog_file_size = bundle_manifest[f"rf3mc.{seed_f.locale}"][1]
         dialog_bytes = get_bundle_bytes(bundle_path,dialog_file_offset,size=dialog_file_size)
         out_dialog_bytes = bytearray(dialog_bytes)
         out_dialog_bytes += b'\x00'
@@ -297,7 +298,7 @@ def modify_dialog(seed_f:SeedFileInfo):
             else:
                 loggerDebug.error(f"Hint File not found: {seed_f.hint_file_path}")
         
-        with open(os.path.join(f"{seed_f.ap_mod_path}/rf3mc.eng"), "wb") as param_file:
+        with open(os.path.join(f"{seed_f.ap_mod_path}/rf3mc.{seed_f.locale}"), "wb") as param_file:
             param_file.write(out_dialog_bytes)
     except Exception as e:
         loggerDebug.critical(f"Error generating dialog mod: {e}\n{traceback.format_exc()}")
@@ -334,6 +335,43 @@ def modify_spells(seed_f:SeedFileInfo):
             param_file.write(out_magic_bytes)
     except Exception as e:
             loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
+
+def read_settings_plist(setting=None):
+    save_path = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
+    settings_plist_path = os.path.join(save_path,"Settings.plist")
+    with open(settings_plist_path, 'rb') as fp:
+        settings_dict = plistlib.load(fp)
+    if setting:
+        if setting in settings_dict:
+            return settings_dict[setting]
+        else:
+            return None
+    else:
+        return settings_dict
+
+def detect_locale(seed_f:SeedFileInfo):
+    try:
+        settings_language = read_settings_plist("language")
+        if settings_language:
+            match settings_language:
+                case "fr":
+                    seed_f.locale = "fra"
+                case "de":
+                    seed_f.locale = "deu"
+                case "ja":
+                    seed_f.locale = "jpn"
+                case "ko":
+                    seed_f.locale = "kor"
+                case "zh-hk":
+                    seed_f.locale = "twn"
+                case "zh-cn":
+                    seed_f.locale = "eng"
+                case _:
+                    seed_f.locale = "eng"
+        else:
+            seed_f.locale = "eng"
+    except Exception as e:
+        loggerDebug.error(f"Error moving bundle patch {e}\n{traceback.format_exc()}")
 
 def modify_npc_params(seed_f:SeedFileInfo):
     try:
@@ -824,13 +862,21 @@ def get_save_file(seed_f:SeedFileInfo):
             loggerDebug.error(f"Error getting save file: {e}\n{traceback.format_exc()}")
 
 def adjust_settings_plist(seed_f:SeedFileInfo):
+    from .game_data import plist_settings_list
     try:
-        plist_path = seed_f.ap_sys_save_path = os.path.join(seed_f.ap_save_seed_path,"Settings.plist")
-        if not os.path.isfile(plist_path):
-            plist_org = os.path.join(f"{os.getenv('APPDATA')}\\Rune Factory 4 Special","Settings.plist")
-            if os.path.isfile(plist_org):
-                shutil.copy(plist_org,plist_path)
-        pass
+        plist_ap_settings_path = os.path.join(f"{seed_f.ap_save_seed_path}","Settings.plist")
+        if Path(plist_ap_settings_path).is_file():
+            with open(plist_ap_settings_path, 'rb') as fp:
+                ap_settings_dict = plistlib.load(fp)
+        else:
+            ap_settings_dict = {}
+        for setting_name in plist_settings_list:
+            setting = read_settings_plist(setting_name)
+            if setting:
+                ap_settings_dict[setting_name] = setting
+        with open(plist_ap_settings_path, "wb") as fp:
+            plistlib.dump(ap_settings_dict, fp)
+            
     except Exception as e:
         loggerDebug.error(f"Error modifying plist file: {e}\n{traceback.format_exc()}")
     
@@ -934,18 +980,25 @@ def patch_scenerio(seed_f:SeedFileInfo):
         patch_bytes = pkgutil.get_data(__name__, f"data/patches/rf3mc.ips")
         with open(f"{seed_f.ap_mod_path}/rf3.mc", "wb") as mc_file:
             mc_file.write(patch(mc_bytes,parse_ips_file(patch_bytes)))
+            mc_file.seek(0x3d33ac)
+            mc_file.write(b'\x8D\x01\x14\x00')
         
     except Exception as e:
         loggerDebug.error(f"Writing new scenerio: {e}\n{traceback.format_exc()}")
 
 def move_bundle_1(seed_f:SeedFileInfo, restore= False):
-    bundle1_name = f"bundlePatch1.mbundle"
-    bundle1_path = f"{seed_f.install_path}/Bundle/{bundle1_name}"
-    bundle1_store_path = f"{seed_f.static_patch_path}/{bundle1_name}"
-    if restore:
-        shutil.move(bundle1_store_path, bundle1_path)
-    else:
-        shutil.move(bundle1_path, bundle1_store_path)
+    try:
+        bundle1_name = f"bundlePatch1.mbundle"
+        bundle1_path = f"{seed_f.install_path}/Bundle/{bundle1_name}"
+        bundle1_store_path = f"{seed_f.static_patch_path}/{bundle1_name}"
+        if restore:
+            if Path(bundle1_store_path).is_file():
+                shutil.move(bundle1_store_path, bundle1_path)
+        else:
+            if Path(bundle1_path).is_file():
+                shutil.move(bundle1_path, bundle1_store_path)
+    except Exception as e:
+        loggerDebug.error(f"Error moving bundle patch {e}\n{traceback.format_exc()}")
 
 def set_aprf4s_reg():
     try:
@@ -1044,13 +1097,14 @@ def start_launch(seed_f:SeedFileInfo):
             process_new_save(seed_f)
             create_run_seed_dir(seed_f)
             write_sys_save(seed_f)
+            adjust_settings_plist(seed_f)
             patch_map_files(seed_f)
             additional_file_patching(seed_f)
             modify_npc_params(seed_f)
             modify_sound(seed_f)
             if seed_f.element_option:
                 modify_spells(seed_f)
-            
+            detect_locale(seed_f)
             modify_dialog(seed_f)
             modify_system_text(seed_f)
             patch_scenerio(seed_f)

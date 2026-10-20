@@ -104,6 +104,7 @@ def pc_read_ptr(pm, adr):
         return value
     except Exception as e:
         logger.warning(f"Failed to read pointer, game isn't open?")
+        #logger.warning(f"Pointer read fail: {e}\n{traceback.format_exc()}")
 
 def pc_read_bytes(pm, adr, size):
     try:

@@ -1,6 +1,12 @@
 bundle_manifest = {
     # File name: [offset, size]
     "rf3mc.eng": [0x7099D94, 0x4E3C48],
+    "rf3mc.deu": [0x4C47B310, 0x58895C],
+    "rf3mc.fra": [0xC1A62930, 0x5AF7BF],
+    "rf3mc.jpn": [0x1FA6B31D, 0x5CA825],
+    "rf3mc.kor": [0xBD2DD078, 0x4FC9AA],
+    "rf3mc.twn": [0x56D5264A, 0x4BC2DD],
+
     "rf3ParamMagic.bin": [0xE0E51FBB, 0x10204],
     "rf3NpcParam.bin": [0xE19301F5, 0x1D7CC],
     "common_audio_data.bdat": [0x10BF13F94,0x6EE0],
@@ -60,6 +66,18 @@ text_modifications = {
     21607: "30",
 
 }
+plist_settings_list = [
+    "language",
+    "resolutionScale",
+    "voiceLanguage",
+    "disableVsync",
+    "actionKeyMappings",
+    "sdlWindow",
+    "controllerStyle",
+    "useFullScreen",
+    "enableUpsampling",
+    "isBackgroundSuspendDisabled"
+]
 game_consts = {
     "total shipments": 1076,
 }
