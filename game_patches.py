@@ -287,32 +287,35 @@ class PatchManager:
         )
 
 def randomize_chests(ctx:"RF4Client"):
-    chest_loot_table = pc_read_bytes(ctx.pm, ctx.processes_base + 0x9EFA60, 190*8)
-    chest_loot = bytearray(chest_loot_table)
-    chest_loot_path = f"{ctx.seed_f.ap_mod_path}/chest_loot.json"
-    if not Path(chest_loot_path).is_file():
-        
-        if ctx.chest_shuffle == 1:
-            chest_loot_dict = {}
-            for chest_id in range(190):
-                offset = chest_id * 8
-                loot_list = []
-                for x in range(4):
-                    range_base = offset + (x*2)
-                    loot_list.append(int.from_bytes(chest_loot_table[range_base:range_base+2], "little"))
-                #loot_row = int.from_bytes(chest_loot_table[offset:offset+8], "little")
-                if loot_list != [0,0,0,0]:
-                    chest_loot_dict[chest_id] = loot_list
-            shuffled_loot = shuffle_dict(chest_loot_dict)
-        elif ctx.chest_shuffle == 2:
-            shuffled_loot = {}
-            for chest_id in range(190):
-                shuffled_loot[chest_id] = [0,0,0,0]
-        with open(chest_loot_path, "w") as loot_json:
-            json.dump(shuffled_loot, loot_json)
-    else:
-        with open(chest_loot_path, 'r') as loot_json:
-            shuffled_loot = json.load(loot_json)
+    try:
+        chest_loot_table = pc_read_bytes(ctx.pm, ctx.processes_base + 0x9EFA60, 190*8)
+        chest_loot = bytearray(chest_loot_table)
+        chest_loot_path = f"{ctx.seed_f.ap_mod_path}/chest_loot.json"
+        if not Path(chest_loot_path).is_file():
+            
+            if ctx.chest_shuffle == 1:
+                chest_loot_dict = {}
+                for chest_id in range(190):
+                    offset = chest_id * 8
+                    loot_list = []
+                    for x in range(4):
+                        range_base = offset + (x*2)
+                        loot_list.append(int.from_bytes(chest_loot_table[range_base:range_base+2], "little"))
+                    #loot_row = int.from_bytes(chest_loot_table[offset:offset+8], "little")
+                    if loot_list != [0,0,0,0]:
+                        chest_loot_dict[chest_id] = loot_list
+                shuffled_loot = shuffle_dict(chest_loot_dict)
+            elif ctx.chest_shuffle == 2:
+                shuffled_loot = {}
+                for chest_id in range(190):
+                    shuffled_loot[chest_id] = [0,0,0,0]
+            with open(chest_loot_path, "w") as loot_json:
+                json.dump(shuffled_loot, loot_json)
+        else:
+            with open(chest_loot_path, 'r') as loot_json:
+                shuffled_loot = json.load(loot_json)
+    except Exception as e:
+        loggerDebug.critical(f"Error Patching: {e}\n{traceback.format_exc()}")
     
     for chest_id, contents in shuffled_loot.items():
         offset = int(chest_id) * 8

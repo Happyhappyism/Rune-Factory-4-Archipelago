@@ -337,17 +337,20 @@ def modify_spells(seed_f:SeedFileInfo):
             loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def read_settings_plist(setting=None):
-    save_path = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
-    settings_plist_path = os.path.join(save_path,"Settings.plist")
-    with open(settings_plist_path, 'rb') as fp:
-        settings_dict = plistlib.load(fp)
-    if setting:
-        if setting in settings_dict:
-            return settings_dict[setting]
+    try:
+        save_path = f"{os.getenv('APPDATA')}\\Rune Factory 4 Special"
+        settings_plist_path = os.path.join(save_path,"Settings.plist")
+        with open(settings_plist_path, 'rb') as fp:
+            settings_dict = plistlib.load(fp)
+        if setting:
+            if setting in settings_dict:
+                return settings_dict[setting]
+            else:
+                return None
         else:
-            return None
-    else:
-        return settings_dict
+            return settings_dict
+    except Exception as e:
+        loggerDebug.error(f"Error: {e}\n{traceback.format_exc()}")
 
 def detect_locale(seed_f:SeedFileInfo):
     try:
@@ -714,29 +717,33 @@ def process_aprf4s(seed_f:SeedFileInfo):
         loggerDebug.error(f"Error processing aprf4s: {e}\n{traceback.format_exc()}")
 
 def get_goal_str(goal_int):
-    match goal_int:
-        case 0:
-            goal_str = "Custom"
-        case 1:
-            goal_str = "Ethelberd"
-        case 2:
-            goal_str = "Rune Prana"
-        case 3:
-            goal_str = "Shipment Percentage"
-        case 4:
-            goal_str = "Nationized Baths"
-        case 5:
-            goal_str = "Eliza"
-        case 6:
-            goal_str = "Mariage"
-        case 7:
-            goal_str = "Rune Hunt"
-        case 8:
-            goal_str = "Homeowner"
-        case _:
-            loggerDebug.warning(f"Goal not found {goal_int}")
-            goal_str = "Ethelberd"
-    return goal_str
+    try:
+        match goal_int:
+            case 0:
+                goal_str = "Custom"
+            case 1:
+                goal_str = "Ethelberd"
+            case 2:
+                goal_str = "Rune Prana"
+            case 3:
+                goal_str = "Shipment Percentage"
+            case 4:
+                goal_str = "Nationized Baths"
+            case 5:
+                goal_str = "Eliza"
+            case 6:
+                goal_str = "Mariage"
+            case 7:
+                goal_str = "Rune Hunt"
+            case 8:
+                goal_str = "Homeowner"
+            case _:
+                loggerDebug.warning(f"Goal not found {goal_int}")
+                goal_str = "Ethelberd"
+        return goal_str
+    except Exception as e:
+        loggerDebug.error(f"Error processing aprf4s: {e}\n{traceback.format_exc()}")
+        return ""
 
 def build_seed_combo(seed_f:SeedFileInfo):
     try:
@@ -980,8 +987,8 @@ def patch_scenerio(seed_f:SeedFileInfo):
         patch_bytes = pkgutil.get_data(__name__, f"data/patches/rf3mc.ips")
         with open(f"{seed_f.ap_mod_path}/rf3.mc", "wb") as mc_file:
             mc_file.write(patch(mc_bytes,parse_ips_file(patch_bytes)))
-            mc_file.seek(0x3d33ac)
-            mc_file.write(b'\x8D\x01\x14\x00')
+            #mc_file.seek(0x3d33ac)
+            #mc_file.write(b'\x8D\x01\x14\x00')
         
     except Exception as e:
         loggerDebug.error(f"Writing new scenerio: {e}\n{traceback.format_exc()}")
@@ -1067,8 +1074,8 @@ def clean_aprf4s_files(seed_f:SeedFileInfo):
 
 
 def delete_unsaved_seed_files(seed_f:SeedFileInfo):
-    bgm_path = f"{seed_f.ap_mod_path}/Audio"
     try:
+        bgm_path = f"{seed_f.ap_mod_path}/Audio"
         if os.path.isdir(bgm_path):
             shutil.rmtree(bgm_path)
     except Exception as e:
